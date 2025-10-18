@@ -82,7 +82,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'alertmanagement',   # your MySQL database name
         'USER': 'root',
-        'PASSWORD': 'thepythers',
+        'PASSWORD': 'bossdale3253',
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {

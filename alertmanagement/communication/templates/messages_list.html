@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Message List</title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        h1 { color: #333; }
+    </style>
+</head>
+<body>
+    <h1>All Messages 💬</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Message ID</th>
+                <th>User</th>
+                <th>Emergency Event ID</th>
+                <th>Message Text</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for message in messages %}
+            <tr>
+                <td>{{ message.message_id }}</td>
+                <td>{{ message.user_id.username }}</td> <td>{{ message.emergency_event.pk }}</td> <td>{{ message.message_text }}</td>
+                <td>{{ message.timestamp }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No messages found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

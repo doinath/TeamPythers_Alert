@@ -1,0 +1,225 @@
+/* Login.css */
+
+/* -------------------- GLOBAL RESET -------------------- */
+/* Fixed typo: Changed '•' to '*' for the universal selector */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%; /* Added for consistency */
+  color: #fff;
+  overflow-x: hidden;
+}
+
+/* -------------------- HERO CONTAINER -------------------- */
+.hero-container {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat; /* add this */
+  width: 100vw; /* change from 100% to 100vw */
+  height: 100vh; /* ensure full height coverage */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* -------------------- HEADER -------------------- */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 6px 5%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  height: 60px;
+}
+
+/* -------------------- LOGO CONTAINER -------------------- */
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo {
+  width: 130px; /* Adjust logo size */
+  height: auto;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+/* Subtle hover effect for interactivity */
+.logo:hover {
+  transform: scale(1.05);
+}
+
+
+/* -------------------- NAVIGATION -------------------- */
+
+nav ul {
+  list-style: none;
+  display: flex;
+  align-items: center;
+}
+
+nav ul li {
+  margin: 0 35px;
+}
+
+nav ul li a {
+  color: #333;
+  text-decoration: none;
+  font-size: 1em;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+  color: #c0392b;
+}
+
+/* -------------------- BUTTONS -------------------- */
+.btn {
+  padding: 10px 25px;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-signup {
+  background-color: #c0392b;
+}
+
+.btn-signup:hover {
+  background-color: #e74c3c;
+}
+
+/* -------------------- MAIN SECTION -------------------- */
+main {
+  flex-grow: 1; /* Allows main to take up available space */
+  display: flex;
+  align-items: center;
+  /* Changed to space-evenly for better visual balance on large screens */
+  justify-content: space-evenly;
+  padding: 100px 5% 20px; 
+}
+
+.hero-text {
+  flex-basis: 50%;
+  padding-left: 50px;
+  text-align: left;
+}
+
+.hero-text h1 {
+  width: 500px;
+  font-size: 4em;
+  font-weight: 900;
+  line-height: 1.2;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+.hero-text .highlight-text {
+  color: #e74c3c;
+}
+
+
+/* -------------------- HAMBURGER MENU -------------------- */
+.hamburger {
+  display: none;
+  cursor: pointer;
+}
+
+.hamburger .line {
+  width: 25px;
+  height: 3px;
+  background-color: #333;
+  margin: 5px 0;
+  transition: all 0.3s ease;
+}
+
+/* -------------------- RESPONSIVE DESIGN -------------------- */
+@media screen and (max-width: 992px) {
+  main {
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    gap: 40px;
+    padding-top: 120px;
+  }
+
+  .hero-text {
+    text-align: center;
+    padding: 0;
+    order: 1; /* Show text first */
+  }
+
+  .hero-text h1 {
+    font-size: 2.5em;
+    width: auto;
+  }
+
+  /* Show the hamburger */
+  .hamburger {
+    display: block;
+  }
+
+  /* Slide-out nav for mobile */
+  .nav-links {
+    position: fixed;
+    top: 70px; /* Matches header height */
+    right: 0;
+    height: calc(100vh - 70px);
+    width: 60%;
+    background-color: white;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 40px;
+    align-items: center;
+    transform: translateX(100%);
+    transition: transform 0.5s ease-in-out;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .nav-links li {
+    margin: 20px 0;
+  }
+
+  .nav-links.nav-active {
+    transform: translateX(0%);
+  }
+
+  /* Hamburger animation */
+  .hamburger.toggle .line:nth-child(1) {
+    transform: rotate(-45deg) translate(-5px, 6px);
+  }
+
+  .hamburger.toggle .line:nth-child(2) {
+    opacity: 0;
+  }
+
+  .hamburger.toggle .line:nth-child(3) {
+    transform: rotate(45deg) translate(-5px, -6px);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .hero-text h1 {
+    font-size: 2em;
+  }
+}

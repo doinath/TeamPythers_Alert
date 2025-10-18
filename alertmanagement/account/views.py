@@ -3,5 +3,8 @@ from django.shortcuts import render
 
 class LoginView(View):
     def get(self, request):
-        # Render login.html template
         return render(request, "login.html")
+
+class IndexView(View):
+    def get(self, request):
+        return render(request, "index.html")

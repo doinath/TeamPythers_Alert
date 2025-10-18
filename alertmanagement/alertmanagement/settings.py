@@ -41,7 +41,7 @@ ROOT_URLCONF = 'alertmanagement.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'Templates'],  # Updated to your Templates folder
+        'DIRS': [BASE_DIR / 'account' / 'Templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -87,9 +87,9 @@ USE_TZ = True
 # -------------------- STATIC FILES --------------------
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    BASE_DIR / 'Templates' / 'assets',  # Your CSS, JS, images go here
+    BASE_DIR / 'account' / 'assets',
 ]
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 
 # -------------------- DEFAULT AUTO FIELD --------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

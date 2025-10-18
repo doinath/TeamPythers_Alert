@@ -53,7 +53,7 @@ header {
 }
 
 .logo {
-  width: 130px; /* Adjust logo size */
+  width: 100px; /* Adjust logo size */
   height: auto;
   object-fit: contain;
   transition: transform 0.3s ease;
@@ -124,6 +124,7 @@ main {
   padding-left: 350px;
   text-align: left;
 }
+
 
 .hero-text h1 {
   width: 500px;

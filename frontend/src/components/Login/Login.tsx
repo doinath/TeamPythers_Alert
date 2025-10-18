@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./Login.css";
 import alertLogo from "../../assets/alert_logo.png";
 import disasterBg from "../../assets/disaster-bg.png";

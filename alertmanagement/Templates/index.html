@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALERT</title>
+  <!-- Load CSS via Django static -->
+  <link rel="stylesheet" href="{% static 'css/Index.css' %}">
+</head>
+<body>
+  <div class="hero-container" style="background-image: url('{% static "images/disaster-bg.png" %}');">
+    <header>
+      <div class="logo-container">
+        <img src="{% static 'images/alert_logo.png' %}" alt="ALERT Logo" class="logo">
+      </div>
+
+      <nav>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="#">Home</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#" class="btn btn-signup">Sign Up</a></li>
+        </ul>
+      </nav>
+
+      <div class="hamburger" id="hamburger">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+      </div>
+    </header>
+
+    <main>
+      <div class="hero-text">
+        <h1>Stay Safe</h1>
+        <h1>Stay Informed</h1>
+        <h1 class="highlight-text">Stay ALERT</h1>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Hamburger menu toggle
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('navLinks');
+
+    hamburger.addEventListener('click', () => {
+      navLinks.classList.toggle('nav-active');
+      hamburger.classList.toggle('toggle');
+    });
+  </script>
+</body>
+</html>

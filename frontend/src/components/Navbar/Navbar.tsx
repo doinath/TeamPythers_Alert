@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import logo from '../../assets/logo.png';
 import './Navbar.css';
-import Logo from '../Logo/Logo';
 
 const Navbar = () => {
   const [menu, setMenu] = useState("home");
@@ -9,6 +9,7 @@ const Navbar = () => {
   return (
     <div className="navbar">
       <div className="nav-logo">
+        <img src={logo} alt="ALERT logo" />
       </div>
 
       <div className="nav-right">

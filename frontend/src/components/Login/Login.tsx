@@ -20,7 +20,9 @@ const Login: React.FC = () => {
   return (
     <div className="hero-container" style={{ backgroundImage: `url(${disasterBg})` }}>
       <header>
-        <img src={alertLogo} alt="ALERT Logo" className="logo" />
+        <div className="logo-container">
+          <img src={alertLogo} alt="ALERT Logo" className="logo" />
+        </div>
 
         <nav>
           <ul className={`nav-links ${navActive ? "nav-active" : ""}`}>

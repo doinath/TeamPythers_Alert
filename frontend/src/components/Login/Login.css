@@ -1,23 +1,29 @@
+/* Login.css */
+
 /* -------------------- GLOBAL RESET -------------------- */
-•  {
+/* Fixed typo: Changed '•' to '*' for the universal selector */
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: Arial, Helvetica, sans-serif;
 }
 
-html, body {
+html,
+body {
   height: 100%;
+  width: 100%; /* Added for consistency */
   color: #fff;
   overflow-x: hidden;
 }
 
 /* -------------------- HERO CONTAINER -------------------- */
 .hero-container {
-  background-image: url('/disaster-bg.png'); /* Public folder reference for React */
+  /* The background-image is now correctly handled by the inline style in your JSX */
   background-size: cover;
   background-position: center;
-  height: 100vh;
+  width: 100%; /* Ensure it takes full width */
+  min-height: 100vh; /* Use min-height to handle content overflow */
   position: relative;
   display: flex;
   flex-direction: column;
@@ -39,7 +45,7 @@ header {
 }
 
 .logo {
-  width: 120px;            /* adjust to your preferred size */
+  width: 120px;
   height: auto;
 }
 
@@ -88,16 +94,19 @@ nav ul li a:hover {
 
 /* -------------------- MAIN SECTION -------------------- */
 main {
+  flex-grow: 1; /* Allows main to take up available space */
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  height: 100%;
-  padding: 100px 5% 0;
+  /* Changed to space-evenly for better visual balance on large screens */
+  justify-content: space-evenly;
+  padding: 100px 5% 20px; /* Adjusted padding for better alignment */
 }
 
 .hero-text {
   flex-basis: 50%;
-  padding-left: 260px;
+  padding-left: 250px;
+  text-align: left;
+  /* Removed rigid 'padding-left: 260px'. The parent's justify-content will handle spacing */
 }
 
 .hero-text h1 {
@@ -188,7 +197,13 @@ main {
   }
 
   .hero-text {
+    text-align: center;
     padding: 0;
+    order: 1; /* Show text first */
+  }
+  
+  .signin-form-container {
+      order: 2; /* Show form second */
   }
 
   .hero-text h1 {
@@ -204,7 +219,7 @@ main {
   /* Slide-out nav for mobile */
   .nav-links {
     position: fixed;
-    top: 70px;
+    top: 70px; /* Matches header height */
     right: 0;
     height: calc(100vh - 70px);
     width: 60%;

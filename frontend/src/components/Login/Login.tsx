@@ -1,6 +1,14 @@
 import React, { useState } from "react";
 import "./Login.css";
 import alertLogo from "../../assets/alert_logo.png";
+import disasterBg from "../../assets/disaster-bg.png";
+
+<div
+  className="hero-container"
+  style={{ backgroundImage: `url(${disasterBg})` }}
+>
+  {/* content */}
+</div>
 
 const Login: React.FC = () => {
   const [navActive, setNavActive] = useState(false);
@@ -10,7 +18,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="hero-container">
+    <div className="hero-container" style={{ backgroundImage: `url(${disasterBg})` }}>
       <header>
         <img src={alertLogo} alt="ALERT Logo" className="logo" />
 

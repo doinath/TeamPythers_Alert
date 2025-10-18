@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authority Dashboard</title>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+            <img src="{% static 'images/alert_logo.png' %}" alt="ALERT Logo">
+            <h2>Authority</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="#">Dashboard</a></li>
+                <li><a href="#">Incidents</a></li>
+                <li><a href="#">Reports</a></li>
+                <li><a href="#">Users</a></li>
+                <li><a href="#">Settings</a></li>
+                <li><a href="#">Logout</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="dashboard-header">
+            <h1>Welcome, Authority</h1>
+            <p>Overview of alerts and reports</p>
+        </header>
+
+        <section class="dashboard-cards">
+            <!-- Placeholder cards -->
+            <div class="card">Card 1</div>
+            <div class="card">Card 2</div>
+            <div class="card">Card 3</div>
+        </section>
+
+        <section class="dashboard-tables">
+            <h2>Recent Incidents</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>001</td>
+                        <td>Example</td>
+                        <td>Active</td>
+                        <td>YYYY-MM-DD</td>
+                    </tr>
+                    <!-- More placeholder rows -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+</body>
+</html>

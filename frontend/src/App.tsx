@@ -1,26 +1,17 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navbar from './components/Navbar/Navbar';
-import Index from './pages/Index';
-// Import other pages when ready
-// import About from './pages/About';
-// import Contact from './pages/Contact';
-// import SignIn from './pages/SignIn';
-// import SignUp from './pages/SignUp';
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
+import './App.css'
+import Login from './components/Login/Login'
 
 function App() {
+  const [count, setCount] = useState(0)
+
   return (
-    <BrowserRouter>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Index />} />
-        {/* Example routes for other pages */}
-        {/* <Route path="/about" element={<About />} /> */}
-        {/* <Route path="/contact" element={<Contact />} /> */}
-        {/* <Route path="/signin" element={<SignIn />} /> */}
-        {/* <Route path="/signup" element={<SignUp />} /> */}
-      </Routes>
-    </BrowserRouter>
-  );
+    <>
+    <Login />
+    </>
+  )
 }
 
-export default App;
+export default App

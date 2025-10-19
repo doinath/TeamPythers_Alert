@@ -1,15 +1,20 @@
 import os
 from pathlib import Path
 
-# -------------------- BASE DIRECTORIES --------------------
-BASE_DIR = Path(__file__).resolve().parent.parent  # points to alertmanagement/
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
 
-# -------------------- SECURITY --------------------
+
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
+
+# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-8h!lpf)7@n=wkhjpbp!z^$-7-2ldm4p+ptg3fe-*6lcy2epprt'
 DEBUG = True  # Set False in production
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
-# -------------------- INSTALLED APPS --------------------
+# Application definition
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -24,7 +29,6 @@ INSTALLED_APPS = [
     'system',
 ]
 
-# -------------------- MIDDLEWARE --------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -55,13 +59,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'alertmanagement.wsgi.application'
 
-# -------------------- DATABASE --------------------
+
+# Database
+# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'alertmanagement',
         'USER': 'root',
-        'PASSWORD': 'Sherie@#$2505',
+        'PASSWORD': 'thepythers',
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {
@@ -69,6 +76,7 @@ DATABASES = {
         },
     }
 }
+#root, thepythers superuser
 
 # -------------------- PASSWORD VALIDATION --------------------
 AUTH_PASSWORD_VALIDATORS = [
@@ -78,10 +86,16 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# -------------------- INTERNATIONALIZATION --------------------
+
+# Internationalization
+# https://docs.djangoproject.com/en/5.2/topics/i18n/
+
 LANGUAGE_CODE = 'en-us'
+
 TIME_ZONE = 'UTC'
+
 USE_I18N = True
+
 USE_TZ = True
 
 # -------------------- STATIC FILES --------------------
@@ -90,6 +104,9 @@ STATICFILES_DIRS = [
     BASE_DIR / 'account' / 'assets',
 ]
 
+STATIC_URL = 'static/'
 
-# -------------------- DEFAULT AUTO FIELD --------------------
+# Default primary key field type
+# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

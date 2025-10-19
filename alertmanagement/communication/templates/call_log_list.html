@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Call Log List</title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        h1 { color: #333; }
+    </style>
+</head>
+<body>
+    <h1>Call Logs 📞</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Call ID</th>
+                <th>User</th>
+                <th>Emergency Event ID</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Duration (s)</th>
+                <th>Call Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in call_logs %}
+            <tr>
+                <td>{{ log.call_id }}</td>
+                <td>{{ log.user_id.username }}</td> <td>{{ log.emergency_event.pk }}</td> <td>{{ log.start_time }}</td>
+                <td>{{ log.end_time }}</td>
+                <td>{{ log.duration }}</td>
+                <td>{{ log.call_type }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7">No call logs found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responder Dashboard</title>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+            <img src="{% static 'images/alert_logo.png' %}" alt="ALERT Logo">
+            <h2>Responder</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="#">Dashboard</a></li>
+                <li><a href="#">Active Incidents</a></li>
+                <li><a href="#">Assigned Alerts</a></li>
+                <li><a href="#">Reports</a></li>
+                <li><a href="#">Notifications</a></li>
+                <li><a href="#">Settings</a></li>
+                <li><a href="#">Logout</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="dashboard-header">
+            <h1>Welcome, Responder</h1>
+            <p>Overview of your active alerts and incidents</p>
+        </header>
+
+        <section class="dashboard-cards">
+            <!-- Placeholder cards -->
+            <div class="card">Ongoing Incidents</div>
+            <div class="card">Assigned Alerts</div>
+            <div class="card">Pending Reports</div>
+        </section>
+
+        <section class="dashboard-tables">
+            <h2>Recent Incidents</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Incident ID</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                        <th>Reported At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>001</td>
+                        <td>Sample Location</td>
+                        <td>In Progress</td>
+                        <td>YYYY-MM-DD</td>
+                    </tr>
+                    <!-- More placeholder rows -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+</body>
+</html>

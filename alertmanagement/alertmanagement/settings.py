@@ -45,7 +45,7 @@ ROOT_URLCONF = 'alertmanagement.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'account' / 'Templates'],
+        'DIRS': [BASE_DIR / 'account' / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -68,7 +68,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'alertmanagement',
         'USER': 'root',
-        'PASSWORD': 'thepythers',
+        'PASSWORD': 'Sherie@#$2505',
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {

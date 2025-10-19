@@ -19,8 +19,13 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include('account.urls')),
     path('emergency/', include('emergency.urls')),
     path('api/', include('communication.urls')),
     path('system/', include('system.urls')),
     path('verification/', include('verification.urls')),
 ]
+
+# if settings.DEBUG:
+#     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
+

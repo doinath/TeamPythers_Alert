@@ -1,4 +1,4 @@
-import logo from './logo.svg';
+import logo from './assets/logo.svg';
 import './App.css';
 
 function App() {
@@ -17,9 +17,18 @@ function App() {
         >
           Learn React
         </a>
+          <MyButton/>
       </header>
+
+
     </div>
   );
+}
+
+function MyButton() {
+    return (
+        <button>I'm a button</button>
+    );
 }
 
 export default App;

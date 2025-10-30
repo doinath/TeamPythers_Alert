@@ -1,54 +1,319 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ALERT</title>
-  <!-- Load CSS via Django static -->
-  <link rel="stylesheet" href="{% static 'css/Index.css' %}">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ALERT - Stay Safe, Stay Informed</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../css/index.css">
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/"
+  }
+}
+</script>
 </head>
-<body>
-  <div class="hero-container" style="background-image: url('{% static "images/disaster-bg.png" %}');">
-    <header>
-      <div class="logo-container">
-        <img src="{% static 'images/alert_logo.png' %}" alt="ALERT Logo" class="logo">
-      </div>
-
-      <nav>
-        <ul class="nav-links" id="navLinks">
-          <li><a href="#">Home</a></li>
-          <li><a href="#">About</a></li>
-          <li><a href="#">Contact</a></li>
-          <li><a href="#" class="btn btn-signup">Sign Up</a></li>
-        </ul>
-      </nav>
-
-      <div class="hamburger" id="hamburger">
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-      </div>
+<body class="bg-white text-gray-800">
+    <!-- Header -->
+    <header class="sticky top-0 left-0 right-0 z-50 bg-white shadow-md py-4 px-4 sm:px-8 md:px-16">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="#home">
+                <div class="flex items-center space-x-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 8.5c0-2.485 2.015-4.5 4.5-4.5S15 6.015 15 8.5" opacity="0.4" transform="scale(0.6) translate(2.5, -6)" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.5 10c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" opacity="0.2" transform="scale(0.6) translate(2.5, -6)" />
+                    </svg>
+                    <span class="text-2xl font-bold tracking-wider text-gray-800">ALERT</span>
+                </div>
+            </a>
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="#home" class="text-gray-800 hover:text-red-600 transition-colors duration-300 font-medium">Home</a>
+                <a href="#about" class="text-gray-800 hover:text-red-600 transition-colors duration-300 font-medium">About</a>
+                <a href="#contact" class="text-gray-800 hover:text-red-600 transition-colors duration-300 font-medium">Contact</a>
+                <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-md shadow-lg transition-transform transform hover:scale-105 duration-300">
+                    Sign Up
+                </button>
+            </nav>
+            <div class="md:hidden">
+                <button class="text-gray-800 focus:outline-none" aria-label="Toggle menu">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                    </svg>
+                </button>
+            </div>
+        </div>
     </header>
 
     <main>
-      <div class="hero-text">
-        <h1>Stay Safe</h1>
-        <h1>Stay Informed</h1>
-        <h1 class="highlight-text">Stay ALERT</h1>
-      </div>
+        <!-- Hero Section -->
+        <section id="home" class="relative min-h-screen flex items-center justify-center text-white pt-24 pb-12 md:pt-0 md:pb-0 px-12">
+            <div class="absolute inset-0 z-0">
+                <img src="{% static 'images/landingimage.png' %}" alt="Aftermath of a natural disaster" class="w-full h-full object-cover" />
+                <div class="absolute inset-0 backdrop-brightness-75"></div>
+            </div>
+
+            <!-- Mobile-only Rescuer Image -->
+            <div class="lg:hidden absolute bottom-0 left-0 right-0 flex justify-center z-10 pointer-events-none">
+              <img src="{% static 'images/rescuer-hero.png' %}" alt="Firefighter carrying a child to safety" class="h-64 sm:h-80 w-auto object-contain" />
+            </div>
+
+            <div class="relative z-10 container mx-auto px-4 sm:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+                    <!-- Column 1: Rescuer Image (Desktop) -->
+                    <div class="hidden lg:flex justify-center lg:justify-end">
+                        <img src="{% static 'images/rescuer.png' %}"
+                           alt="Firefighter carrying a child to safety"
+                           class="h-[48rem] xl:h-[56rem] -mb-48 w-auto object-contain flex-shrink-0 scale-125 -mb-20 transition-transform duration-700 ease-in-out" />
+                    </div>
+
+                    <!-- Column 2: Tagline -->
+                    <div class="text-left">
+                        <h1 class="text-5xl xl:text-6xl mb-5 font-extrabold leading-tight drop-shadow-lg whitespace-nowrap">Stay Safe</h1>
+                        <h1 class="text-5xl xl:text-6xl mb-5 font-extrabold leading-tight drop-shadow-lg mt-2 whitespace-nowrap">Stay Informed</h1>
+                        <h1 class="text-5xl xl:text-6xl font-extrabold leading-tight drop-shadow-lg mt-2 whitespace-nowrap">Stay <span class="text-red-500">ALERT</span></h1>
+                    </div>
+
+                    <!-- Column 3: Sign In Form -->
+                    <div class="flex justify-center lg:justify-start">
+                        <div class="bg-white/95 backdrop-blur-sm text-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md" style="box-shadow: 0 0 25px rgba(239, 68, 68, 0.3)">
+                            <h2 class="text-2xl font-bold text-center mb-2">Sign In to you Account</h2>
+                            <p class="text-center text-gray-600 mb-6 text-sm">Enter registered email and password in the fields provided.</p>
+                            <form action="#" method="POST" no-validate>
+                                <div class="mb-4">
+                                    <input type="email" id="email" placeholder="Email Address" class="w-full px-4 py-3 bg-white border-2 border-red-200 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors" required />
+                                </div>
+                                <div class="mb-6">
+                                    <input type="password" id="password" placeholder="Password" class="w-full px-4 py-3 bg-white border-2 border-red-200 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors" required />
+                                </div>
+                                <button type="submit" class="w-full bg-gradient-to-b from-red-500 to-red-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    Sign In
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about">
+            <div class="bg-white text-gray-800 py-16 sm:py-24">
+                <div class="container mx-auto px-4">
+                    <h2 class="text-4xl md:text-5xl font-extrabold text-center mb-12">
+                        How <span class="text-red-600">ALERT</span> Works When <br class="hidden sm:block" /> You Need Help Most
+                    </h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                        <div class="rounded-lg p-6 shadow-lg flex items-start space-x-4 bg-red-600 text-white">
+                            <div class="text-4xl font-bold text-yellow-300">1</div>
+                            <div>
+                                <h3 class="font-bold text-lg">Detect an Emergency</h3>
+                                <p class="text-sm mt-1 text-red-100">Stay calm and identify the situation — whether it’s an accident, health issue, or danger nearby.</p>
+                            </div>
+                        </div>
+                        <div class="rounded-lg p-6 shadow-lg flex items-start space-x-4 bg-red-600 text-white">
+                            <div class="text-4xl font-bold text-yellow-300">2</div>
+                            <div>
+                                <h3 class="font-bold text-lg">Press the ALERT Button</h3>
+                                <p class="text-sm mt-1 text-red-100">Just one tap on our platform instantly sends an emergency signal to nearby responders.</p>
+                            </div>
+                        </div>
+                        <div class="rounded-lg p-6 shadow-lg flex items-start space-x-4 bg-red-600 text-white">
+                            <div class="text-4xl font-bold text-yellow-300">3</div>
+                            <div>
+                                <h3 class="font-bold text-lg">GPS is Auto-Sent</h3>
+                                <p class="text-sm mt-1 text-red-100">Your GPS location is shared instantly, ensuring help finds you faster.</p>
+                            </div>
+                        </div>
+                        <div class="rounded-lg p-6 shadow-lg flex items-start space-x-4 bg-red-600 text-white">
+                            <div class="text-4xl font-bold text-yellow-300">4</div>
+                            <div>
+                                <h3 class="font-bold text-lg">Connect with Responders</h3>
+                                <p class="text-sm mt-1 text-red-100">Our system alerts responders and connects you to the nearest available assistance.</p>
+                            </div>
+                        </div>
+                        <div class="rounded-lg p-6 shadow-lg flex items-start space-x-4 bg-red-600 text-white">
+                            <div class="text-4xl font-bold text-yellow-300">5</div>
+                            <div>
+                                <h3 class="font-bold text-lg">Track Help in Real-Time</h3>
+                                <p class="text-sm mt-1 text-red-100">Track updates as help moves toward your location through our tracking interface.</p>
+                            </div>
+                        </div>
+                        <div class="rounded-lg p-6 shadow-lg flex items-start space-x-4 bg-white text-gray-800 border border-gray-200">
+                            <div class="text-4xl font-bold text-yellow-500">6</div>
+                            <div>
+                                <h3 class="font-bold text-lg">Receive Help Safely</h3>
+                                <p class="text-sm mt-1 text-gray-600">Trained personnel arrive to assist you — stay calm and follow their instructions until you’re secure.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="relative py-24 bg-cover bg-center bg-fixed" style="background-image: url('https://picsum.photos/seed/paramedic/1920/1080')">
+                <div class="absolute inset-0 bg-gray-900/60"></div>
+                <div class="relative container mx-auto px-12 sm:px-20 lg:px-28 text-white text-left mb-10">
+                    <h2 class="text-5xl font-bold mb-10">About</h2>
+                    <h3 class="text-3xl font-semibold mt-4">ALERT - Assistance Link for <br/>Emergency Response & Tracking</h3>
+                    <p class="mt-4 max-w-2xl text-lg leading-relaxed">
+                        This is a platform designed to connect citizens with responders in just one tap. Once activated, it automatically sends your location and notifies nearby emergency teams for immediate assistance. <span class="bg-cyan-600/50 p-1 rounded-md">With ALERT, help is always within reach — fast, reliable, and life-saving.</span>
+                    </p>
+                </div>
+            </div>
+            <div class="bg-gray-100">
+                <div class="container mx-auto px-4 px-12 sm:px-20 lg:px-28">
+                    <div class="bg-white rounded-xl shadow-2xl p-8 md:p-12 -mt-20 relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 ">
+                        <div class="flex-grow text-center md:text-left ">
+                            <h3 class="text-2xl lg:text-3xl font-bold text-gray-800 ">Be the reason someone gets help in time.</h3>
+                            <p class="text-gray-600 mt-2">Join ALERT as a responder today and make every second count. Become part of a network that saves lives, delivers hope, and responds when people need it most.</p>
+                        </div>
+                        <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-10 rounded-lg shadow-lg whitespace-nowrap transition-transform transform hover:scale-105 duration-300">
+                            Join Us Now!
+                        </button>
+                    </div>
+                </div>
+                <div class="container mx-auto px-4 pt-20 pb-24 text-gray-800">
+                    <div class="flex flex-col lg:flex-row items-center lg:items-start justify-center gap-12">
+                        <div class="flex flex-wrap justify-center gap-4">
+                            <div class="bg-white rounded-lg border border-gray-200 shadow-lg p-4 text-center w-36">
+                                <div class="w-28 h-28 mx-auto bg-gray-200 border-2 border-gray-300 rounded-md mb-3"></div>
+                                <p class="font-semibold text-sm">Julian Andales</p>
+                            </div>
+                            <div class="bg-white rounded-lg border border-gray-200 shadow-lg p-4 text-center w-36">
+                                <div class="w-28 h-28 mx-auto bg-gray-200 border-2 border-gray-300 rounded-md mb-3"></div>
+                                <p class="font-semibold text-sm">Nathanael Del Castillo</p>
+                            </div>
+                            <div class="bg-white rounded-lg border border-gray-200 shadow-lg p-4 text-center w-36">
+                                <div class="w-28 h-28 mx-auto bg-gray-200 border-2 border-gray-300 rounded-md mb-3"></div>
+                                <p class="font-semibold text-sm">Sherielyn Guadiana</p>
+                            </div>
+                            <div class="bg-white rounded-lg border border-gray-200 shadow-lg p-4 text-center w-36">
+                                <div class="w-28 h-28 mx-auto bg-gray-200 border-2 border-gray-300 rounded-md mb-3"></div>
+                                <p class="font-semibold text-sm">Kyle Plando</p>
+                            </div>
+                            <div class="bg-white rounded-lg border border-gray-200 shadow-lg p-4 text-center w-36">
+                                <div class="w-28 h-28 mx-auto bg-gray-200 border-2 border-gray-300 rounded-md mb-3"></div>
+                                <p class="font-semibold text-sm">Shervin Tabernero</p>
+                            </div>
+                        </div>
+                        <div class="lg:w-1/4 text-center lg:text-left mt-8 lg:mt-0">
+                            <h3 class="text-3xl font-bold text-gray-800">Meet the Team</h3>
+                            <p class="text-gray-600 mt-4">We are a team of 3rd year BS Computer Science students dedicated to developing innovative solutions for faster emergency response.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-24 bg-white">
+            <div class="container mx-auto px-12 sm:px-20 lg:px-28">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+                    <div class="lg:col-span-3 text-center lg:text-left">
+                        <h2 class="text-4xl font-bold text-red-600 mb-4">Contact Us</h2>
+                        <p class="text-2xl text-gray-700 italic">
+                            Get in Touch with the ALERT Team — <br /> We're Here to Help and Respond.
+                        </p>
+                    </div>
+                    <div class="lg:col-span-4 relative flex flex-col items-center lg:items-start lg:pl-12">
+                        <div class="absolute left-0 top-0 bottom-0 w-px bg-red-300 hidden lg:block"></div>
+                        <div class="space-y-6 text-left w-full max-w-sm">
+                            <p class="text-gray-600 mb-6">Reach us through email, phone, or social media for any questions or support. Choose the option that's most convenient for you, and we'll respond as soon as possible.</p>
+                            <div class="flex items-center space-x-4">
+                                <div class="bg-red-600 text-white p-3 rounded-full">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-800">Phone</h4>
+                                    <p class="text-red-700">(+63) 9533923688</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <div class="bg-red-600 text-white p-3 rounded-full">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-800">Email</h4>
+                                    <p class="text-red-700">alert_team@gmail.com</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <div class="bg-red-600 text-white p-3 rounded-full">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect width="20" height="20" x="2" y="2" rx="5" ry="5" stroke-width="2"></rect><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01" /></svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-800">Instagram</h4>
+                                    <p class="text-red-700">alert.com</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-5">
+                        <div class="bg-[#5a2a2a] rounded-2xl p-8 shadow-2xl">
+                            <form action="#" method="POST" no-validate>
+                                <div class="mb-4">
+                                    <input type="text" placeholder="Full Name" class="w-full bg-[#7d5a5a] text-white placeholder-gray-300 rounded-lg px-4 py-3 border border-gray-600/50 focus:outline-none focus:ring-2 focus:ring-white" />
+                                </div>
+                                <div class="mb-4">
+                                    <input type="email" placeholder="Email" class="w-full bg-[#7d5a5a] text-white placeholder-gray-300 rounded-lg px-4 py-3 border border-gray-600/50 focus:outline-none focus:ring-2 focus:ring-white" />
+                                </div>
+                                <div class="mb-6">
+                                    <textarea placeholder="Message" rows="4" class="w-full bg-[#7d5a5a] text-white placeholder-gray-300 rounded-lg px-4 py-3 border border-gray-600/50 focus:outline-none focus:ring-2 focus:ring-white"></textarea>
+                                </div>
+                                <button type="submit" class="w-full bg-gray-200 hover:bg-white text-gray-800 font-bold py-3 px-4 rounded-lg shadow-lg transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    Submit
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
-  </div>
 
-  <script>
-    // Hamburger menu toggle
-    const hamburger = document.getElementById('hamburger');
-    const navLinks = document.getElementById('navLinks');
-
-    hamburger.addEventListener('click', () => {
-      navLinks.classList.toggle('nav-active');
-      hamburger.classList.toggle('toggle');
-    });
-  </script>
+    <!-- Footer -->
+    <footer class="bg-[#3b0909] text-gray-300">
+        <div class="container mx-auto py-16 px-12 sm:px-20 lg:px-28">
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-8 text-sm">
+                <div class="col-span-2 md:col-span-1">
+                    <h3 class="text-2xl font-bold text-white mb-4">ALERT</h3>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-4">Navigation</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="hover:text-white">Home</a></li>
+                        <li><a href="#about" class="hover:text-white">About</a></li>
+                        <li><a href="#contact" class="hover:text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-4">What We Do</h4>
+                    <p>ALERT lets citizens send an emergency signal with just one tap — no delays, no confusion.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-4">Contact Us</h4>
+                    <p>Phone Number: <span class="text-white">123-456-7890</span></p>
+                    <p>Email Address: <span class="text-white">alert@gmail.co</span></p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-4">Social</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" /></svg></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.024.06 1.378.06 3.808s-.012 2.784-.06 3.808c-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.024.048-1.378.06-3.808.06s-2.784-.012-3.808-.06c-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.048-1.024-.06-1.378-.06-3.808s.012-2.784.06-3.808c.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 016.08 2.525c.636-.247 1.363-.416 2.427-.465C9.53 2.013 9.884 2 12.315 2zm-1.161 1.545a4.92 4.92 0 00-3.59 1.182 4.92 4.92 0 00-1.182 3.59A4.92 4.92 0 003.545 12a4.92 4.92 0 001.182 3.59 4.92 4.92 0 003.59 1.182 4.92 4.92 0 003.59-1.182 4.92 4.92 0 001.182-3.59A4.92 4.92 0 0015.455 8.41a4.92 4.92 0 00-3.59-1.182zM12 15.455a3.455 3.455 0 110-6.91 3.455 3.455 0 010 6.91zm5.09-8.335a1.182 1.182 0 11-2.364 0 1.182 1.182 0 012.364 0z" clip-rule="evenodd" /></svg></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.71v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" /></svg></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-gray-700">
+            <div class="container mx-auto px-4 py-6 text-center text-xs text-gray-400">
+                <p>© 2025 Assistance Link for Emergency Response & Tracking | All Rights Reserved</p>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

@@ -8,16 +8,8 @@
     <title>ALERT - Stay Safe, Stay Informed</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../css/index.css">
-<script type="importmap">
-{
-  "imports": {
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/"
-  }
-}
-</script>
 </head>
+
 <body class="bg-white text-gray-800">
     <!-- Header -->
     <header class="sticky top-0 left-0 right-0 z-50 bg-white shadow-md py-4 px-4 sm:px-8 md:px-16">
@@ -74,8 +66,8 @@
 
                     <!-- Column 2: Tagline -->
                     <div class="text-left">
-                        <h1 class="text-5xl xl:text-6xl mb-5 font-extrabold leading-tight drop-shadow-lg whitespace-nowrap">Stay Safe</h1>
-                        <h1 class="text-5xl xl:text-6xl mb-5 font-extrabold leading-tight drop-shadow-lg mt-2 whitespace-nowrap">Stay Informed</h1>
+                        <h1 class="text-5xl xl:text-6xl mb-7 font-extrabold leading-tight drop-shadow-lg whitespace-nowrap">Stay Safe</h1>
+                        <h1 class="text-5xl xl:text-6xl mb-7 font-extrabold leading-tight drop-shadow-lg mt-2 whitespace-nowrap">Stay Informed</h1>
                         <h1 class="text-5xl xl:text-6xl font-extrabold leading-tight drop-shadow-lg mt-2 whitespace-nowrap">Stay <span class="text-red-500">ALERT</span></h1>
                     </div>
 
@@ -154,17 +146,18 @@
                     </div>
                 </div>
             </div>
-            <div class="relative py-24 bg-cover bg-center bg-fixed" style="background-image: url('https://picsum.photos/seed/paramedic/1920/1080')">
-                <div class="absolute inset-0 bg-gray-900/60"></div>
+            <div class="relative py-24 bg-cover bg-center bg-fixed"
+                 style="background-image: url('{% static 'images/about_image.jpg' %}');">
+                <div class="absolute inset-0 bg-[#490000]/50"></div>
                 <div class="relative container mx-auto px-12 sm:px-20 lg:px-28 text-white text-left mb-10">
-                    <h2 class="text-5xl font-bold mb-10">About</h2>
-                    <h3 class="text-3xl font-semibold mt-4">ALERT - Assistance Link for <br/>Emergency Response & Tracking</h3>
-                    <p class="mt-4 max-w-2xl text-lg leading-relaxed">
-                        This is a platform designed to connect citizens with responders in just one tap. Once activated, it automatically sends your location and notifies nearby emergency teams for immediate assistance. <span class="bg-cyan-600/50 p-1 rounded-md">With ALERT, help is always within reach — fast, reliable, and life-saving.</span>
+                    <h2 class="text-5xl font-bold mb-10 drop-shadow-lg">About</h2>
+                    <h3 class="text-3xl font-semibold mt-4 drop-shadow-lg">ALERT - Assistance Link for <br/>Emergency Response & Tracking</h3>
+                    <p class="mt-4 max-w-2xl text-lg leading-relaxed drop-shadow-lg">
+                        This is a platform designed to connect citizens with responders in just one tap. Once activated, it automatically sends your location and notifies nearby emergency teams for immediate assistance. <span class="bg-[#BF0000]/50 p-1 rounded-md">With ALERT, help is always within reach — fast, reliable, and life-saving.</span>
                     </p>
                 </div>
             </div>
-            <div class="bg-gray-100">
+            <div class="bg-[#E7E4E2]">
                 <div class="container mx-auto px-4 px-12 sm:px-20 lg:px-28">
                     <div class="bg-white rounded-xl shadow-2xl p-8 md:p-12 -mt-20 relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 ">
                         <div class="flex-grow text-center md:text-left ">
@@ -180,23 +173,23 @@
                     <div class="flex flex-col lg:flex-row items-center lg:items-start justify-center gap-12">
                         <div class="flex flex-wrap justify-center gap-4">
                             <div class="bg-white rounded-lg border border-gray-200 shadow-lg p-4 text-center w-36">
-                                <div class="w-28 h-28 mx-auto bg-gray-200 border-2 border-gray-300 rounded-md mb-3"></div>
+                                <img src="{% static 'images/julian_pfp.jpg' %}" alt="Julian Andales" class="w-28 h-28 mx-auto mb-3 border-2 border-gray-400 rounded-md">
                                 <p class="font-semibold text-sm">Julian Andales</p>
                             </div>
                             <div class="bg-white rounded-lg border border-gray-200 shadow-lg p-4 text-center w-36">
-                                <div class="w-28 h-28 mx-auto bg-gray-200 border-2 border-gray-300 rounded-md mb-3"></div>
+                                <img src="{% static 'images/about_image.jpg' %}" alt="Julian Andales" class="w-28 h-28 mx-auto mb-3 border-2 border-gray-400 rounded-md">
                                 <p class="font-semibold text-sm">Nathanael Del Castillo</p>
                             </div>
                             <div class="bg-white rounded-lg border border-gray-200 shadow-lg p-4 text-center w-36">
-                                <div class="w-28 h-28 mx-auto bg-gray-200 border-2 border-gray-300 rounded-md mb-3"></div>
+                                <img src="{% static 'images/sherielyn_pfp.jpg' %}" alt="Julian Andales" class="w-28 h-28 mx-auto mb-3 border-2 border-gray-400 rounded-md">
                                 <p class="font-semibold text-sm">Sherielyn Guadiana</p>
                             </div>
                             <div class="bg-white rounded-lg border border-gray-200 shadow-lg p-4 text-center w-36">
-                                <div class="w-28 h-28 mx-auto bg-gray-200 border-2 border-gray-300 rounded-md mb-3"></div>
+                                <img src="{% static 'images/kyle_pfp.jpg' %}" alt="Julian Andales" class="w-28 h-28 mx-auto mb-3 border-2 border-gray-400 rounded-md">
                                 <p class="font-semibold text-sm">Kyle Plando</p>
                             </div>
                             <div class="bg-white rounded-lg border border-gray-200 shadow-lg p-4 text-center w-36">
-                                <div class="w-28 h-28 mx-auto bg-gray-200 border-2 border-gray-300 rounded-md mb-3"></div>
+                                <img src="{% static 'images/shervin_pfp.jpg' %}" alt="Julian Andales" class="w-28 h-28 mx-auto mb-3 border-2 border-gray-400 rounded-md">
                                 <p class="font-semibold text-sm">Shervin Tabernero</p>
                             </div>
                         </div>

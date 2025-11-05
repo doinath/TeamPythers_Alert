@@ -1,66 +1,325 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Citizen Dashboard</title>
+    <title>ALERT - Citizen Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
 </head>
-<body>
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <div class="logo">
-            <img src="{% static 'images/alert_logo.png' %}" alt="ALERT Logo">
-            <h2>Citizen</h2>
-        </div>
-        <nav class="sidebar-nav">
-            <ul>
-                <li><a href="#">Dashboard</a></li>
-                <li><a href="#">My Alerts</a></li>
-                <li><a href="#">Report Issue</a></li>
-                <li><a href="#">Notifications</a></li>
-                <li><a href="#">Settings</a></li>
-                <li><a href="#">Logout</a></li>
-            </ul>
-        </nav>
-    </aside>
+<body class="bg-gray-50 text-gray-800">
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <header class="dashboard-header">
-            <h1>Welcome, Citizen</h1>
-            <p>Overview of your alerts and reports</p>
+    <div id="app" class="flex flex-col min-h-screen">
+        <!-- Header -->
+        <header class="bg-white shadow-sm sticky top-0 z-50">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <!-- Logo and Nav -->
+                    <div class="flex items-center space-x-8">
+                        <div class="flex items-center space-x-2">
+                            <img src="{% static 'images/logo.png' %}" alt="ALERT Logo" class="h-10 w-auto object-contain" />
+                        </div>
+                        <nav class="hidden md:flex items-center space-x-6">
+                            <a href="#" class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Dashboard</a>
+                            <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">Chat</a>
+                            <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">Call Logs</a>
+                            <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">News</a>
+                            <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">Settings</a>
+                        </nav>
+                    </div>
+
+                    <!-- User Profile & Theme Toggle -->
+                    <div class="flex items-center space-x-4">
+                        <span class="hidden sm:inline font-medium text-gray-700 dark:text-gray-300">Bessie Cooper</span>
+                        <img class="h-10 w-10 rounded-full object-cover" src="https://picsum.photos/id/237/100/100" alt="User Avatar">
+                    </div>
+                </div>
+            </div>
         </header>
 
-        <section class="dashboard-cards">
-            <!-- Placeholder cards -->
-            <div class="card">My Active Alerts</div>
-            <div class="card">Resolved Alerts</div>
-            <div class="card">Notifications</div>
-        </section>
+        <!-- Main Content -->
+        <main class="flex-grow container mx-auto p-4 md:p-6 lg:p-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <!-- Left Column -->
+                <div class="lg:col-span-4 flex flex-col gap-8">
+                    <!-- Quick Call Card -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg text-center">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">Quick Call</h2>
+                        <button id="sos-button" class="relative w-48 h-48 mx-auto rounded-full bg-red-700 shadow-2xl shadow-red-600/50 flex items-center justify-center group transform hover:scale-105 transition-transform duration-300">
+                            <div class="absolute inset-0 rounded-full border-4 border-white animate-pulse"></div>
+                            <div class="absolute inset-2 rounded-full bg-white/20"></div>
+                            <span class="text-5xl font-extrabold text-white tracking-widest group-hover:tracking-normal transition-all duration-300">SOS</span>
+                        </button>
+                    </div>
 
-        <section class="dashboard-tables">
-            <h2>My Recent Reports</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Report ID</th>
-                        <th>Type</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>001</td>
-                        <td>Example Issue</td>
-                        <td>Pending</td>
-                        <td>YYYY-MM-DD</td>
-                    </tr>
-                    <!-- More placeholder rows -->
-                </tbody>
-            </table>
-        </section>
-    </main>
+                    <!-- Emergency Contacts -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">Emergency Contacts</h2>
+                        <div class="space-y-4">
+                            <div class="contact-section">
+                                <h3 class="font-semibold text-red-700 mb-2 pb-1 border-b">Police & Law Enforcement</h3>
+                                <ul class="text-sm text-gray-600 space-y-2">
+                                    <li class="flex justify-between items-center"><span>Cebu City Police Hotline</span><span class="text-gray-500 font-mono text-xs">(555) 233-9111</span></li>
+                                    <li class="flex justify-between items-center"><span>Waterfront Police Station</span><span class="text-gray-500 font-mono text-xs">(555) 254-6277</span></li>
+                                    <li class="flex justify-between items-center"><span>Fuente Osmeña Police Station</span><span class="text-gray-500 font-mono text-xs">(555) 255-7355</span></li>
+                                    <li class="flex justify-between items-center"><span>Mobile Patrol Group</span><span class="text-gray-500 font-mono text-xs">(555) 233-5564</span></li>
+                                </ul>
+                            </div>
+                             <div class="contact-section">
+                                <h3 class="font-semibold text-red-700 mb-2 pb-1 border-b">Fire Department & Rescue</h3>
+                                <ul class="text-sm text-gray-600 space-y-2">
+                                    <li class="flex justify-between items-center"><span>Cebu City Fire Department</span><span class="text-gray-500 font-mono text-xs">(555) 256-0541</span></li>
+                                    <li class="flex justify-between items-center"><span>Mandaue City Fire Department</span><span class="text-gray-500 font-mono text-xs">(555) 344-4747</span></li>
+                                    <li class="flex justify-between items-center"><span>Fil-Chinese Volunteer Fire Brigade</span><span class="text-gray-500 font-mono text-xs">(555) 254-0222</span></li>
+                                </ul>
+                            </div>
+                            <div class="contact-section">
+                                <h3 class="font-semibold text-red-700 mb-2 pb-1 border-b">Hospitals & Medical Services</h3>
+                                <ul class="text-sm text-gray-600 space-y-2">
+                                    <li class="flex justify-between items-center"><span>Chong Hua Hospital</span><span class="text-gray-500 font-mono text-xs">(555) 255-8000</span></li>
+                                    <li class="flex justify-between items-center"><span>Cebu Doctors' Hospital</span><span class="text-gray-500 font-mono text-xs">(555) 255-5555</span></li>
+                                    <li class="flex justify-between items-center"><span>Velez General Hospital</span><span class="text-gray-500 font-mono text-xs">(555) 253-1871</span></li>
+                                    <li class="flex justify-between items-center"><span>Perpetual Succour Hospital</span><span class="text-gray-500 font-mono text-xs">(555) 233-8620</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Medical Information Card (Improvement based on ERD) -->
+                     <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <div class="flex justify-between items-center mb-4">
+                           <h2 class="text-xl font-bold text-gray-800">Medical Information</h2>
+                           <a href="#" class="text-sm font-medium text-red-600 hover:underline">Edit</a>
+                        </div>
+                        <div class="space-y-3 text-sm">
+                           <p><span class="font-semibold text-gray-500">Conditions:</span> <span class="text-gray-700">Asthma</span></p>
+                           <p><span class="font-semibold text-gray-500">Allergies:</span> <span class="text-gray-700">Peanuts, Penicillin</span></p>
+                           <p><span class="font-semibold text-gray-500">Blood Type:</span> <span class="text-gray-700">O+</span></p>
+                           <p class="pt-2 text-xs text-gray-400">This information will be shared with responders in an emergency.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="lg:col-span-8 flex flex-col">
+                     <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 mb-6">What <span class="text-red-600">KIND</span> of Emergency?</h1>
+                        <div id="emergency-buttons-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
+                            <button data-type="Fire" class="emergency-button flex flex-col items-center justify-center p-8 text-white bg-gradient-to-br from-orange-500 via-red-600 to-rose-700 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300">
+                                <img src="{% static 'images/fire_icon.png' %}" alt="ALERT Logo" class="h-12 w-auto" />
+                                <span class="font-semibold">Fire</span>
+                            </button>
+                            <button data-type="Flood" class="emergency-button flex flex-col items-center justify-center p-8 text-white bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300">
+                                <img src="{% static 'images/flood_icon.png' %}" alt="ALERT Logo" class="h-12 w-auto" />
+                                <span class="font-semibold">Flood</span>
+                            </button>
+                            <button data-type="Accident" class="emergency-button flex flex-col items-center justify-center p-8 text-white bg-gradient-to-br from-rose-400 via-rose-500 to-red-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300">
+                                <img src="{% static 'images/accidents_icon.png' %}" alt="ALERT Logo" class="h-12 w-auto" />
+                                <span class="font-semibold">Accident</span>
+                            </button>
+                            <button data-type="Crime" class="emergency-button flex flex-col items-center justify-center p-8 text-white bg-gradient-to-br from-slate-500 via-indigo-600 to-purple-700 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300">
+                                <img src="{% static 'images/crime_icon.png' %}" alt="ALERT Logo" class="h-12 w-auto" />
+                                <span class="font-semibold">Crime</span>
+                            </button>
+                            <button data-type="Earthquake" class="emergency-button flex flex-col items-center justify-center p-8 text-white bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300">
+                                <img src="{% static 'images/earthquake_icon.png' %}" alt="ALERT Logo" class="h-12 w-auto" />
+                                <span class="font-semibold">Earthquake</span>
+                            </button>
+                        </div>
+                        <!-- Response Container (Initially Hidden) -->
+                        <div id="response-container" class="hidden text-center py-8">
+                            <svg class="w-16 h-16 mx-auto text-green-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <p id="response-message" class="text-lg font-semibold text-gray-800">Responders are on their way.</p>
+                            <p class="text-sm text-gray-500 mt-1">Your location has been shared.</p>
+                            <div class="mt-8 flex justify-center gap-4">
+                                <button id="cancel-button" class="px-8 py-3 bg-gray-200 text-gray-800 font-bold rounded-lg hover:bg-gray-300 transition-transform transform hover:scale-105">Cancel</button>
+                                <button id="chat-button" class="px-8 py-3 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition-transform transform hover:scale-105">Chat with Responders</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-lg mt-8 flex-grow flex flex-col">
+                         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
+                            <label for="search-location" class="text-lg font-bold text-gray-800">Search Location</label>
+                            <button id="pin-location-btn" class="mt-2 sm:mt-0 flex items-center justify-center space-x-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                                </svg>
+                                <span>Pin My Current Location</span>
+                            </button>
+                         </div>
+                         <div id="map-container" class="flex-grow w-full h-64 md:h-full bg-gray-200 rounded-lg overflow-hidden relative flex items-center justify-center">
+                             <div id="map-loader" class="text-center text-gray-600">
+                                <svg class="animate-spin h-8 w-8 text-gray-500 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <p class="mt-2 text-sm">Fetching your location...</p>
+                            </div>
+                            <iframe id="map-iframe" class="w-full h-full hidden" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            <div id="location-status" class="absolute bottom-2 left-2 bg-white/80 backdrop-blur-sm px-3 py-1 rounded-md text-xs font-semibold text-gray-700 shadow-md hidden">
+                                Location pinned!
+                            </div>
+                         </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sosButton = document.getElementById('sos-button');
+            const emergencyButtons = document.querySelectorAll('.emergency-button');
+            const pinLocationButton = document.getElementById('pin-location-btn');
+            const locationStatus = document.getElementById('location-status');
+            const mapIframe = document.getElementById('map-iframe');
+            const mapLoader = document.getElementById('map-loader');
+
+            // Elements for response flow
+            const emergencyButtonsGrid = document.getElementById('emergency-buttons-grid');
+            const responseContainer = document.getElementById('response-container');
+            const responseMessage = document.getElementById('response-message');
+            const cancelButton = document.getElementById('cancel-button');
+            const chatButton = document.getElementById('chat-button');
+
+            const options = {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            };
+
+            function success(pos) {
+                const crd = pos.coords;
+                return { lat: crd.latitude, lon: crd.longitude };
+            }
+
+            function error(err) {
+                console.warn(`ERROR(${err.code}): ${err.message}`);
+            }
+            
+            async function getCurrentLocation() {
+                return new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(
+                        pos => resolve(success(pos)), 
+                        err => {
+                            error(err);
+                            reject(err);
+                        }, 
+                        options
+                    );
+                });
+            }
+            
+            function updateMap(lat, lon) {
+                const bbox = 0.005; // Zoom factor
+                const url = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - bbox},${lat - bbox},${lon + bbox},${lat + bbox}&layer=mapnik&marker=${lat},${lon}`;
+                if (mapIframe.src !== url) {
+                    mapIframe.src = url;
+                }
+                mapIframe.onload = () => {
+                    mapLoader.classList.add('hidden');
+                    mapIframe.classList.remove('hidden');
+                };
+            }
+
+            async function initializeMap() {
+                try {
+                    const location = await getCurrentLocation();
+                    updateMap(location.lat, location.lon);
+                } catch(e) {
+                    mapLoader.innerHTML = `<div class="p-4 text-center"><p class="text-sm text-gray-700">Could not get your location.</p><p class="text-xs text-gray-500 mt-1">Please enable location services and <button id="retry-location-btn" class="text-red-600 underline">try again</button>.</p></div>`;
+                    const retryBtn = document.getElementById('retry-location-btn');
+                    if (retryBtn) {
+                        retryBtn.addEventListener('click', () => {
+                            mapLoader.innerHTML = `<div class="text-center text-gray-600"><svg class="animate-spin h-8 w-8 text-gray-500 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><p class="mt-2 text-sm">Fetching your location...</p></div>`;
+                            initializeMap();
+                        });
+                    }
+                }
+            }
+            
+            initializeMap();
+
+            // SOS Button Handler
+            sosButton.addEventListener('click', async () => {
+                try {
+                    const location = await getCurrentLocation();
+                    alert(`SOS SIGNAL SENT!\n\nAn emergency call is being initiated from your location:\nLatitude: ${location.lat.toFixed(6)}\nLongitude: ${location.lon.toFixed(6)}\n\nResponders have been dispatched.`);
+                } catch (e) {
+                    alert('Could not get your location. Please enable location services in your browser and try again.');
+                }
+            });
+
+            // Emergency Type Buttons Handler
+            emergencyButtons.forEach(button => {
+                button.addEventListener('click', async () => {
+                    const emergencyType = button.dataset.type;
+                     try {
+                        const location = await getCurrentLocation();
+                        responseMessage.textContent = `${emergencyType} responders are on their way.`;
+                        emergencyButtonsGrid.classList.add('hidden');
+                        responseContainer.classList.remove('hidden');
+                    } catch (e) {
+                        alert('Could not get your location. Please enable location services in your browser and try again.');
+                    }
+                });
+            });
+
+            // Cancel Button Handler
+            cancelButton.addEventListener('click', () => {
+                responseContainer.classList.add('hidden');
+                emergencyButtonsGrid.classList.remove('hidden');
+            });
+
+            // Chat Button Handler
+            chatButton.addEventListener('click', () => {
+                alert('Opening chat with emergency services...');
+                // Optional: Visually switch to the chat tab in the nav
+                const navLinks = document.querySelectorAll('header nav a');
+                navLinks.forEach(link => {
+                    link.classList.remove('text-red-600', 'border-b-2', 'border-red-600', 'font-semibold');
+                    link.classList.add('text-gray-500', 'hover:text-red-600');
+                    if (link.textContent.trim() === 'Chat') {
+                        link.classList.add('text-red-600', 'border-b-2', 'border-red-600', 'font-semibold');
+                        link.classList.remove('text-gray-500', 'hover:text-red-600');
+                    }
+                });
+            });
+            
+            // Pin Location on Map Handler
+            pinLocationButton.addEventListener('click', async () => {
+                locationStatus.textContent = `Pinning your location...`;
+                locationStatus.classList.remove('hidden');
+                try {
+                    const location = await getCurrentLocation();
+                    updateMap(location.lat, location.lon);
+                    locationStatus.textContent = `Location Pinned: ${location.lat.toFixed(4)}, ${location.lon.toFixed(4)}`;
+                    setTimeout(() => {
+                       locationStatus.classList.add('hidden');
+                    }, 4000);
+                } catch(e) {
+                    locationStatus.textContent = `Failed to pin location.`;
+                    setTimeout(() => {
+                       locationStatus.classList.add('hidden');
+                    }, 4000);
+                }
+            });
+
+        });
+    </script>
+
 </body>
 </html>

@@ -1,67 +1,406 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responder Dashboard</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ALERT Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <style>
+        .leaflet-control-zoom, .leaflet-control-attribution {
+            display: none !important;
+        }
+    </style>
 </head>
-<body>
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <div class="logo">
-            <img src="{% static 'images/alert_logo.png' %}" alt="ALERT Logo">
-            <h2>Responder</h2>
+<body class="bg-gray-100 font-sans">
+    <div id="root">
+        <div class="min-h-screen bg-gray-100">
+            <!-- Header -->
+            <header class="bg-white shadow-md">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex items-center justify-between h-16">
+                        <!-- Logo and Nav -->
+                    <div class="flex items-center space-x-8">
+                        <div class="flex items-center space-x-2">
+                            <img src="{% static 'images/logo.png' %}" alt="ALERT Logo" class="h-10 w-auto object-contain" />
+                        </div>
+                        <nav class="hidden md:flex items-center space-x-6">
+                            <a href="#" class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Dashboard</a>
+                            <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">Chat</a>
+                            <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">Call Logs</a>
+                            <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">News</a>
+                            <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">Settings</a>
+                        </nav>
+                    </div>
+                        <div class="flex items-center space-x-4">
+                            <div id="status-badge" class="bg-gradient-to-b from-red-600 to-red-800 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md transition-all duration-300">
+                                ON DUTY - Assigned
+                            </div>
+                            <div class="flex items-center">
+                                <span class="text-gray-800 font-medium text-sm mr-3">Bessie Cooper</span>
+                                <img class="h-8 w-8 rounded-full object-cover" src="https://i.pravatar.cc/40?u=bessie" alt="User Avatar" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Left Column -->
+                    <div class="flex flex-col gap-8">
+                        <!-- Event Details Card -->
+                        <div class="bg-gradient-to-r from-red-50 to-white p-6 rounded-lg shadow-lg">
+                            <div class="flex items-baseline space-x-4">
+                                <h2 class="text-xl font-bold text-red-800">EMERGENCY EVENT:</h2>
+                                <p class="text-lg text-gray-700">MEDICAL ASSISTANCE</p>
+                            </div>
+                            <div class="flex items-baseline space-x-4 mt-2">
+                                <h2 class="text-xl font-bold text-red-800">SEVERITY:</h2>
+                                <p class="text-lg text-gray-700">HIGH</p>
+                            </div>
+                        </div>
+
+                        <!-- Citizen Info Card -->
+                        <div class="bg-gradient-to-r from-red-50 to-white p-6 rounded-lg shadow-lg">
+                            <dl>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1 py-2 border-b border-gray-100 last:border-b-0">
+                                    <dt class="text-lg font-bold text-red-800 md:text-left">LOCATION:</dt>
+                                    <dd class="md:col-span-2 text-lg text-gray-700">Caigit, Cebu City</dd>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1 py-2 border-b border-gray-100 last:border-b-0">
+                                    <dt class="text-lg font-bold text-red-800 md:text-left">CITIZEN:</dt>
+                                    <dd class="md:col-span-2 text-lg text-gray-700">
+                                        Kyle Plando
+                                        <br />
+                                        0931-112-3490
+                                    </dd>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1 py-2 border-b border-gray-100 last:border-b-0">
+                                    <dt class="text-lg font-bold text-red-800 md:text-left">DESCRIPTION:</dt>
+                                    <dd class="md:col-span-2 text-lg text-gray-700">Patient experiencing severe chest pain and shortness of breath. History of cardiac issues. Needs immediate transport.</dd>
+                                </div>
+                            </dl>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div id="action-buttons" class="mt-8 flex flex-col items-center justify-center space-y-4">
+                            <button id="acknowledge-btn" class="w-64 py-3 px-6 font-bold text-lg uppercase rounded-lg shadow-lg transform active:scale-95 transition-transform duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-gradient-to-b from-red-600 to-red-800 text-white border-b-4 border-red-900 active:border-b-0 hover:from-red-500 hover:to-red-700 focus:ring-red-500">
+                                Acknowledge
+                            </button>
+                            <button id="on-scene-btn" class="w-64 py-3 px-6 font-bold text-lg uppercase rounded-lg shadow-lg transform active:scale-95 transition-transform duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-gradient-to-b from-blue-600 to-blue-800 text-white border-b-4 border-blue-900 active:border-b-0 hover:from-blue-500 hover:to-blue-700 focus:ring-blue-500 hidden">
+                                On Scene
+                            </button>
+                            <button id="resolve-btn" class="w-64 py-3 px-6 font-bold text-lg uppercase rounded-lg shadow-lg transform active:scale-95 transition-transform duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-gradient-to-b from-green-600 to-green-800 text-white border-b-4 border-green-900 active:border-b-0 hover:from-green-500 hover:to-green-700 focus:ring-green-500 hidden">
+                                Resolve
+                            </button>
+                             <p id="pending-withdrawal-msg" class="text-center text-gray-600 font-semibold hidden">Withdrawal request submitted.<br>Awaiting confirmation from dispatch.</p>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="h-full">
+                        <!-- Map Card -->
+                        <div class="bg-white rounded-lg shadow-lg overflow-hidden relative h-full min-h-[400px] lg:min-h-0">
+                             <div id="map" class="w-full h-full"></div>
+                            <div class="absolute top-4 left-1/2 -translate-x-1/2 bg-gradient-to-b from-red-600 to-red-800 text-white text-lg font-bold py-2 px-6 rounded-lg shadow-xl z-[1000]">
+                                Emergency Location
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
-        <nav class="sidebar-nav">
-            <ul>
-                <li><a href="#">Dashboard</a></li>
-                <li><a href="#">Active Incidents</a></li>
-                <li><a href="#">Assigned Alerts</a></li>
-                <li><a href="#">Reports</a></li>
-                <li><a href="#">Notifications</a></li>
-                <li><a href="#">Settings</a></li>
-                <li><a href="#">Logout</a></li>
-            </ul>
-        </nav>
-    </aside>
+    </div>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <header class="dashboard-header">
-            <h1>Welcome, Responder</h1>
-            <p>Overview of your active alerts and incidents</p>
-        </header>
+    <!-- Confirmation Modal -->
+    <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1100] hidden">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm">
+            <h3 class="text-lg font-bold text-gray-800 mb-4" id="confirmation-title">Confirm Action</h3>
+            <p class="text-gray-600 mb-6" id="confirmation-message">Are you sure you want to proceed?</p>
 
-        <section class="dashboard-cards">
-            <!-- Placeholder cards -->
-            <div class="card">Ongoing Incidents</div>
-            <div class="card">Assigned Alerts</div>
-            <div class="card">Pending Reports</div>
-        </section>
+            <!-- Modal Actions Container -->
+            <div class="mt-6">
+                <!-- Generic Actions: Shown for On-Scene, etc. -->
+                <div id="generic-actions" class="flex justify-end space-x-4">
+                    <button id="cancel-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancel</button>
+                    <button id="confirm-generic-btn" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Confirm</button>
+                </div>
 
-        <section class="dashboard-tables">
-            <h2>Recent Incidents</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Incident ID</th>
-                        <th>Location</th>
-                        <th>Status</th>
-                        <th>Reported At</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>001</td>
-                        <td>Sample Location</td>
-                        <td>In Progress</td>
-                        <td>YYYY-MM-DD</td>
-                    </tr>
-                    <!-- More placeholder rows -->
-                </tbody>
-            </table>
-        </section>
-    </main>
+                <!-- Acknowledge Actions: Shown only for Acknowledge -->
+                <div id="acknowledge-actions" class="hidden flex flex-col space-y-4">
+                    <button id="confirm-acknowledge-btn" class="w-full py-3 px-6 font-bold text-lg uppercase rounded-lg shadow-lg transform active:scale-95 transition-transform duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-gradient-to-b from-red-600 to-red-800 text-white border-b-4 border-red-900 active:border-b-0 hover:from-red-500 hover:to-red-700 focus:ring-red-500">
+                        Confirm
+                    </button>
+                    <button id="request-withdraw-btn" class="w-full py-3 px-6 font-bold text-lg uppercase rounded-lg shadow-lg transform active:scale-95 transition-transform duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-gradient-to-b from-yellow-500 to-yellow-700 text-white border-b-4 border-yellow-800 active:border-b-0 hover:from-yellow-400 hover:to-yellow-600 focus:ring-yellow-500">
+                        Request Withdraw
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resolution Modal -->
+    <div id="resolution-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1100] hidden">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-lg">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Resolve Emergency Event</h3>
+            <form id="resolution-form">
+                <label for="resolution-notes" class="block text-sm font-medium text-gray-700">Resolution Notes:</label>
+                <textarea id="resolution-notes" name="resolution-notes" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm" required></textarea>
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button type="button" id="cancel-resolve-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">Submit Resolution</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Withdrawal Modal -->
+    <div id="withdrawal-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1100] hidden">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-lg">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Request Withdrawal</h3>
+            <form id="withdrawal-form">
+                <label for="withdrawal-reason" class="block text-sm font-medium text-gray-700">Reason for Withdrawal:</label>
+                <textarea id="withdrawal-reason" name="withdrawal-reason" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 sm:text-sm" placeholder="e.g., Vehicle trouble, assigned to higher priority event..." required></textarea>
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button type="button" id="cancel-withdrawal-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600">Submit Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 text-white py-2 px-4 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300">
+        <span id="toast-message"></span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- STATE ---
+            let appState = 'ASSIGNED'; // ASSIGNED, ACKNOWLEDGED, ON_SCENE, RESOLVED, WITHDRAWAL_REQUESTED
+            let confirmCallback = null;
+
+            // --- ELEMENTS ---
+            const statusBadge = document.getElementById('status-badge');
+            const acknowledgeBtn = document.getElementById('acknowledge-btn');
+            const onSceneBtn = document.getElementById('on-scene-btn');
+            const resolveBtn = document.getElementById('resolve-btn');
+            const pendingWithdrawalMsg = document.getElementById('pending-withdrawal-msg');
+
+            // Confirmation Modal
+            const confirmationModal = document.getElementById('confirmation-modal');
+            const confirmationTitle = document.getElementById('confirmation-title');
+            const confirmationMessage = document.getElementById('confirmation-message');
+            const genericActions = document.getElementById('generic-actions');
+            const confirmGenericBtn = document.getElementById('confirm-generic-btn');
+            const cancelBtn = document.getElementById('cancel-btn');
+            const acknowledgeActions = document.getElementById('acknowledge-actions');
+            const confirmAcknowledgeBtn = document.getElementById('confirm-acknowledge-btn');
+            const requestWithdrawBtn = document.getElementById('request-withdraw-btn');
+
+            // Resolution Modal
+            const resolutionModal = document.getElementById('resolution-modal');
+            const resolutionForm = document.getElementById('resolution-form');
+            const cancelResolveBtn = document.getElementById('cancel-resolve-btn');
+
+            // Withdrawal Modal
+            const withdrawalModal = document.getElementById('withdrawal-modal');
+            const withdrawalForm = document.getElementById('withdrawal-form');
+            const cancelWithdrawalBtn = document.getElementById('cancel-withdrawal-btn');
+
+            // Toast
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+
+            // --- MAP INITIALIZATION ---
+            const emergencyCoords = [10.3157, 123.8854]; // Cebu City coordinates
+            const map = L.map('map').setView(emergencyCoords, 13);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+            }).addTo(map);
+
+            const redIcon = new L.Icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
+            L.marker(emergencyCoords, { icon: redIcon }).addTo(map).bindPopup("<b>Emergency Location</b><br>Caigit, Cebu City").openPopup();
+
+            // --- GEOLOCATION ---
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const userCoords = [position.coords.latitude, position.coords.longitude];
+                     const blueIcon = new L.Icon({
+                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowSize: [41, 41]
+                    });
+                    L.marker(userCoords, { icon: blueIcon }).addTo(map).bindPopup("Your Location");
+                    map.fitBounds([emergencyCoords, userCoords], { padding: [50, 50] });
+                }, () => {
+                    console.warn('Could not get user location. Map will be centered on the emergency.');
+                    map.setView(emergencyCoords, 14);
+                });
+            }
+
+
+            // --- UI UPDATE LOGIC ---
+            const updateUI = () => {
+                // Reset button states
+                acknowledgeBtn.classList.add('hidden');
+                onSceneBtn.classList.add('hidden');
+                resolveBtn.classList.add('hidden');
+                pendingWithdrawalMsg.classList.add('hidden');
+
+                // Reset badge classes
+                statusBadge.className = 'text-white text-xs font-bold px-3 py-1 rounded-full shadow-md transition-all duration-300';
+
+                switch(appState) {
+                    case 'ASSIGNED':
+                        statusBadge.textContent = 'ON DUTY - Assigned';
+                        statusBadge.classList.add('bg-gradient-to-b', 'from-red-600', 'to-red-800');
+                        acknowledgeBtn.classList.remove('hidden');
+                        break;
+                    case 'ACKNOWLEDGED':
+                        statusBadge.textContent = 'ON DUTY - Acknowledged';
+                        statusBadge.classList.add('bg-gradient-to-b', 'from-blue-600', 'to-blue-800');
+                        onSceneBtn.classList.remove('hidden');
+                        break;
+                    case 'ON_SCENE':
+                        statusBadge.textContent = 'ON DUTY - On Scene';
+                        statusBadge.classList.add('bg-gradient-to-b', 'from-indigo-600', 'to-indigo-800');
+                        resolveBtn.classList.remove('hidden');
+                        break;
+                    case 'RESOLVED':
+                        statusBadge.textContent = 'ON DUTY - Resolved';
+                        statusBadge.classList.add('bg-gradient-to-b', 'from-green-600', 'to-green-800');
+                        resolveBtn.classList.remove('hidden');
+                        resolveBtn.disabled = true;
+                        resolveBtn.textContent = 'Event Resolved';
+                        resolveBtn.classList.add('from-gray-400', 'to-gray-500', 'border-gray-500', 'cursor-not-allowed');
+                        break;
+                    case 'WITHDRAWAL_REQUESTED':
+                        statusBadge.textContent = 'ON DUTY - Withdrawal Requested';
+                        statusBadge.classList.add('bg-gradient-to-b', 'from-yellow-500', 'to-yellow-700');
+                        pendingWithdrawalMsg.classList.remove('hidden');
+                        break;
+                }
+            };
+
+            // --- MODAL & TOAST LOGIC ---
+            const showConfirmationModal = (title, message, callback) => {
+                confirmationTitle.textContent = title;
+                confirmationMessage.textContent = message;
+                acknowledgeActions.classList.add('hidden');
+                genericActions.classList.remove('hidden');
+                confirmCallback = callback;
+                confirmationModal.classList.remove('hidden');
+            };
+
+            const hideConfirmationModal = () => {
+                confirmationModal.classList.add('hidden');
+                confirmCallback = null;
+            };
+
+            const showResolutionModal = () => resolutionModal.classList.remove('hidden');
+            const hideResolutionModal = () => resolutionModal.classList.add('hidden');
+
+            const showWithdrawalModal = () => withdrawalModal.classList.remove('hidden');
+            const hideWithdrawalModal = () => withdrawalModal.classList.add('hidden');
+
+            const showToast = (message, type = 'success') => {
+                toastMessage.textContent = message;
+                toast.classList.remove('bg-green-500', 'bg-blue-500'); // remove old colors
+                if (type === 'success') {
+                    toast.classList.add('bg-green-500');
+                } else {
+                    toast.classList.add('bg-blue-500');
+                }
+                toast.classList.remove('translate-y-20', 'opacity-0');
+                setTimeout(() => {
+                    toast.classList.add('translate-y-20', 'opacity-0');
+                }, 3000);
+            };
+
+            // --- EVENT HANDLERS ---
+            acknowledgeBtn.addEventListener('click', () => {
+                confirmationTitle.textContent = 'Acknowledge Event';
+                confirmationMessage.textContent = 'Please confirm your assignment or request to withdraw.';
+                genericActions.classList.add('hidden');
+                acknowledgeActions.classList.remove('hidden');
+                confirmationModal.classList.remove('hidden');
+            });
+
+            onSceneBtn.addEventListener('click', () => {
+                showConfirmationModal(
+                    'Mark as On Scene',
+                    'Confirm that you have arrived at the scene.',
+                    () => {
+                        appState = 'ON_SCENE';
+                        updateUI();
+                        hideConfirmationModal();
+                    }
+                );
+            });
+
+            resolveBtn.addEventListener('click', showResolutionModal);
+
+            // Modal Buttons
+            confirmGenericBtn.addEventListener('click', () => {
+                if (confirmCallback) confirmCallback();
+            });
+
+            confirmAcknowledgeBtn.addEventListener('click', () => {
+                appState = 'ACKNOWLEDGED';
+                updateUI();
+                hideConfirmationModal();
+            });
+
+            requestWithdrawBtn.addEventListener('click', () => {
+                hideConfirmationModal();
+                showWithdrawalModal();
+            });
+
+            cancelBtn.addEventListener('click', hideConfirmationModal);
+            cancelResolveBtn.addEventListener('click', hideResolutionModal);
+            cancelWithdrawalBtn.addEventListener('click', hideWithdrawalModal);
+
+            // Form Submissions
+            resolutionForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const notes = document.getElementById('resolution-notes').value;
+                console.log('Resolution Notes:', notes);
+                appState = 'RESOLVED';
+                updateUI();
+                hideResolutionModal();
+                showToast('Event resolved successfully!', 'success');
+            });
+
+            withdrawalForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const reason = document.getElementById('withdrawal-reason').value;
+                console.log('Withdrawal Reason:', reason);
+                appState = 'WITHDRAWAL_REQUESTED';
+                updateUI();
+                hideWithdrawalModal();
+                showToast('Withdrawal request submitted.', 'info');
+            });
+            
+            // Initial UI setup
+            updateUI();
+        });
+    </script>
 </body>
 </html>

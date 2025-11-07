@@ -39,8 +39,38 @@
 
                     <!-- User Profile -->
                     <div class="flex items-center space-x-4">
-                        <span class="hidden sm:inline font-medium text-gray-700 dark:text-gray-300">Bessie Cooper</span>
-                        <img class="h-10 w-10 rounded-full object-cover" src="https://picsum.photos/id/237/100/100" alt="User Avatar">
+                        <div class="hidden md:flex items-center space-x-4">
+                            <span class="text-gray-800 font-medium text-sm mr-3">Bessie Cooper</span>
+                            <img class="h-8 w-8 rounded-full object-cover" src="https://i.pravatar.cc/40?u=bessie" alt="User Avatar" />
+                        </div>
+                        <div class="md:hidden flex items-center">
+                            <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-800 focus:outline-none">
+                                <svg id="menu-open-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
+                                <svg id="menu-close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+                <nav class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                    <a href="#" class="block px-3 py-2 rounded-md text-base font-medium bg-red-50 text-red-700">Dashboard</a>
+                    <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Chat</a>
+                    <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">News</a>
+                    <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Settings</a>
+                </nav>
+                <div class="pt-4 pb-3 border-t border-gray-200">
+                    <div class="flex items-center px-5">
+                        <img class="h-10 w-10 rounded-full object-cover" src="https://picsum.photos/id/237/100/100" alt="User Avatar" />
+                        <div class="ml-3">
+                            <div class="text-base font-medium text-gray-800">Bessie Cooper</div>
+                            <div class="text-sm font-medium text-gray-500">bessie.cooper@example.com</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -187,6 +217,20 @@
             const locationStatus = document.getElementById('location-status');
             const mapIframe = document.getElementById('map-iframe');
             const mapLoader = document.getElementById('map-loader');
+
+            //--- Mobile Menu ---
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const openIcon = document.getElementById('menu-open-icon');
+            const closeIcon = document.getElementById('menu-close-icon');
+
+            if (mobileMenuButton) {
+                 mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                    openIcon.classList.toggle('hidden');
+                    closeIcon.classList.toggle('hidden');
+                });
+            }
 
             // Elements for response flow
             const emergencyButtonsGrid = document.getElementById('emergency-buttons-grid');

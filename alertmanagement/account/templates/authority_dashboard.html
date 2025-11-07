@@ -1,66 +1,440 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Authority Dashboard</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ALERT Authority Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <div class="logo">
-            <img src="{% static 'images/alert_logo.png' %}" alt="ALERT Logo">
-            <h2>Authority</h2>
-        </div>
-        <nav class="sidebar-nav">
-            <ul>
-                <li><a href="#">Dashboard</a></li>
-                <li><a href="#">Incidents</a></li>
-                <li><a href="#">Reports</a></li>
-                <li><a href="#">Users</a></li>
-                <li><a href="#">Settings</a></li>
-                <li><a href="#">Logout</a></li>
-            </ul>
-        </nav>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="main-content">
-        <header class="dashboard-header">
-            <h1>Welcome, Authority</h1>
-            <p>Overview of alerts and reports</p>
+<body class="bg-gray-100 font-sans">
+    <div id="app">
+        <!-- Header -->
+        <header class="bg-white shadow-sm sticky top-0 z-50">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <!-- Logo and Nav -->
+                    <div class="flex items-center space-x-8">
+                        <div class="flex items-center space-x-2">
+                            <img src="{% static 'images/logo.png' %}" alt="ALERT Logo" class="h-10 w-auto object-contain" />
+                        </div>
+                        <nav class="hidden md:flex items-center space-x-6">
+                            <a href="#" class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Dashboard</a>
+                            <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">Chat</a>
+                            <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">Call Logs</a>
+                            <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">News</a>
+                            <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">Settings</a>
+                        </nav>
+                    </div>
+                    <div class="hidden md:flex items-center space-x-4">
+                        <span class="text-gray-700 font-medium">Bessie Cooper</span>
+                        <img class="h-10 w-10 rounded-full object-cover" src="https://picsum.photos/id/237/100/100" alt="User Avatar" />
+                    </div>
+                    <div class="md:hidden flex items-center">
+                        <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-800 focus:outline-none">
+                            <svg id="menu-open-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                            <svg id="menu-close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+                <nav class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                    <a href="#" class="block px-3 py-2 rounded-md text-base font-medium bg-red-50 text-red-700">Dashboard</a>
+                    <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Chat</a>
+                    <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">News</a>
+                    <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Settings</a>
+                </nav>
+                <div class="pt-4 pb-3 border-t border-gray-200">
+                    <div class="flex items-center px-5">
+                        <img class="h-10 w-10 rounded-full object-cover" src="https://picsum.photos/id/237/100/100" alt="User Avatar" />
+                        <div class="ml-3">
+                            <div class="text-base font-medium text-gray-800">Bessie Cooper</div>
+                            <div class="text-sm font-medium text-gray-500">bessie.cooper@example.com</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </header>
 
-        <section class="dashboard-cards">
-            <!-- Placeholder cards -->
-            <div class="card">Card 1</div>
-            <div class="card">Card 2</div>
-            <div class="card">Card 3</div>
-        </section>
+        <!-- Main Content -->
+        <main class="p-4 sm:p-6 lg:p-8">
+            <div class="space-y-6">
+                <!-- Stat Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-gradient-to-r from-red-800 via-red-600 to-red-400 p-6 rounded-xl shadow-lg text-white">
+                        <p class="text-sm font-medium uppercase tracking-wider text-white-600">Active Emergency Events</p>
+                        <p class="text-5xl font-bold mt-2 text-white-600">4</p>
+                    </div>
+                    <div class="bg-gradient-to-r from-red-800 via-red-600 to-red-400 p-6 rounded-xl shadow-lg text-white">
+                        <p class="text-sm font-medium uppercase tracking-wider text-white-600">Responders Available</p>
+                        <p class="text-5xl font-bold mt-2 text-white-600">2</p>
+                    </div>
+                    <div class="bg-gradient-to-r from-red-800 via-red-600 to-red-400 p-6 rounded-xl shadow-lg text-white">
+                        <p class="text-sm font-medium uppercase tracking-wider text-white-600">Pending Verifications</p>
+                        <p class="text-5xl font-bold mt-2 text-white-600">3</p>
+                    </div>
+                    <div class="bg-gradient-to-r from-red-800 via-red-600 to-red-400 p-6 rounded-xl shadow-lg text-white">
+                        <p class="text-sm font-medium uppercase tracking-wider text-white-600">Total Authorities</p>
+                        <p class="text-5xl font-bold mt-2 text-white-600">5</p>
+                    </div>
+                </div>
 
-        <section class="dashboard-tables">
-            <h2>Recent Incidents</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Type</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>001</td>
-                        <td>Example</td>
-                        <td>Active</td>
-                        <td>YYYY-MM-DD</td>
-                    </tr>
-                    <!-- More placeholder rows -->
-                </tbody>
-            </table>
-        </section>
-    </main>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Active Events Table -->
+                    <div class="lg:col-span-2 bg-white rounded-lg shadow-md overflow-hidden">
+                        <div class="px-4 py-3 sm:px-6 border-b border-gray-200 flex justify-between items-center">
+                            <h3 class="text-lg leading-6 font-semibold text-gray-900">Active Emergency Events</h3>
+                            <div class="flex items-center space-x-2">
+                                <input type="text" placeholder="Search events..." class="hidden sm:block border rounded-md px-2 py-1 text-sm"/>
+                                <button onclick="alert('Viewing all active events...')" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-1 px-3 rounded-md transition">View All</button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event ID</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Severity</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">1</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Fire</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">High</span></td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">7/28/2024, 6:30:00 PM</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                            <button class="text-indigo-600 hover:text-indigo-900">Details</button>
+                                            <button class="text-blue-600 hover:text-blue-900">Assign</button>
+                                            <button onclick="alert('Simulating closing event #1')" class="text-red-600 hover:text-red-900">Close</button>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">2</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Flood</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Critical</span></td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">7/28/2024, 5:45:00 PM</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                            <button class="text-indigo-600 hover:text-indigo-900">Details</button>
+                                            <button class="text-blue-600 hover:text-blue-900">Assign</button>
+                                            <button onclick="alert('Simulating closing event #2')" class="text-red-600 hover:text-red-900">Close</button>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">3</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Accident</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Medium</span></td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">7/28/2024, 7:05:00 PM</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                            <button class="text-indigo-600 hover:text-indigo-900">Details</button>
+                                            <button class="text-blue-600 hover:text-blue-900">Assign</button>
+                                            <button onclick="alert('Simulating closing event #3')" class="text-red-600 hover:text-red-900">Close</button>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">5</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Fire</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Low</span></td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">7/28/2024, 7:20:00 PM</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                            <button class="text-indigo-600 hover:text-indigo-900">Details</button>
+                                            <button class="text-blue-600 hover:text-blue-900">Assign</button>
+                                            <button onclick="alert('Simulating closing event #5')" class="text-red-600 hover:text-red-900">Close</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- Responder Status -->
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden h-full flex flex-col">
+                        <div class="px-4 py-3 sm:px-6 border-b border-gray-200 flex justify-between items-center">
+                            <h3 class="text-lg leading-6 font-semibold text-gray-900">Responder Status</h3>
+                            <button onclick="alert('Viewing all responders...')" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-1 px-3 rounded-md transition">View All</button>
+                        </div>
+                        <div class="flex-grow p-4 space-y-3 overflow-y-auto">
+                            <div onclick="openResponderModal('resp-001')" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg cursor-pointer transition">
+                                <div>
+                                    <p class="font-semibold text-gray-800">kyle</p>
+                                    <p class="text-sm text-gray-500">Mandaue City - Firefighter</p>
+                                </div>
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+                            </div>
+                            <div onclick="openResponderModal('resp-002')" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg cursor-pointer transition">
+                                <div>
+                                    <p class="font-semibold text-gray-800">sherie</p>
+                                    <p class="text-sm text-gray-500">Hipodromo - Paramedic</p>
+                                </div>
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+                            </div>
+                            <div onclick="openResponderModal('resp-003')" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg cursor-pointer transition">
+                                <div>
+                                    <p class="font-semibold text-gray-800">john.d</p>
+                                    <p class="text-sm text-gray-500">Mandaue City - Police Officer</p>
+                                </div>
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Assigned</span>
+                            </div>
+                            <div onclick="openResponderModal('resp-004')" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg cursor-pointer transition">
+                                <div>
+                                    <p class="font-semibold text-gray-800">jane.s</p>
+                                    <p class="text-sm text-gray-500">Cebu City Central - Firefighter</p>
+                                </div>
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Inactive</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Pending Verifications -->
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <div class="px-4 py-3 sm:px-6 border-b border-gray-200 flex justify-between items-center">
+                            <h3 class="text-lg leading-6 font-semibold text-gray-900">Pending Citizen Verifications</h3>
+                            <button onclick="alert('Viewing all pending verifications...')" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-1 px-3 rounded-md transition">View All</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Requested Role</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">kylep</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Citizen</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span></td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><button onclick="openVerificationModal('ver-001')" class="text-indigo-600 hover:text-indigo-900">Review</button></td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">sherieg</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Citizen</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span></td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><button onclick="openVerificationModal('ver-002')" class="text-indigo-600 hover:text-indigo-900">Review</button></td>
+                                    </tr>
+                                     <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">kylep</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Responder</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span></td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><button onclick="openVerificationModal('ver-003')" class="text-indigo-600 hover:text-indigo-900">Review</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- System Logs -->
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden h-full flex flex-col">
+                        <div class="px-4 py-3 sm:px-6 border-b border-gray-200 flex justify-between items-center">
+                            <h3 class="text-lg leading-6 font-semibold text-gray-900">Recent System Logs</h3>
+                            <button onclick="alert('Viewing all system logs...')" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-1 px-3 rounded-md transition">View All</button>
+                        </div>
+                        <div class="flex-grow p-4 space-y-3 overflow-y-auto">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0"><div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center"><svg class="h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg></div></div>
+                                <div class="ml-3"><p class="text-sm font-medium text-gray-900">User Login</p><p class="text-sm text-gray-500">Authority bessie.cooper logged in.</p><p class="text-xs text-gray-400 mt-1">7/28/2024, 7:25:00 PM</p></div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0"><div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center"><svg class="h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg></div></div>
+                                <div class="ml-3"><p class="text-sm font-medium text-gray-900">Event Create</p><p class="text-sm text-gray-500">New event #5 created.</p><p class="text-xs text-gray-400 mt-1">7/28/2024, 7:20:00 PM</p></div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0"><div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center"><svg class="h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg></div></div>
+                                <div class="ml-3"><p class="text-sm font-medium text-gray-900">Responder Update</p><p class="text-sm text-gray-500">Responder john.d status changed to Assigned.</p><p class="text-xs text-gray-400 mt-1">7/28/2024, 7:10:00 PM</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Responder Modal -->
+    <div id="responderModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h2 id="responderModalTitle" class="text-xl font-bold text-gray-800">Responder Details</h2>
+                <button onclick="closeResponderModal()" class="text-gray-400 hover:text-gray-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="p-6 space-y-6 overflow-y-auto">
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Current Location</h3>
+                    <div id="responderModalMap" class="bg-gray-200 rounded-lg h-48 flex items-center justify-center"><p class="text-gray-500">Map Placeholder</p></div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900">Credentials</h3>
+                    <dl id="responderModalCredentials" class="divide-y divide-gray-200"></dl>
+                </div>
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900">Assigned Event</h3>
+                    <div id="responderModalEvent"></div>
+                </div>
+            </div>
+            <div class="p-4 bg-gray-50 border-t flex justify-end">
+                <button onclick="closeResponderModal()" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Verification Modal -->
+    <div id="verificationModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h2 id="verificationModalTitle" class="text-xl font-bold text-gray-800">Review Verification</h2>
+                <button onclick="closeVerificationModal()" class="text-gray-400 hover:text-gray-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="p-6 space-y-6 overflow-y-auto">
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900">Personal Information</h3>
+                    <dl id="verificationModalPersonalInfo" class="divide-y divide-gray-200"></dl>
+                </div>
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900">Medical Information</h3>
+                    <div id="verificationModalMedicalInfo"></div>
+                </div>
+            </div>
+            <div class="p-4 bg-gray-50 border-t flex justify-end space-x-3">
+                <button onclick="closeVerificationModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg transition">Cancel</button>
+                <button onclick="alert('Verification Rejected')" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition">Reject</button>
+                <button onclick="alert('Verification Approved')" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition">Approve</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DATA ---
+            const MOCK_USERS = [
+                { userId: 'user-001', username: 'kylep', firstName: 'Kyle', lastName: 'Plando', dateOfBirth: '1990-05-15', gender: 'Male', address: '123 Maple St, Mandaue City, Cebu', contactInfo: '09171234567', email: 'kyle.plando@example.com' },
+                { userId: 'user-002', username: 'sherieg', firstName: 'Sherielyn', lastName: 'Guadiana', dateOfBirth: '1992-08-22', gender: 'Female', address: '456 Oak Ave, Cebu City, Cebu', contactInfo: '09187654321', email: 'sherie.g@example.com' }
+            ];
+            const MOCK_EVENTS = [
+                { eventId: 1, category: 'Fire', description: 'Structure fire at downtown building.', severityLevel: 'High', createdAt: '2024-07-28T10:30:00Z', status: 'Active', location: 'Colon, Cebu City' },
+                { eventId: 2, category: 'Flood', description: 'Major flooding in residential area.', severityLevel: 'Critical', createdAt: '2024-07-28T09:45:00Z', status: 'Active', location: 'Talamban, Cebu' },
+                { eventId: 3, category: 'Accident', description: 'Multi-vehicle collision on highway.', severityLevel: 'Medium', createdAt: '2024-07-28T11:05:00Z', status: 'Active', location: 'SRP, Cebu' }
+            ];
+            const MOCK_RESPONDERS = [
+                { userId: 'resp-001', username: 'kyle', departmentUnit: 'Mandaue City', role: 'Firefighter', serviceArea: 'District 1', dutyStatus: 'Active', location: { lat: 10.33, lng: 123.94 }, credentials: { id: 'FF123', type: 'Firefighter I', expires: '2025-12-31' } },
+                { userId: 'resp-002', username: 'sherie', departmentUnit: 'Hipodromo', role: 'Paramedic', serviceArea: 'District 2', dutyStatus: 'Active', location: { lat: 10.32, lng: 123.91 }, credentials: { id: 'PM456', type: 'EMT-P', expires: '2026-06-30' } },
+                { userId: 'resp-003', username: 'john.d', departmentUnit: 'Mandaue City', role: 'Police Officer', serviceArea: 'District 1', dutyStatus: 'Assigned', assignedEventId: 3, location: { lat: 10.29, lng: 123.88 }, credentials: { id: 'PO789', type: 'Police Officer II', expires: '2025-09-01' } },
+                { userId: 'resp-004', username: 'jane.s', departmentUnit: 'Cebu City Central', role: 'Firefighter', serviceArea: 'District 3', dutyStatus: 'Inactive', location: { lat: 10.31, lng: 123.90 }, credentials: { id: 'FF101', type: 'Fire Chief', expires: '2027-01-15' } },
+            ];
+            const MOCK_VERIFICATIONS = [
+                { verificationId: 'ver-001', userId: 'user-001', requestedRole: 'Citizen', submittedDocumentsStatus: 'Pending Review', status: 'Pending', medicalConditions: [{ conditionName: 'Asthma', notes: 'Requires inhaler during stressful situations.' }] },
+                { verificationId: 'ver-002', userId: 'user-002', requestedRole: 'Citizen', submittedDocumentsStatus: 'Received', status: 'Pending', medicalConditions: [] },
+                { verificationId: 'ver-003', userId: 'user-001', requestedRole: 'Responder', submittedDocumentsStatus: 'Received', status: 'Pending', medicalConditions: [] }
+            ];
+
+            //--- Mobile Menu ---
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const openIcon = document.getElementById('menu-open-icon');
+            const closeIcon = document.getElementById('menu-close-icon');
+
+            if (mobileMenuButton) {
+                 mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                    openIcon.classList.toggle('hidden');
+                    closeIcon.classList.toggle('hidden');
+                });
+            }
+
+            // --- Modal Info Row Helper ---
+            const createInfoRow = (label, value) => `
+                <div class="grid grid-cols-3 gap-4 py-2">
+                    <dt class="text-sm font-medium text-gray-500">${label}</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">${value || 'N/A'}</dd>
+                </div>`;
+
+            // --- Responder Modal ---
+            const responderModal = document.getElementById('responderModal');
+            window.openResponderModal = (responderId) => {
+                const responder = MOCK_RESPONDERS.find(r => r.userId === responderId);
+                if (!responder) return;
+
+                document.getElementById('responderModalTitle').innerText = `Responder Details: ${responder.username}`;
+                document.getElementById('responderModalMap').innerHTML = `<p class="text-gray-500">Map Placeholder for ${responder.location.lat}, ${responder.location.lng}</p>`;
+
+                const credentialsContainer = document.getElementById('responderModalCredentials');
+                credentialsContainer.innerHTML = createInfoRow('Credential ID', responder.credentials.id) +
+                                                 createInfoRow('Type', responder.credentials.type) +
+                                                 createInfoRow('Expires', new Date(responder.credentials.expires).toLocaleDateString());
+
+                const eventContainer = document.getElementById('responderModalEvent');
+                const assignedEvent = MOCK_EVENTS.find(e => e.eventId === responder.assignedEventId);
+                if (assignedEvent) {
+                    eventContainer.innerHTML = `<dl class="divide-y divide-gray-200">
+                        ${createInfoRow('Event ID', assignedEvent.eventId)}
+                        ${createInfoRow('Category', assignedEvent.category)}
+                        ${createInfoRow('Location', assignedEvent.location)}
+                        ${createInfoRow('Severity', assignedEvent.severityLevel)}
+                    </dl>`;
+                } else {
+                    eventContainer.innerHTML = '<p class="text-sm text-gray-500">Not currently assigned to an event.</p>';
+                }
+
+                responderModal.classList.remove('hidden');
+            };
+            window.closeResponderModal = () => responderModal.classList.add('hidden');
+
+            // --- Verification Modal ---
+            const verificationModal = document.getElementById('verificationModal');
+
+            window.openVerificationModal = (verificationId) => {
+                const verification = MOCK_VERIFICATIONS.find(v => v.verificationId === verificationId);
+                if (!verification) return;
+
+                // Find the associated user information
+                const user = MOCK_USERS.find(u => u.userId === verification.userId);
+
+                document.getElementById('verificationModalTitle').innerText = `Review Verification: ${user ? user.username : 'N/A'}`;
+
+                // Populate Personal Info
+                const personalInfoContainer = document.getElementById('verificationModalPersonalInfo');
+                if (user) {
+                    personalInfoContainer.innerHTML = createInfoRow('Full Name', `${user.firstName} ${user.lastName}`) +
+                                                      createInfoRow('Requested Role', verification.requestedRole) +
+                                                      createInfoRow('Email', user.email) +
+                                                      createInfoRow('Contact', user.contactInfo) +
+                                                      createInfoRow('Address', user.address) +
+                                                      createInfoRow('Date of Birth', user.dateOfBirth);
+                } else {
+                    personalInfoContainer.innerHTML = '<p class="text-sm text-red-500">User details not found.</p>';
+                }
+
+                // Populate Medical Info
+                const medicalInfoContainer = document.getElementById('verificationModalMedicalInfo');
+                if (verification.medicalConditions && verification.medicalConditions.length > 0) {
+                    medicalInfoContainer.innerHTML = `<dl class="divide-y divide-gray-200">
+                        ${verification.medicalConditions.map(cond =>
+                            createInfoRow(`Condition: ${cond.conditionName}`, cond.notes)
+                        ).join('')}
+                    </dl>`;
+                } else {
+                    medicalInfoContainer.innerHTML = '<p class="text-sm text-gray-500">No medical conditions reported.</p>';
+                }
+
+                verificationModal.classList.remove('hidden');
+            };
+
+            window.closeVerificationModal = () => verificationModal.classList.add('hidden');
+        });
+    </script>
 </body>
 </html>

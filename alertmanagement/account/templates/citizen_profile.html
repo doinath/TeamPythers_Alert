@@ -1,0 +1,268 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Citizen Profile - ALERT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        .edit-mode {
+            background-color: #f9fafb;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo and Nav -->
+                <div class="flex items-center space-x-8">
+                    <div class="flex items-center space-x-2">
+                        <img src="{% static 'images/logo.png' %}" alt="ALERT Logo" class="h-10 w-auto object-contain" />
+                    </div>
+                    <nav class="hidden md:flex items-center space-x-6">
+                        <a href="#" class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Dashboard</a>
+                        <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">Chat</a>
+                        <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">Call Logs</a>
+                        <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">News</a>
+                        <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">Settings</a>
+                    </nav>
+                </div>
+
+                <!-- User Profile -->
+                <div class="flex items-center space-x-4">
+                    <div class="hidden md:flex items-center space-x-4">
+                        <span class="text-gray-800 font-medium text-sm mr-3">Bessie Cooper</span>
+                        <img class="h-8 w-8 rounded-full object-cover" src="https://i.pravatar.cc/40?u=bessie" alt="User Avatar" />
+                    </div>
+                    <div class="md:hidden flex items-center">
+                        <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-800 focus:outline-none">
+                            <svg id="menu-open-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                            <svg id="menu-close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <nav class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium bg-red-50 text-red-700">Dashboard</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Chat</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">News</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Settings</a>
+            </nav>
+            <div class="pt-4 pb-3 border-t border-gray-200">
+                <div class="flex items-center px-5">
+                    <img class="h-10 w-10 rounded-full object-cover" src="https://picsum.photos/id/237/100/100" alt="User Avatar" />
+                    <div class="ml-3">
+                        <div class="text-base font-medium text-gray-800">Bessie Cooper</div>
+                        <div class="text-sm font-medium text-gray-500">bessie.cooper@example.com</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <div class="space-y-8 animate-fadeIn">
+            <div class="flex justify-end">
+              <button id="editButton" class="px-6 py-2 bg-red-700 text-white font-semibold rounded-lg shadow-md hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75 transition-colors">
+                Edit Profile
+              </button>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                        <img
+                            class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-red-200"
+                            src="https://i.pravatar.cc/150?u=kyleplando"
+                            alt="Citizen Profile"
+                        />
+                        <h2 class="text-2xl font-bold text-gray-800 view-mode">Kyle Plando</h2>
+                        <input type="text" class="hidden edit-mode text-2xl font-bold text-gray-800 border rounded-md px-2 py-1 w-full text-center" />
+
+                        <p class="text-sm text-gray-500 mt-1 view-mode">kyle.plando@example.com</p>
+                        <input type="email" class="hidden edit-mode text-sm text-gray-500 border rounded-md px-2 py-1 w-full mt-1 text-center" />
+
+                        <p class="text-sm text-gray-500 view-mode">0931-112-3490</p>
+                        <input type="tel" class="hidden edit-mode text-sm text-gray-500 border rounded-md px-2 py-1 w-full text-center" />
+
+                        <span class="mt-4 inline-block bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">
+                            Citizen
+                        </span>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                      <h3 class="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2 mb-4">Address</h3>
+                        <address class="text-sm not-italic text-gray-700 space-y-1">
+                            <div>
+                                <p class="view-mode">123 Main St, Caigit</p>
+                                <input type="text" class="hidden edit-mode text-sm w-full border rounded-md p-1">
+                            </div>
+                            <div>
+                                <p class="view-mode">Cebu City, Cebu</p>
+                                <input type="text" class="hidden edit-mode text-sm w-full border rounded-md p-1">
+                            </div>
+                            <div>
+                                <p class="view-mode">6000</p>
+                                <input type="text" class="hidden edit-mode text-sm w-full border rounded-md p-1">
+                            </div>
+                        </address>
+                    </div>
+                </div>
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                      <h3 class="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2 mb-4">Medical Information</h3>
+                      <div class="py-2 border-b border-gray-100 last:border-b-0">
+                          <div>
+                              <h4 class="font-semibold text-gray-800 view-mode">Cardiac Issues</h4>
+                              <input type="text" class="hidden edit-mode font-semibold text-gray-800 border rounded-md p-1 w-full mb-1">
+                          </div>
+                          <div>
+                              <p class="text-sm text-gray-600 view-mode">History of cardiac issues, experiences chest pain and shortness of breath.</p>
+                              <textarea class="hidden edit-mode text-sm text-gray-600 border rounded-md p-1 w-full" rows="2"></textarea>
+                          </div>
+                      </div>
+                      <div class="py-2 border-b border-gray-100 last:border-b-0">
+                          <div>
+                              <h4 class="font-semibold text-gray-800 view-mode">Asthma</h4>
+                              <input type="text" class="hidden edit-mode font-semibold text-gray-800 border rounded-md p-1 w-full mb-1">
+                          </div>
+                          <div>
+                              <p class="text-sm text-gray-600 view-mode">Uses an inhaler as needed.</p>
+                              <textarea class="hidden edit-mode text-sm text-gray-600 border rounded-md p-1 w-full" rows="2"></textarea>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2 mb-4">Emergency Contacts</h3>
+                        <ul class="divide-y divide-gray-100">
+                           <li class="py-3 flex justify-between items-center">
+                               <div>
+                                   <p class="font-semibold text-gray-800 view-mode">Jane Plando</p>
+                                   <input type="text" class="hidden edit-mode font-semibold text-gray-800 border rounded-md p-1 w-full mb-1">
+                                   <p class="text-sm text-gray-500 view-mode">Spouse</p>
+                                   <input type="text" class="hidden edit-mode text-sm text-gray-500 border rounded-md p-1 w-full">
+                               </div>
+                               <div>
+                                   <p class="text-sm font-medium text-gray-600 view-mode">0917-555-1234</p>
+                                   <input type="tel" class="hidden edit-mode text-sm text-gray-600 border rounded-md p-1 w-full text-right">
+                               </div>
+                           </li>
+                           <li class="py-3 flex justify-between items-center">
+                               <div>
+                                   <p class="font-semibold text-gray-800 view-mode">Dr. John Smith</p>
+                                   <input type="text" class="hidden edit-mode font-semibold text-gray-800 border rounded-md p-1 w-full mb-1">
+                                   <p class="text-sm text-gray-500 view-mode">Personal Doctor</p>
+                                   <input type="text" class="hidden edit-mode text-sm text-gray-500 border rounded-md p-1 w-full">
+                               </div>
+                               <div>
+                                   <p class="text-sm font-medium text-gray-600 view-mode">0922-555-5678</p>
+                                   <input type="tel" class="hidden edit-mode text-sm text-gray-600 border rounded-md p-1 w-full text-right">
+                               </div>
+                           </li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2 mb-4">Government IDs</h3>
+                        <ul class="divide-y divide-gray-100">
+                           <li class="py-3 flex justify-between items-center">
+                               <div>
+                                   <p class="font-semibold text-gray-800 view-mode">Driver's License</p>
+                                   <input type="text" class="hidden edit-mode font-semibold text-gray-800 border rounded-md p-1 w-full mb-1">
+                                   <p class="text-sm text-gray-500 view-mode">D05-90-123456</p>
+                                   <input type="text" class="hidden edit-mode text-sm text-gray-500 border rounded-md p-1 w-full">
+                               </div>
+                               <span class="text-xs font-semibold px-2 py-1 rounded-full bg-green-100 text-green-800">
+                                   Verified
+                               </span>
+                           </li>
+                           <li class="py-3 flex justify-between items-center">
+                               <div>
+                                   <p class="font-semibold text-gray-800 view-mode">Passport</p>
+                                   <input type="text" class="hidden edit-mode font-semibold text-gray-800 border rounded-md p-1 w-full mb-1">
+                                   <p class="text-sm text-gray-500 view-mode">PH12345678</p>
+                                   <input type="text" class="hidden edit-mode text-sm text-gray-500 border rounded-md p-1 w-full">
+                               </div>
+                               <span class="text-xs font-semibold px-2 py-1 rounded-full bg-green-100 text-green-800">
+                                   Verified
+                               </span>
+                           </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const editButton = document.getElementById('editButton');
+        const mainContainer = document.querySelector('main');
+        let isEditMode = false;
+
+        editButton.addEventListener('click', () => {
+            isEditMode = !isEditMode;
+            editButton.textContent = isEditMode ? 'Save Changes' : 'Edit Profile';
+            editButton.classList.toggle('bg-green-600', isEditMode);
+            editButton.classList.toggle('hover:bg-green-700', isEditMode);
+            editButton.classList.toggle('bg-red-700', !isEditMode);
+            editButton.classList.toggle('hover:bg-red-800', !isEditMode);
+
+            const viewElements = mainContainer.querySelectorAll('.view-mode');
+
+            if (isEditMode) {
+                // Entering Edit Mode
+                viewElements.forEach(viewEl => {
+                    const editEl = viewEl.nextElementSibling;
+                    if (editEl && editEl.classList.contains('edit-mode')) {
+                        editEl.value = viewEl.textContent.trim();
+                        viewEl.classList.add('hidden');
+                        editEl.classList.remove('hidden');
+                    }
+                });
+            } else {
+                // Saving Changes
+                const editElements = mainContainer.querySelectorAll('.edit-mode');
+                editElements.forEach(editEl => {
+                    const viewEl = editEl.previousElementSibling;
+                    if (viewEl && viewEl.classList.contains('view-mode')) {
+                       viewEl.textContent = editEl.value;
+                        editEl.classList.add('hidden');
+                        viewEl.classList.remove('hidden');
+                    }
+                });
+            }
+        });
+
+        //--- Mobile Menu ---
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const openIcon = document.getElementById('menu-open-icon');
+            const closeIcon = document.getElementById('menu-close-icon');
+
+            if (mobileMenuButton) {
+                 mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                    openIcon.classList.toggle('hidden');
+                    closeIcon.classList.toggle('hidden');
+                });
+            }
+    });
+</script>
+</body>
+</html>

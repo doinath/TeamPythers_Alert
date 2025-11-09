@@ -20,3 +20,15 @@ class ResponderDashboardView(View):
 class AuthorityDashboardView(View):
     def get(self, request):
         return render(request, "authority_dashboard.html")
+
+class CitizenProfileView(View):
+    def get(self, request):
+        return render(request, "citizen_profile.html")
+
+class ResponderProfileView(View):
+    def get(self, request):
+        return render(request, "responder_profile.html")
+
+class AuthorityProfileView(View):
+    def get(self, request):
+        return render(request, "authority_profile.html")

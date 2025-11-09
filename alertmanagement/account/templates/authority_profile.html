@@ -1,0 +1,278 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Authority Profile - ALERT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        .edit-mode {
+            background-color: #f9fafb;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo and Nav -->
+                <div class="flex items-center space-x-8">
+                    <div class="flex items-center space-x-2">
+                        <img src="{% static 'images/logo.png' %}" alt="ALERT Logo" class="h-10 w-auto object-contain" />
+                    </div>
+                    <nav class="hidden md:flex items-center space-x-6">
+                        <a href="#" class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Dashboard</a>
+                        <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">Chat</a>
+                        <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">Call Logs</a>
+                        <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">News</a>
+                        <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">Settings</a>
+                    </nav>
+                </div>
+                <div class="hidden md:flex items-center space-x-4">
+                    <span class="text-gray-700 font-medium">Bessie Cooper</span>
+                    <img class="h-10 w-10 rounded-full object-cover" src="https://picsum.photos/id/237/100/100" alt="User Avatar" />
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-800 focus:outline-none">
+                        <svg id="menu-open-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <svg id="menu-close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <nav class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium bg-red-50 text-red-700">Dashboard</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Chat</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">News</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Settings</a>
+            </nav>
+            <div class="pt-4 pb-3 border-t border-gray-200">
+                <div class="flex items-center px-5">
+                    <img class="h-10 w-10 rounded-full object-cover" src="https://picsum.photos/id/237/100/100" alt="User Avatar" />
+                    <div class="ml-3">
+                        <div class="text-base font-medium text-gray-800">Bessie Cooper</div>
+                        <div class="text-sm font-medium text-gray-500">bessie.cooper@example.com</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <div class="space-y-8 animate-fadeIn">
+            <div class="flex justify-between items-center">
+                <h1 class="text-3xl font-bold text-gray-900">Authority Profile</h1>
+                <button id="editButton" class="px-6 py-2 bg-red-700 text-white font-semibold rounded-lg shadow-md hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75 transition-colors">Edit Profile</button>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                        <img
+                            class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-red-200"
+                            src="https://i.pravatar.cc/150?u=bessiecooper"
+                            alt="Authority Profile"
+                        />
+                        <h2 class="text-2xl font-bold text-gray-800 view-mode">Bessie Cooper</h2>
+                        <input type="text" class="hidden edit-mode text-2xl font-bold text-gray-800 border rounded-md px-2 py-1 w-full text-center" />
+
+                        <p class="text-sm text-gray-500 mt-1 view-mode">b.cooper@authority.gov</p>
+                        <input type="email" class="hidden edit-mode text-sm text-gray-500 border rounded-md px-2 py-1 w-full mt-1 text-center" />
+
+                        <p class="text-sm text-gray-500 view-mode">0918-555-0001</p>
+                        <input type="tel" class="hidden edit-mode text-sm text-gray-500 border rounded-md px-2 py-1 w-full text-center" />
+
+                         <span class="mt-4 inline-block bg-yellow-100 text-yellow-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">
+                            Authority
+                        </span>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2 mb-4">Address</h3>
+                         <address class="text-sm not-italic text-gray-700 space-y-1">
+                            <div>
+                                <p class="view-mode">789 Gov. Bldg. Rd, Capitol Site</p>
+                                <input type="text" class="hidden edit-mode text-sm w-full border rounded-md p-1">
+                            </div>
+                            <div>
+                                <p class="view-mode">Cebu City, Cebu</p>
+                                <input type="text" class="hidden edit-mode text-sm w-full border rounded-md p-1">
+                            </div>
+                            <div>
+                                <p class="view-mode">6000</p>
+                                <input type="text" class="hidden edit-mode text-sm w-full border rounded-md p-1">
+                            </div>
+                        </address>
+                    </div>
+                </div>
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2 mb-4">Authority Information</h3>
+                        <dl>
+                             <div class="grid grid-cols-3 gap-4 py-3 border-b border-gray-100 last:border-b-0">
+                                <dt class="text-sm font-medium text-gray-500">Agency Name</dt>
+                                <dd class="text-sm text-gray-900 col-span-2 view-mode">Cebu City Command Center (C3)</dd>
+                                <dd class="col-span-2 hidden edit-mode"><input type="text" class="text-sm text-gray-900 w-full border rounded-md p-1"></dd>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4 py-3 border-b border-gray-100 last:border-b-0">
+                                <dt class="text-sm font-medium text-gray-500">Jurisdiction Area</dt>
+                                <dd class="text-sm text-gray-900 col-span-2 view-mode">Cebu City Proper</dd>
+                                <dd class="col-span-2 hidden edit-mode"><input type="text" class="text-sm text-gray-900 w-full border rounded-md p-1"></dd>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4 py-3 border-b border-gray-100 last:border-b-0">
+                                <dt class="text-sm font-medium text-gray-500">Date Joined</dt>
+                                <dd class="text-sm text-gray-900 col-span-2 view-mode">2/1/2020</dd>
+                                <dd class="col-span-2 hidden edit-mode"><input type="date" class="text-sm text-gray-900 w-full border rounded-md p-1" value="2020-02-01"></dd>
+                            </div>
+                        </dl>
+                    </div>
+                     <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2 mb-4">Personal Details</h3>
+                        <dl>
+                             <div class="grid grid-cols-3 gap-4 py-3 border-b border-gray-100 last:border-b-0">
+                                <dt class="text-sm font-medium text-gray-500">Date of Birth</dt>
+                                <dd class="text-sm text-gray-900 col-span-2 view-mode">1975-03-10</dd>
+                                <dd class="col-span-2 hidden edit-mode"><input type="date" class="text-sm text-gray-900 w-full border rounded-md p-1" value="1975-03-10"></dd>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4 py-3 border-b border-gray-100 last:border-b-0">
+                                <dt class="text-sm font-medium text-gray-500">Gender</dt>
+                                <dd class="text-sm text-gray-900 col-span-2 view-mode">Female</dd>
+                                <dd class="col-span-2 hidden edit-mode">
+                                    <select class="text-sm text-gray-900 w-full border rounded-md p-1">
+                                        <option>Female</option>
+                                        <option>Male</option>
+                                        <option>Other</option>
+                                    </select>
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const editButton = document.getElementById('editButton');
+        const mainContainer = document.querySelector('main');
+        let isEditMode = false;
+
+        editButton.addEventListener('click', () => {
+            isEditMode = !isEditMode;
+            editButton.textContent = isEditMode ? 'Save Changes' : 'Edit Profile';
+            editButton.classList.toggle('bg-green-600', isEditMode);
+            editButton.classList.toggle('hover:bg-green-700', isEditMode);
+            editButton.classList.toggle('bg-red-700', !isEditMode);
+            editButton.classList.toggle('hover:bg-red-800', !isEditMode);
+
+            const viewElements = mainContainer.querySelectorAll('.view-mode');
+            const editElements = mainContainer.querySelectorAll('.edit-mode');
+
+            if (isEditMode) {
+                // Entering Edit Mode
+                viewElements.forEach(viewEl => {
+                    const editSibling = viewEl.nextElementSibling;
+                    if (!editSibling || !editSibling.classList.contains('edit-mode')) return;
+
+                    // Find the actual input field. It might be the sibling itself, or nested inside it.
+                    let input = ['INPUT', 'SELECT', 'TEXTAREA'].includes(editSibling.tagName)
+                        ? editSibling
+                        : editSibling.querySelector('input, select, textarea');
+
+                    if (input) {
+                        // For fields like "Duty Status", the value is inside a child <span>
+                        const valueSource = viewEl.querySelector('span') || viewEl;
+                        if (input.type === 'date') {
+                            // Handle date inputs which need YYYY-MM-DD format
+                            try {
+                                input.value = new Date(valueSource.textContent.trim()).toISOString().split('T')[0];
+                            } catch (e) {
+                                // Fallback for invalid date text, try parsing a different way
+                                const parts = valueSource.textContent.trim().split('/');
+                                if (parts.length === 3) {
+                                    input.value = `${parts[2]}-${parts[0].padStart(2, '0')}-${parts[1].padStart(2, '0')}`;
+                                } else {
+                                    input.value = valueSource.textContent.trim();
+                                }
+                            }
+                        } else {
+                            input.value = valueSource.textContent.trim();
+                        }
+                    }
+                });
+
+                viewElements.forEach(el => el.classList.add('hidden'));
+                editElements.forEach(el => el.classList.remove('hidden'));
+            } else {
+                // Saving Changes
+                editElements.forEach(editEl => {
+                     // Find the actual input field. It might be the element itself, or nested.
+                    let input = ['INPUT', 'SELECT', 'TEXTAREA'].includes(editEl.tagName)
+                        ? editEl
+                        : editEl.querySelector('input, select, textarea');
+
+                    if (input) {
+                        // Find the corresponding view element to update.
+                        let viewSibling = editEl.previousElementSibling;
+                        // Handle cases where edit is a DD and view is a DD
+                        if(editEl.tagName === 'DD'){
+                            viewSibling = editEl.previousElementSibling;
+                        } else {
+                            viewSibling = input.parentElement.previousElementSibling;
+                        }
+
+                        if (!viewSibling) { // Fallback for profile header inputs
+                           viewSibling = input.previousElementSibling;
+                        }
+
+                        if(viewSibling && viewSibling.classList.contains('view-mode')) {
+                             // Find the actual element to update (could be a span within the view element)
+                            const valueTarget = viewSibling.querySelector('span') || viewSibling;
+                            if (input.type === 'date') {
+                                // Format date for display
+                                const [year, month, day] = input.value.split('-');
+                                valueTarget.textContent = `${month}/${day}/${year}`;
+                            } else {
+                                valueTarget.textContent = input.value;
+                            }
+                        }
+                    }
+                });
+
+                viewElements.forEach(el => el.classList.remove('hidden'));
+                editElements.forEach(el => el.classList.add('hidden'));
+            }
+        });
+
+        //--- Mobile Menu ---
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const openIcon = document.getElementById('menu-open-icon');
+        const closeIcon = document.getElementById('menu-close-icon');
+
+        if (mobileMenuButton) {
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                openIcon.classList.toggle('hidden');
+                closeIcon.classList.toggle('hidden');
+            });
+        }
+    });
+</script>
+</body>
+</html>

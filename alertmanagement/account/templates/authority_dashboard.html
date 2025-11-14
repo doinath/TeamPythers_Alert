@@ -7,6 +7,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ALERT Authority Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .leaflet-control-zoom, .leaflet-control-attribution {
+            display: none !important;
+        }
+    </style>
 </head>
 <body class="bg-gray-100 font-sans">
     <div id="app">
@@ -64,196 +77,328 @@
         </header>
 
         <!-- Main Content -->
-        <main class="p-4 sm:p-6 lg:p-8">
-            <div class="space-y-6">
-                <!-- Stat Cards -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="bg-gradient-to-r from-red-800 via-red-600 to-red-400 p-6 rounded-xl shadow-lg text-white">
-                        <p class="text-sm font-medium uppercase tracking-wider text-white-600">Active Emergency Events</p>
-                        <p class="text-5xl font-bold mt-2 text-white-600">4</p>
+        <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+             <!-- Tab Navigation -->
+            <div class="mb-6 border-b border-gray-200">
+              <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                <button id="authority-tab" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 border-red-600 text-red-600">
+                  Authority Dashboard
+                </button>
+                <button id="citizen-tab" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                  My Citizen Account
+                </button>
+              </nav>
+            </div>
+
+            <!-- Authority View -->
+            <div id="authority-view">
+                <div class="space-y-6">
+                    <!-- Stat Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="bg-gradient-to-r from-red-800 via-red-600 to-red-400 p-6 rounded-xl shadow-lg text-white">
+                            <p class="text-sm font-medium uppercase tracking-wider text-white-600">Active Emergency Events</p>
+                            <p class="text-5xl font-bold mt-2 text-white-600">4</p>
+                        </div>
+                        <div class="bg-gradient-to-r from-red-800 via-red-600 to-red-400 p-6 rounded-xl shadow-lg text-white">
+                            <p class="text-sm font-medium uppercase tracking-wider text-white-600">Responders Available</p>
+                            <p class="text-5xl font-bold mt-2 text-white-600">2</p>
+                        </div>
+                        <div class="bg-gradient-to-r from-red-800 via-red-600 to-red-400 p-6 rounded-xl shadow-lg text-white">
+                            <p class="text-sm font-medium uppercase tracking-wider text-white-600">Pending Verifications</p>
+                            <p class="text-5xl font-bold mt-2 text-white-600">3</p>
+                        </div>
+                        <div class="bg-gradient-to-r from-red-800 via-red-600 to-red-400 p-6 rounded-xl shadow-lg text-white">
+                            <p class="text-sm font-medium uppercase tracking-wider text-white-600">Total Authorities</p>
+                            <p class="text-5xl font-bold mt-2 text-white-600">5</p>
+                        </div>
                     </div>
-                    <div class="bg-gradient-to-r from-red-800 via-red-600 to-red-400 p-6 rounded-xl shadow-lg text-white">
-                        <p class="text-sm font-medium uppercase tracking-wider text-white-600">Responders Available</p>
-                        <p class="text-5xl font-bold mt-2 text-white-600">2</p>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Active Events Table -->
+                        <div class="lg:col-span-2 bg-white rounded-lg shadow-md overflow-hidden">
+                            <div class="px-4 py-3 sm:px-6 border-b border-gray-200 flex justify-between items-center">
+                                <h3 class="text-lg leading-6 font-semibold text-gray-900">Active Emergency Events</h3>
+                                <div class="flex items-center space-x-2">
+                                    <input type="text" placeholder="Search events..." class="hidden sm:block border rounded-md px-2 py-1 text-sm"/>
+                                    <button onclick="alert('Viewing all active events...')" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-1 px-3 rounded-md transition">View All</button>
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event ID</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Severity</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">1</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Fire</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">High</span></td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">7/28/2024, 6:30:00 PM</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                                <button class="text-indigo-600 hover:text-indigo-900">Details</button>
+                                                <button class="text-blue-600 hover:text-blue-900">Assign</button>
+                                                <button onclick="alert('Simulating closing event #1')" class="text-red-600 hover:text-red-900">Close</button>
+                                            </td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">2</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Flood</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Critical</span></td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">7/28/2024, 5:45:00 PM</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                                <button class="text-indigo-600 hover:text-indigo-900">Details</button>
+                                                <button class="text-blue-600 hover:text-blue-900">Assign</button>
+                                                <button onclick="alert('Simulating closing event #2')" class="text-red-600 hover:text-red-900">Close</button>
+                                            </td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">3</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Accident</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Medium</span></td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">7/28/2024, 7:05:00 PM</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                                <button class="text-indigo-600 hover:text-indigo-900">Details</button>
+                                                <button class="text-blue-600 hover:text-blue-900">Assign</button>
+                                                <button onclick="alert('Simulating closing event #3')" class="text-red-600 hover:text-red-900">Close</button>
+                                            </td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">5</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Fire</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Low</span></td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">7/28/2024, 7:20:00 PM</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                                <button class="text-indigo-600 hover:text-indigo-900">Details</button>
+                                                <button class="text-blue-600 hover:text-blue-900">Assign</button>
+                                                <button onclick="alert('Simulating closing event #5')" class="text-red-600 hover:text-red-900">Close</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Responder Status -->
+                        <div class="bg-white rounded-lg shadow-md overflow-hidden h-full flex flex-col">
+                            <div class="px-4 py-3 sm:px-6 border-b border-gray-200 flex justify-between items-center">
+                                <h3 class="text-lg leading-6 font-semibold text-gray-900">Responder Status</h3>
+                                <button onclick="alert('Viewing all responders...')" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-1 px-3 rounded-md transition">View All</button>
+                            </div>
+                            <div class="flex-grow p-4 space-y-3 overflow-y-auto">
+                                <div onclick="openResponderModal('resp-001')" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg cursor-pointer transition">
+                                    <div>
+                                        <p class="font-semibold text-gray-800">kyle</p>
+                                        <p class="text-sm text-gray-500">Mandaue City - Firefighter</p>
+                                    </div>
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+                                </div>
+                                <div onclick="openResponderModal('resp-002')" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg cursor-pointer transition">
+                                    <div>
+                                        <p class="font-semibold text-gray-800">sherie</p>
+                                        <p class="text-sm text-gray-500">Hipodromo - Paramedic</p>
+                                    </div>
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+                                </div>
+                                <div onclick="openResponderModal('resp-003')" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg cursor-pointer transition">
+                                    <div>
+                                        <p class="font-semibold text-gray-800">john.d</p>
+                                        <p class="text-sm text-gray-500">Mandaue City - Police Officer</p>
+                                    </div>
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Assigned</span>
+                                </div>
+                                <div onclick="openResponderModal('resp-004')" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg cursor-pointer transition">
+                                    <div>
+                                        <p class="font-semibold text-gray-800">jane.s</p>
+                                        <p class="text-sm text-gray-500">Cebu City Central - Firefighter</p>
+                                    </div>
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Inactive</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="bg-gradient-to-r from-red-800 via-red-600 to-red-400 p-6 rounded-xl shadow-lg text-white">
-                        <p class="text-sm font-medium uppercase tracking-wider text-white-600">Pending Verifications</p>
-                        <p class="text-5xl font-bold mt-2 text-white-600">3</p>
-                    </div>
-                    <div class="bg-gradient-to-r from-red-800 via-red-600 to-red-400 p-6 rounded-xl shadow-lg text-white">
-                        <p class="text-sm font-medium uppercase tracking-wider text-white-600">Total Authorities</p>
-                        <p class="text-5xl font-bold mt-2 text-white-600">5</p>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Pending Verifications -->
+                        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                            <div class="px-4 py-3 sm:px-6 border-b border-gray-200 flex justify-between items-center">
+                                <h3 class="text-lg leading-6 font-semibold text-gray-900">Pending Citizen Verifications</h3>
+                                <button onclick="alert('Viewing all pending verifications...')" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-1 px-3 rounded-md transition">View All</button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Requested Role</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">kylep</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Citizen</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span></td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><button onclick="openVerificationModal('ver-001')" class="text-indigo-600 hover:text-indigo-900">Review</button></td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">sherieg</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Citizen</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span></td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><button onclick="openVerificationModal('ver-002')" class="text-indigo-600 hover:text-indigo-900">Review</button></td>
+                                        </tr>
+                                         <tr class="hover:bg-gray-50">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">kylep</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Responder</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span></td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><button onclick="openVerificationModal('ver-003')" class="text-indigo-600 hover:text-indigo-900">Review</button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- System Logs -->
+                        <div class="bg-white rounded-lg shadow-md overflow-hidden h-full flex flex-col">
+                            <div class="px-4 py-3 sm:px-6 border-b border-gray-200 flex justify-between items-center">
+                                <h3 class="text-lg leading-6 font-semibold text-gray-900">Recent System Logs</h3>
+                                <button onclick="alert('Viewing all system logs...')" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-1 px-3 rounded-md transition">View All</button>
+                            </div>
+                            <div class="flex-grow p-4 space-y-3 overflow-y-auto">
+                                <div class="flex items-start">
+                                    <div class="flex-shrink-0"><div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center"><svg class="h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg></div></div>
+                                    <div class="ml-3"><p class="text-sm font-medium text-gray-900">User Login</p><p class="text-sm text-gray-500">Authority bessie.cooper logged in.</p><p class="text-xs text-gray-400 mt-1">7/28/2024, 7:25:00 PM</p></div>
+                                </div>
+                                <div class="flex items-start">
+                                    <div class="flex-shrink-0"><div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center"><svg class="h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg></div></div>
+                                    <div class="ml-3"><p class="text-sm font-medium text-gray-900">Event Create</p><p class="text-sm text-gray-500">New event #5 created.</p><p class="text-xs text-gray-400 mt-1">7/28/2024, 7:20:00 PM</p></div>
+                                </div>
+                                <div class="flex items-start">
+                                    <div class="flex-shrink-0"><div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center"><svg class="h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg></div></div>
+                                    <div class="ml-3"><p class="text-sm font-medium text-gray-900">Responder Update</p><p class="text-sm text-gray-500">Responder john.d status changed to Assigned.</p><p class="text-xs text-gray-400 mt-1">7/28/2024, 7:10:00 PM</p></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Active Events Table -->
-                    <div class="lg:col-span-2 bg-white rounded-lg shadow-md overflow-hidden">
-                        <div class="px-4 py-3 sm:px-6 border-b border-gray-200 flex justify-between items-center">
-                            <h3 class="text-lg leading-6 font-semibold text-gray-900">Active Emergency Events</h3>
-                            <div class="flex items-center space-x-2">
-                                <input type="text" placeholder="Search events..." class="hidden sm:block border rounded-md px-2 py-1 text-sm"/>
-                                <button onclick="alert('Viewing all active events...')" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-1 px-3 rounded-md transition">View All</button>
-                            </div>
+            <!-- Citizen View -->
+            <div id="citizen-view" class="hidden">
+                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- Left Column -->
+                    <div class="lg:col-span-4 flex flex-col gap-8">
+                        <!-- Quick Call Card -->
+                        <div class="bg-white p-6 rounded-xl shadow-lg text-center">
+                            <h2 class="text-xl font-bold text-gray-800 mb-4">Quick Call</h2>
+                            <button id="sos-button" class="relative w-48 h-48 mx-auto rounded-full bg-red-700 shadow-2xl shadow-red-600/50 flex items-center justify-center group transform hover:scale-105 transition-transform duration-300">
+                                <div class="absolute inset-0 rounded-full border-4 border-white animate-pulse"></div>
+                                <div class="absolute inset-2 rounded-full bg-white/20"></div>
+                                <span class="text-5xl font-extrabold text-white tracking-widest group-hover:tracking-normal transition-all duration-300">SOS</span>
+                            </button>
                         </div>
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event ID</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Severity</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">1</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Fire</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">High</span></td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">7/28/2024, 6:30:00 PM</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                                            <button class="text-indigo-600 hover:text-indigo-900">Details</button>
-                                            <button class="text-blue-600 hover:text-blue-900">Assign</button>
-                                            <button onclick="alert('Simulating closing event #1')" class="text-red-600 hover:text-red-900">Close</button>
-                                        </td>
-                                    </tr>
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">2</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Flood</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Critical</span></td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">7/28/2024, 5:45:00 PM</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                                            <button class="text-indigo-600 hover:text-indigo-900">Details</button>
-                                            <button class="text-blue-600 hover:text-blue-900">Assign</button>
-                                            <button onclick="alert('Simulating closing event #2')" class="text-red-600 hover:text-red-900">Close</button>
-                                        </td>
-                                    </tr>
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">3</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Accident</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Medium</span></td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">7/28/2024, 7:05:00 PM</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                                            <button class="text-indigo-600 hover:text-indigo-900">Details</button>
-                                            <button class="text-blue-600 hover:text-blue-900">Assign</button>
-                                            <button onclick="alert('Simulating closing event #3')" class="text-red-600 hover:text-red-900">Close</button>
-                                        </td>
-                                    </tr>
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">5</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Fire</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Low</span></td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">7/28/2024, 7:20:00 PM</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                                            <button class="text-indigo-600 hover:text-indigo-900">Details</button>
-                                            <button class="text-blue-600 hover:text-blue-900">Assign</button>
-                                            <button onclick="alert('Simulating closing event #5')" class="text-red-600 hover:text-red-900">Close</button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <!-- Responder Status -->
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden h-full flex flex-col">
-                        <div class="px-4 py-3 sm:px-6 border-b border-gray-200 flex justify-between items-center">
-                            <h3 class="text-lg leading-6 font-semibold text-gray-900">Responder Status</h3>
-                            <button onclick="alert('Viewing all responders...')" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-1 px-3 rounded-md transition">View All</button>
-                        </div>
-                        <div class="flex-grow p-4 space-y-3 overflow-y-auto">
-                            <div onclick="openResponderModal('resp-001')" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg cursor-pointer transition">
-                                <div>
-                                    <p class="font-semibold text-gray-800">kyle</p>
-                                    <p class="text-sm text-gray-500">Mandaue City - Firefighter</p>
-                                </div>
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
-                            </div>
-                            <div onclick="openResponderModal('resp-002')" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg cursor-pointer transition">
-                                <div>
-                                    <p class="font-semibold text-gray-800">sherie</p>
-                                    <p class="text-sm text-gray-500">Hipodromo - Paramedic</p>
-                                </div>
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
-                            </div>
-                            <div onclick="openResponderModal('resp-003')" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg cursor-pointer transition">
-                                <div>
-                                    <p class="font-semibold text-gray-800">john.d</p>
-                                    <p class="text-sm text-gray-500">Mandaue City - Police Officer</p>
-                                </div>
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Assigned</span>
-                            </div>
-                            <div onclick="openResponderModal('resp-004')" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg cursor-pointer transition">
-                                <div>
-                                    <p class="font-semibold text-gray-800">jane.s</p>
-                                    <p class="text-sm text-gray-500">Cebu City Central - Firefighter</p>
-                                </div>
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Inactive</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- Pending Verifications -->
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                        <div class="px-4 py-3 sm:px-6 border-b border-gray-200 flex justify-between items-center">
-                            <h3 class="text-lg leading-6 font-semibold text-gray-900">Pending Citizen Verifications</h3>
-                            <button onclick="alert('Viewing all pending verifications...')" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-1 px-3 rounded-md transition">View All</button>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Requested Role</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">kylep</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Citizen</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span></td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><button onclick="openVerificationModal('ver-001')" class="text-indigo-600 hover:text-indigo-900">Review</button></td>
-                                    </tr>
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">sherieg</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Citizen</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span></td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><button onclick="openVerificationModal('ver-002')" class="text-indigo-600 hover:text-indigo-900">Review</button></td>
-                                    </tr>
-                                     <tr class="hover:bg-gray-50">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">kylep</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Responder</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span></td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><button onclick="openVerificationModal('ver-003')" class="text-indigo-600 hover:text-indigo-900">Review</button></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <!-- Emergency Contacts -->
+                        <div class="bg-white p-6 rounded-xl shadow-lg">
+                            <h2 class="text-xl font-bold text-gray-800 mb-4">Emergency Contacts</h2>
+                            <div class="space-y-4">
+                                <div class="contact-section">
+                                    <h3 class="font-semibold text-red-700 mb-2 pb-1 border-b">Police & Law Enforcement</h3>
+                                    <ul class="text-sm text-gray-600 space-y-2">
+                                        <li class="flex justify-between items-center"><span>Cebu City Police Hotline</span><span class="text-gray-500 font-mono text-xs">(555) 233-9111</span></li>
+                                        <li class="flex justify-between items-center"><span>Waterfront Police Station</span><span class="text-gray-500 font-mono text-xs">(555) 254-6277</span></li>
+                                        <li class="flex justify-between items-center"><span>Fuente Osmeña Police Station</span><span class="text-gray-500 font-mono text-xs">(555) 255-7355</span></li>
+                                        <li class="flex justify-between items-center"><span>Mobile Patrol Group</span><span class="text-gray-500 font-mono text-xs">(555) 233-5564</span></li>
+                                    </ul>
+                                </div>
+                                 <div class="contact-section">
+                                    <h3 class="font-semibold text-red-700 mb-2 pb-1 border-b">Fire Department & Rescue</h3>
+                                    <ul class="text-sm text-gray-600 space-y-2">
+                                        <li class="flex justify-between items-center"><span>Cebu City Fire Department</span><span class="text-gray-500 font-mono text-xs">(555) 256-0541</span></li>
+                                        <li class="flex justify-between items-center"><span>Mandaue City Fire Department</span><span class="text-gray-500 font-mono text-xs">(555) 344-4747</span></li>
+                                        <li class="flex justify-between items-center"><span>Fil-Chinese Volunteer Fire Brigade</span><span class="text-gray-500 font-mono text-xs">(555) 254-0222</span></li>
+                                    </ul>
+                                </div>
+                                <div class="contact-section">
+                                    <h3 class="font-semibold text-red-700 mb-2 pb-1 border-b">Hospitals & Medical Services</h3>
+                                    <ul class="text-sm text-gray-600 space-y-2">
+                                        <li class="flex justify-between items-center"><span>Chong Hua Hospital</span><span class="text-gray-500 font-mono text-xs">(555) 255-8000</span></li>
+                                        <li class="flex justify-between items-center"><span>Cebu Doctors' Hospital</span><span class="text-gray-500 font-mono text-xs">(555) 255-5555</span></li>
+                                        <li class="flex justify-between items-center"><span>Velez General Hospital</span><span class="text-gray-500 font-mono text-xs">(555) 253-1871</span></li>
+                                        <li class="flex justify-between items-center"><span>Perpetual Succour Hospital</span><span class="text-gray-500 font-mono text-xs">(555) 233-8620</span></li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <!-- System Logs -->
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden h-full flex flex-col">
-                        <div class="px-4 py-3 sm:px-6 border-b border-gray-200 flex justify-between items-center">
-                            <h3 class="text-lg leading-6 font-semibold text-gray-900">Recent System Logs</h3>
-                            <button onclick="alert('Viewing all system logs...')" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-1 px-3 rounded-md transition">View All</button>
+
+                    <!-- Right Column -->
+                    <div class="lg:col-span-8 flex flex-col">
+                         <div class="bg-white p-6 rounded-xl shadow-lg">
+                            <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 mb-6">What <span class="text-red-600">KIND</span> of Emergency?</h1>
+                            <div id="emergency-buttons-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
+                                <button data-type="Fire" class="emergency-button flex flex-col items-center justify-center p-8 text-white bg-gradient-to-br from-orange-500 via-red-600 to-rose-700 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300">
+                                    <img src="{% static 'images/fire_icon.png' %}" alt="Fire Icon" class="h-12 w-auto" />
+                                    <span class="font-semibold">Fire</span>
+                                </button>
+                                <button data-type="Flood" class="emergency-button flex flex-col items-center justify-center p-8 text-white bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300">
+                                    <img src="{% static 'images/flood_icon.png' %}" alt="Flood Icon" class="h-12 w-auto" />
+                                    <span class="font-semibold">Flood</span>
+                                </button>
+                                <button data-type="Accident" class="emergency-button flex flex-col items-center justify-center p-8 text-white bg-gradient-to-br from-rose-400 via-rose-500 to-red-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300">
+                                    <img src="{% static 'images/accidents_icon.png' %}" alt="Accident Icon" class="h-12 w-auto" />
+                                    <span class="font-semibold">Accident</span>
+                                </button>
+                                <button data-type="Crime" class="emergency-button flex flex-col items-center justify-center p-8 text-white bg-gradient-to-br from-slate-500 via-indigo-600 to-purple-700 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300">
+                                    <img src="{% static 'images/crime_icon.png' %}" alt="Crime Icon" class="h-12 w-auto" />
+                                    <span class="font-semibold">Crime</span>
+                                </button>
+                                <button data-type="Earthquake" class="emergency-button flex flex-col items-center justify-center p-8 text-white bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300">
+                                    <img src="{% static 'images/earthquake_icon.png' %}" alt="Earthquake Icon" class="h-12 w-auto" />
+                                    <span class="font-semibold">Earthquake</span>
+                                </button>
+                            </div>
+                            <!-- Response Container (Initially Hidden) -->
+                            <div id="response-container" class="hidden text-center py-8">
+                                <svg class="w-16 h-16 mx-auto text-green-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <p id="response-message" class="text-lg font-semibold text-gray-800">Responders are on their way.</p>
+                                <p class="text-sm text-gray-500 mt-1">Your location has been shared.</p>
+                                <div class="mt-8 flex justify-center gap-4">
+                                    <button id="cancel-button" class="px-8 py-3 bg-gray-200 text-gray-800 font-bold rounded-lg hover:bg-gray-300 transition-transform transform hover:scale-105">Cancel</button>
+                                    <button id="chat-button" class="px-8 py-3 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition-transform transform hover:scale-105">Chat with Responders</button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="flex-grow p-4 space-y-3 overflow-y-auto">
-                            <div class="flex items-start">
-                                <div class="flex-shrink-0"><div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center"><svg class="h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg></div></div>
-                                <div class="ml-3"><p class="text-sm font-medium text-gray-900">User Login</p><p class="text-sm text-gray-500">Authority bessie.cooper logged in.</p><p class="text-xs text-gray-400 mt-1">7/28/2024, 7:25:00 PM</p></div>
-                            </div>
-                            <div class="flex items-start">
-                                <div class="flex-shrink-0"><div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center"><svg class="h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg></div></div>
-                                <div class="ml-3"><p class="text-sm font-medium text-gray-900">Event Create</p><p class="text-sm text-gray-500">New event #5 created.</p><p class="text-xs text-gray-400 mt-1">7/28/2024, 7:20:00 PM</p></div>
-                            </div>
-                            <div class="flex items-start">
-                                <div class="flex-shrink-0"><div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center"><svg class="h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg></div></div>
-                                <div class="ml-3"><p class="text-sm font-medium text-gray-900">Responder Update</p><p class="text-sm text-gray-500">Responder john.d status changed to Assigned.</p><p class="text-xs text-gray-400 mt-1">7/28/2024, 7:10:00 PM</p></div>
-                            </div>
+
+                        <div class="bg-white p-6 rounded-xl shadow-lg mt-8 flex-grow flex flex-col">
+                             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
+                                <label for="search-location" class="text-lg font-bold text-gray-800">Search Location</label>
+                                <button id="pin-location-btn" class="mt-2 sm:mt-0 flex items-center justify-center space-x-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                                    </svg>
+                                    <span>Pin My Current Location</span>
+                                </button>
+                             </div>
+                             <div id="map-container" class="flex-grow w-full h-64 md:h-full bg-gray-200 rounded-lg overflow-hidden relative flex items-center justify-center">
+                                 <div id="map-loader" class="text-center text-gray-600">
+                                    <svg class="animate-spin h-8 w-8 text-gray-500 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <p class="mt-2 text-sm">Fetching your location...</p>
+                                </div>
+                                <iframe id="map-iframe" class="w-full h-full hidden" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                <div id="location-status" class="absolute bottom-2 left-2 bg-white/80 backdrop-blur-sm px-3 py-1 rounded-md text-xs font-semibold text-gray-700 shadow-md hidden">
+                                    Location pinned!
+                                </div>
+                             </div>
                         </div>
                     </div>
                 </div>
@@ -289,7 +434,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Verification Modal -->
     <div id="verificationModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4 hidden">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
@@ -319,7 +464,90 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- DATA ---
+            // --- USER DATA ---
+            const users = {
+                authority: {
+                    name: 'Bessie Cooper',
+                    email: 'bessie.cooper@example.com',
+                    avatar: 'https://picsum.photos/id/237/100/100',
+                },
+                citizen: {
+                    name: 'Bessie Cooper',
+                    email: 'bessie.cooper@example.com',
+                    avatar: 'https://i.pravatar.cc/40?u=bessie',
+                }
+            };
+
+            //--- Global Elements ---
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const openIcon = document.getElementById('menu-open-icon');
+            const closeIcon = document.getElementById('menu-close-icon');
+
+            // Header Elements
+            const userNameEl = document.getElementById('user-name');
+            const userAvatarEl = document.getElementById('user-avatar');
+            const mobileUserNameEl = document.getElementById('mobile-user-name');
+            const mobileUserEmailEl = document.getElementById('mobile-user-email');
+            const mobileUserAvatarEl = document.getElementById('mobile-user-avatar');
+
+            // --- Mobile Menu Toggle ---
+            if (mobileMenuButton) {
+                 mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                    openIcon.classList.toggle('hidden');
+                    closeIcon.classList.toggle('hidden');
+                });
+            }
+
+            //--- TABS ---
+            const authorityTab = document.getElementById('authority-tab');
+            const citizenTab = document.getElementById('citizen-tab');
+            const authorityView = document.getElementById('authority-view');
+            const citizenView = document.getElementById('citizen-view');
+            let isCitizenMapInitialized = false;
+
+            function updateHeader(view) {
+                const user = (view === 'citizen') ? users.citizen : users.authority;
+                userNameEl.textContent = user.name;
+                userAvatarEl.src = user.avatar;
+                mobileUserNameEl.textContent = user.name;
+                mobileUserEmailEl.textContent = user.email;
+                mobileUserAvatarEl.src = user.avatar;
+            }
+
+            authorityTab.addEventListener('click', () => {
+                // Style tabs
+                authorityTab.classList.add('border-red-600', 'text-red-600');
+                authorityTab.classList.remove('border-transparent', 'text-gray-500');
+                citizenTab.classList.remove('border-red-600', 'text-red-600');
+                citizenTab.classList.add('border-transparent', 'text-gray-500');
+                // Show/hide content
+                authorityView.classList.remove('hidden');
+                citizenView.classList.add('hidden');
+                updateHeader('authority');
+            });
+
+            citizenTab.addEventListener('click', () => {
+                // Style tabs
+                citizenTab.classList.add('border-red-600', 'text-red-600');
+                citizenTab.classList.remove('border-transparent', 'text-gray-500');
+                authorityTab.classList.remove('border-red-600', 'text-red-600');
+                authorityTab.classList.add('border-transparent', 'text-gray-500');
+                // Show/hide content
+                citizenView.classList.remove('hidden');
+                authorityView.classList.add('hidden');
+                updateHeader('citizen');
+
+                if (!isCitizenMapInitialized) {
+                    initializeCitizenMap();
+                    isCitizenMapInitialized = true;
+                }
+            });
+
+            // ===============================================
+            // AUTHORITY DASHBOARD LOGIC (MODALS)
+            // ===============================================
             const MOCK_USERS = [
                 { userId: 'user-001', username: 'kylep', firstName: 'Kyle', lastName: 'Plando', dateOfBirth: '1990-05-15', gender: 'Male', address: '123 Maple St, Mandaue City, Cebu', contactInfo: '09171234567', email: 'kyle.plando@example.com' },
                 { userId: 'user-002', username: 'sherieg', firstName: 'Sherielyn', lastName: 'Guadiana', dateOfBirth: '1992-08-22', gender: 'Female', address: '456 Oak Ave, Cebu City, Cebu', contactInfo: '09187654321', email: 'sherie.g@example.com' }
@@ -341,99 +569,132 @@
                 { verificationId: 'ver-003', userId: 'user-001', requestedRole: 'Responder', submittedDocumentsStatus: 'Received', status: 'Pending', medicalConditions: [] }
             ];
 
-            //--- Mobile Menu ---
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-            const openIcon = document.getElementById('menu-open-icon');
-            const closeIcon = document.getElementById('menu-close-icon');
+            const createInfoRow = (label, value) => `<div class="grid grid-cols-3 gap-4 py-2"><dt class="text-sm font-medium text-gray-500">${label}</dt><dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">${value || 'N/A'}</dd></div>`;
 
-            if (mobileMenuButton) {
-                 mobileMenuButton.addEventListener('click', () => {
-                    mobileMenu.classList.toggle('hidden');
-                    openIcon.classList.toggle('hidden');
-                    closeIcon.classList.toggle('hidden');
-                });
-            }
-
-            // --- Modal Info Row Helper ---
-            const createInfoRow = (label, value) => `
-                <div class="grid grid-cols-3 gap-4 py-2">
-                    <dt class="text-sm font-medium text-gray-500">${label}</dt>
-                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">${value || 'N/A'}</dd>
-                </div>`;
-
-            // --- Responder Modal ---
             const responderModal = document.getElementById('responderModal');
             window.openResponderModal = (responderId) => {
                 const responder = MOCK_RESPONDERS.find(r => r.userId === responderId);
                 if (!responder) return;
-
                 document.getElementById('responderModalTitle').innerText = `Responder Details: ${responder.username}`;
                 document.getElementById('responderModalMap').innerHTML = `<p class="text-gray-500">Map Placeholder for ${responder.location.lat}, ${responder.location.lng}</p>`;
-
                 const credentialsContainer = document.getElementById('responderModalCredentials');
-                credentialsContainer.innerHTML = createInfoRow('Credential ID', responder.credentials.id) +
-                                                 createInfoRow('Type', responder.credentials.type) +
-                                                 createInfoRow('Expires', new Date(responder.credentials.expires).toLocaleDateString());
-
+                credentialsContainer.innerHTML = createInfoRow('Credential ID', responder.credentials.id) + createInfoRow('Type', responder.credentials.type) + createInfoRow('Expires', new Date(responder.credentials.expires).toLocaleDateString());
                 const eventContainer = document.getElementById('responderModalEvent');
                 const assignedEvent = MOCK_EVENTS.find(e => e.eventId === responder.assignedEventId);
-                if (assignedEvent) {
-                    eventContainer.innerHTML = `<dl class="divide-y divide-gray-200">
-                        ${createInfoRow('Event ID', assignedEvent.eventId)}
-                        ${createInfoRow('Category', assignedEvent.category)}
-                        ${createInfoRow('Location', assignedEvent.location)}
-                        ${createInfoRow('Severity', assignedEvent.severityLevel)}
-                    </dl>`;
-                } else {
-                    eventContainer.innerHTML = '<p class="text-sm text-gray-500">Not currently assigned to an event.</p>';
-                }
-
+                eventContainer.innerHTML = assignedEvent ? `<dl class="divide-y divide-gray-200">${createInfoRow('Event ID', assignedEvent.eventId)}${createInfoRow('Category', assignedEvent.category)}${createInfoRow('Location', assignedEvent.location)}${createInfoRow('Severity', assignedEvent.severityLevel)}</dl>` : '<p class="text-sm text-gray-500">Not currently assigned to an event.</p>';
                 responderModal.classList.remove('hidden');
             };
             window.closeResponderModal = () => responderModal.classList.add('hidden');
 
-            // --- Verification Modal ---
             const verificationModal = document.getElementById('verificationModal');
-
             window.openVerificationModal = (verificationId) => {
                 const verification = MOCK_VERIFICATIONS.find(v => v.verificationId === verificationId);
                 if (!verification) return;
-
-                // Find the associated user information
                 const user = MOCK_USERS.find(u => u.userId === verification.userId);
-
                 document.getElementById('verificationModalTitle').innerText = `Review Verification: ${user ? user.username : 'N/A'}`;
-
-                // Populate Personal Info
                 const personalInfoContainer = document.getElementById('verificationModalPersonalInfo');
-                if (user) {
-                    personalInfoContainer.innerHTML = createInfoRow('Full Name', `${user.firstName} ${user.lastName}`) +
-                                                      createInfoRow('Requested Role', verification.requestedRole) +
-                                                      createInfoRow('Email', user.email) +
-                                                      createInfoRow('Contact', user.contactInfo) +
-                                                      createInfoRow('Address', user.address) +
-                                                      createInfoRow('Date of Birth', user.dateOfBirth);
-                } else {
-                    personalInfoContainer.innerHTML = '<p class="text-sm text-red-500">User details not found.</p>';
-                }
-
-                // Populate Medical Info
+                personalInfoContainer.innerHTML = user ? createInfoRow('Full Name', `${user.firstName} ${user.lastName}`) + createInfoRow('Requested Role', verification.requestedRole) + createInfoRow('Email', user.email) + createInfoRow('Contact', user.contactInfo) + createInfoRow('Address', user.address) + createInfoRow('Date of Birth', user.dateOfBirth) : '<p class="text-sm text-red-500">User details not found.</p>';
                 const medicalInfoContainer = document.getElementById('verificationModalMedicalInfo');
-                if (verification.medicalConditions && verification.medicalConditions.length > 0) {
-                    medicalInfoContainer.innerHTML = `<dl class="divide-y divide-gray-200">
-                        ${verification.medicalConditions.map(cond =>
-                            createInfoRow(`Condition: ${cond.conditionName}`, cond.notes)
-                        ).join('')}
-                    </dl>`;
-                } else {
-                    medicalInfoContainer.innerHTML = '<p class="text-sm text-gray-500">No medical conditions reported.</p>';
-                }
-
+                medicalInfoContainer.innerHTML = (verification.medicalConditions && verification.medicalConditions.length > 0) ? `<dl class="divide-y divide-gray-200">${verification.medicalConditions.map(cond => createInfoRow(`Condition: ${cond.conditionName}`, cond.notes)).join('')}</dl>` : '<p class="text-sm text-gray-500">No medical conditions reported.</p>';
                 verificationModal.classList.remove('hidden');
             };
-
             window.closeVerificationModal = () => verificationModal.classList.add('hidden');
+
+            // ===============================================
+            // CITIZEN DASHBOARD LOGIC
+            // ===============================================
+            const sosButton = document.getElementById('sos-button');
+            const emergencyButtons = document.querySelectorAll('.emergency-button');
+            const pinLocationButton = document.getElementById('pin-location-btn');
+            const locationStatus = document.getElementById('location-status');
+            const mapIframe = document.getElementById('map-iframe');
+            const mapLoader = document.getElementById('map-loader');
+            const emergencyButtonsGrid = document.getElementById('emergency-buttons-grid');
+            const responseContainer = document.getElementById('response-container');
+            const responseMessage = document.getElementById('response-message');
+            const cancelButton = document.getElementById('cancel-button');
+            const chatButton = document.getElementById('chat-button');
+
+            const geoOptions = { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 };
+
+            async function getCurrentLocation() {
+                return new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(
+                        pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+                        err => { console.warn(`ERROR(${err.code}): ${err.message}`); reject(err); },
+                        geoOptions
+                    );
+                });
+            }
+
+            function updateCitizenMap(lat, lon) {
+                const bbox = 0.005;
+                const url = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - bbox},${lat - bbox},${lon + bbox},${lat + bbox}&layer=mapnik&marker=${lat},${lon}`;
+                if (mapIframe.src !== url) mapIframe.src = url;
+                mapIframe.onload = () => {
+                    mapLoader.classList.add('hidden');
+                    mapIframe.classList.remove('hidden');
+                };
+            }
+
+            async function initializeCitizenMap() {
+                try {
+                    const location = await getCurrentLocation();
+                    updateCitizenMap(location.lat, location.lon);
+                } catch(e) {
+                    mapLoader.innerHTML = `<div class="p-4 text-center"><p class="text-sm text-gray-700">Could not get your location.</p><p class="text-xs text-gray-500 mt-1">Please enable location services and <button id="retry-location-btn" class="text-red-600 underline">try again</button>.</p></div>`;
+                    const retryBtn = document.getElementById('retry-location-btn');
+                    if (retryBtn) {
+                        retryBtn.addEventListener('click', () => {
+                            mapLoader.innerHTML = `<div class="text-center text-gray-600"><svg class="animate-spin h-8 w-8 text-gray-500 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><p class="mt-2 text-sm">Fetching your location...</p></div>`;
+                            initializeCitizenMap();
+                        });
+                    }
+                }
+            }
+
+            sosButton.addEventListener('click', async () => {
+                try {
+                    const location = await getCurrentLocation();
+                    alert(`SOS SIGNAL SENT!\n\nLocation: Lat: ${location.lat.toFixed(6)}, Lon: ${location.lon.toFixed(6)}\n\nResponders dispatched.`);
+                } catch (e) { alert('Could not get location. Please enable location services.'); }
+            });
+
+            emergencyButtons.forEach(button => {
+                button.addEventListener('click', async () => {
+                    const emergencyType = button.dataset.type;
+                     try {
+                        await getCurrentLocation();
+                        responseMessage.textContent = `${emergencyType} responders are on their way.`;
+                        emergencyButtonsGrid.classList.add('hidden');
+                        responseContainer.classList.remove('hidden');
+                    } catch (e) { alert('Could not get location. Please enable location services.'); }
+                });
+            });
+
+            cancelButton.addEventListener('click', () => {
+                responseContainer.classList.add('hidden');
+                emergencyButtonsGrid.classList.remove('hidden');
+            });
+
+            chatButton.addEventListener('click', () => alert('Opening chat...'));
+
+            pinLocationButton.addEventListener('click', async () => {
+                locationStatus.textContent = `Pinning...`;
+                locationStatus.classList.remove('hidden');
+                try {
+                    const location = await getCurrentLocation();
+                    updateCitizenMap(location.lat, location.lon);
+                    locationStatus.textContent = `Pinned: ${location.lat.toFixed(4)}, ${location.lon.toFixed(4)}`;
+                    setTimeout(() => locationStatus.classList.add('hidden'), 4000);
+                } catch(e) {
+                    locationStatus.textContent = `Failed to pin.`;
+                    setTimeout(() => locationStatus.classList.add('hidden'), 4000);
+                }
+            });
+
+            // --- INITIALIZATION ---
+            updateHeader('authority');
         });
     </script>
 </body>

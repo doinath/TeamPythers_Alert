@@ -200,6 +200,43 @@
                         </div>
                     </div>
 
+                    <!-- Medical Information -->
+                    <div id="medical-info-section" class="mt-8 pt-6 border-t border-gray-200 hidden">
+                        <h2 class="text-lg font-semibold text-gray-800 mb-6">Medical Information (Optional)</h2>
+                        <p class="text-sm text-gray-500 mb-6 -mt-4">This information will only be shared with verified responders during an emergency to provide you with the best possible care.</p>
+
+                        <div id="medical-info-container" class="space-y-6">
+                            <!-- Dynamic medical entries will be injected here -->
+                        </div>
+
+                        <div class="mt-6">
+                            <button type="button" id="add-medical-info-button" class="flex items-center text-sm font-semibold text-red-600 hover:text-red-800">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
+                                </svg>
+                                Add Medical Information
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Citizen ID Section -->
+                    <div id="citizen-id-section" class="mt-8 pt-6 border-t border-gray-200 hidden">
+                        <h2 class="text-lg font-semibold text-gray-800 mb-6">Verification Documents</h2>
+                        <p class="text-sm text-gray-500 mb-6 -mt-4">Please upload a clear image of your official ID for verification (e.g., National ID, Passport).</p>
+                        <div id="citizen-id-container" class="space-y-6">
+                            <!-- Dynamic ID entries will be injected here -->
+                        </div>
+                         <div class="mt-6">
+                            <button type="button" id="add-citizen-id-button" class="flex items-center text-sm font-semibold text-red-600 hover:text-red-800">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
+                                </svg>
+                                Add Government ID
+                            </button>
+                        </div>
+                    </div>
+
+
                     <!-- Responder Details -->
                     <div id="responder-details" class="mt-8 pt-6 border-t border-gray-200 hidden">
                         <h2 class="text-lg font-semibold text-gray-800 mb-6">Responder Details</h2>
@@ -226,10 +263,20 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="mt-6">
-                            <label for="responder-id-doc" class="block text-sm font-medium text-gray-600 mb-1">Attach Government Document / ID</label>
-                            <p class="text-xs text-gray-500 mb-2">Please upload a clear image of your official ID for verification (e.g., PRC ID, Agency ID).</p>
-                            <input type="file" id="responder-id-doc" name="idDoc" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100"/>
+                        <div class="mt-8">
+                            <h3 class="text-md font-semibold text-gray-700 mb-4">Verification Documents</h3>
+                            <p class="text-xs text-gray-500 mb-4">Please upload a clear image of your official ID for verification (e.g., PRC ID, Agency ID).</p>
+                             <div id="responder-id-container" class="space-y-6">
+                                <!-- Dynamic ID entries for responders -->
+                            </div>
+                             <div class="mt-6">
+                                <button type="button" id="add-responder-id-button" class="flex items-center text-sm font-semibold text-red-600 hover:text-red-800">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
+                                    </svg>
+                                    Add Government ID
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -246,10 +293,20 @@
                                 <input type="text" id="jurisdiction" name="jurisdiction" placeholder="e.g., National, Region IV-A" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500 transition">
                             </div>
                         </div>
-                        <div class="mt-6">
-                            <label for="authority-id-doc" class="block text-sm font-medium text-gray-600 mb-1">Attach Government Document / ID</label>
-                            <p class="text-xs text-gray-500 mb-2">Please upload a clear image of your official ID for verification (e.g., PRC ID, Agency ID).</p>
-                            <input type="file" id="authority-id-doc" name="idDoc" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100"/>
+                        <div class="mt-8">
+                            <h3 class="text-md font-semibold text-gray-700 mb-4">Verification Documents</h3>
+                            <p class="text-xs text-gray-500 mb-4">Please upload a clear image of your official ID for verification (e.g., PRC ID, Agency ID).</p>
+                             <div id="authority-id-container" class="space-y-6">
+                                <!-- Dynamic ID entries for authorities -->
+                            </div>
+                             <div class="mt-6">
+                                <button type="button" id="add-authority-id-button" class="flex items-center text-sm font-semibold text-red-600 hover:text-red-800">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
+                                    </svg>
+                                    Add Government ID
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -306,75 +363,224 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Page elements
+            // Page containers
             const roleSelectionPage = document.getElementById('role-selection-page');
             const registrationFormPage = document.getElementById('registration-form-page');
 
-            // Role selection buttons
+            // Role selection cards
             const selectCitizenBtn = document.getElementById('select-citizen');
             const selectResponderBtn = document.getElementById('select-responder');
             const selectAuthorityBtn = document.getElementById('select-authority');
 
-            // Form elements
+            // Form and navigation elements
             const changeRoleBtn = document.getElementById('change-role-button');
             const registrationForm = document.getElementById('registration-form');
             const formTitleRole = document.getElementById('form-title-role');
+
+            // Role-specific form sections
+            const medicalInfoSection = document.getElementById('medical-info-section');
+            const citizenIdSection = document.getElementById('citizen-id-section');
             const responderDetailsSection = document.getElementById('responder-details');
             const authorityDetailsSection = document.getElementById('authority-details');
 
-            const showRoleSelection = () => {
-                roleSelectionPage.classList.remove('hidden');
-                registrationFormPage.classList.add('hidden');
+            // Dynamic content containers
+            const medicalInfoContainer = document.getElementById('medical-info-container');
+            const citizenIdContainer = document.getElementById('citizen-id-container');
+            const responderIdContainer = document.getElementById('responder-id-container');
+            const authorityIdContainer = document.getElementById('authority-id-container');
+
+
+            // "Add" buttons
+            const addMedicalInfoBtn = document.getElementById('add-medical-info-button');
+            const addCitizenIdBtn = document.getElementById('add-citizen-id-button');
+            const addResponderIdBtn = document.getElementById('add-responder-id-button');
+            const addAuthorityIdBtn = document.getElementById('add-authority-id-button');
+
+            let medicalInfoCounter = 0;
+            let governmentIdCounter = 0;
+
+            // --- TEMPLATE FUNCTIONS ---
+
+            const createMedicalInfoEntry = () => {
+                medicalInfoCounter++;
+                const entry = document.createElement('div');
+                entry.className = 'medical-entry p-4 border border-gray-200 rounded-lg relative';
+                entry.innerHTML = `
+                    <button type="button" class="remove-entry-button absolute top-2 right-2 text-gray-400 hover:text-red-600" aria-label="Remove medical entry">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>
+                    </button>
+                    <div>
+                        <label for="condition_name_${medicalInfoCounter}" class="block text-sm font-medium text-gray-600 mb-1">Condition Name</label>
+                        <input type="text" id="condition_name_${medicalInfoCounter}" name="condition_name" placeholder="e.g., Penicillin Allergy, Asthma" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500 transition">
+                    </div>
+                    <div class="mt-6">
+                        <label for="freeTextNotes_${medicalInfoCounter}" class="block text-sm font-medium text-gray-600 mb-1">Free Text Notes</label>
+                        <textarea id="freeTextNotes_${medicalInfoCounter}" name="notes" rows="3" placeholder="e.g., Patient also reported mild nausea." class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500 transition"></textarea>
+                    </div>
+                `;
+                entry.querySelector('.remove-entry-button').addEventListener('click', () => entry.remove());
+                return entry;
             };
 
+            const createGovernmentIdEntry = () => {
+                governmentIdCounter++;
+                const entry = document.createElement('div');
+                entry.className = 'id-entry p-4 border border-gray-200 rounded-lg relative';
+                entry.innerHTML = `
+                    <button type="button" class="remove-entry-button absolute top-2 right-2 text-gray-400 hover:text-red-600" aria-label="Remove ID entry">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>
+                    </button>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="id_type_${governmentIdCounter}" class="block text-sm font-medium text-gray-600 mb-1">ID Type</label>
+                            <select id="id_type_${governmentIdCounter}" name="id_type" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500 bg-white transition">
+                                <option value="">Select ID Type</option>
+                                <option value="national_id">National ID (PhilSys)</option>
+                                <option value="passport">Passport</option>
+                                <option value="drivers_license">Driver's License</option>
+                                <option value="prc_id">PRC ID</option>
+                                <option value="agency_id">Agency ID</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="id_number_${governmentIdCounter}" class="block text-sm font-medium text-gray-600 mb-1">ID Number</label>
+                            <input type="text" id="id_number_${governmentIdCounter}" name="id_number" placeholder="Enter ID number" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500 transition">
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <label for="id_doc_${governmentIdCounter}" class="block text-sm font-medium text-gray-600 mb-1">Attach ID Document</label>
+                        <input type="file" id="id_doc_${governmentIdCounter}" name="id_doc" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100"/>
+                    </div>
+                `;
+                entry.querySelector('.remove-entry-button').addEventListener('click', () => entry.remove());
+                return entry;
+            };
+
+            // --- EVENT LISTENERS for "Add" buttons ---
+
+            addMedicalInfoBtn.addEventListener('click', () => {
+                medicalInfoContainer.appendChild(createMedicalInfoEntry());
+            });
+
+            addCitizenIdBtn.addEventListener('click', () => {
+                citizenIdContainer.appendChild(createGovernmentIdEntry());
+            });
+
+            addResponderIdBtn.addEventListener('click', () => {
+                responderIdContainer.appendChild(createGovernmentIdEntry());
+            });
+
+            addAuthorityIdBtn.addEventListener('click', () => {
+                authorityIdContainer.appendChild(createGovernmentIdEntry());
+            });
+
+
+            // Function to switch view to the registration form
             const showRegistrationForm = (role) => {
                 roleSelectionPage.classList.add('hidden');
                 registrationFormPage.classList.remove('hidden');
-
-                // Update form title
                 formTitleRole.textContent = role;
 
-                // Clear placeholder values from role-specific fields for a clean form
-                if (role !== 'Responder') {
-                    document.getElementById('department').value = '';
-                    document.getElementById('responderRole').value = '';
-                    document.getElementById('serviceArea').value = '';
-                    document.getElementById('dutyStatus').value = '';
-                    document.getElementById('responder-id-doc').value = '';
-                }
-                if (role !== 'Authority') {
-                    document.getElementById('agencyName').value = '';
-                    document.getElementById('jurisdiction').value = '';
-                    document.getElementById('authority-id-doc').value = '';
-                }
-
-
-                // Hide all role-specific sections
+                // Hide all role-specific sections initially
+                medicalInfoSection.classList.add('hidden');
+                citizenIdSection.classList.add('hidden');
                 responderDetailsSection.classList.add('hidden');
                 authorityDetailsSection.classList.add('hidden');
 
-                // Show the relevant section
-                if (role === 'Responder') {
+                // Clear dynamic containers
+                medicalInfoContainer.innerHTML = '';
+                citizenIdContainer.innerHTML = '';
+                responderIdContainer.innerHTML = '';
+                authorityIdContainer.innerHTML = '';
+
+                // Show sections based on role
+                if (role === 'Citizen') {
+                    medicalInfoSection.classList.remove('hidden');
+                    citizenIdSection.classList.remove('hidden');
+                    medicalInfoContainer.appendChild(createMedicalInfoEntry()); // Add one by default
+                    citizenIdContainer.appendChild(createGovernmentIdEntry()); // Add one by default
+                } else if (role === 'Responder') {
+                    medicalInfoSection.classList.remove('hidden');
                     responderDetailsSection.classList.remove('hidden');
+                    medicalInfoContainer.appendChild(createMedicalInfoEntry()); // Add one by default
+                    responderIdContainer.appendChild(createGovernmentIdEntry()); // Add one by default
                 } else if (role === 'Authority') {
+                    medicalInfoSection.classList.remove('hidden');
                     authorityDetailsSection.classList.remove('hidden');
+                    medicalInfoContainer.appendChild(createMedicalInfoEntry()); // Add one by default
+                    authorityIdContainer.appendChild(createGovernmentIdEntry()); // Add one by default
                 }
+
+                window.scrollTo(0, 0);
             };
 
-            // Event Listeners
+            // Function to switch view back to role selection
+            const showRoleSelection = () => {
+                registrationFormPage.classList.add('hidden');
+                roleSelectionPage.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            };
+
+            // Attach event listeners for role selection
             selectCitizenBtn.addEventListener('click', () => showRegistrationForm('Citizen'));
             selectResponderBtn.addEventListener('click', () => showRegistrationForm('Responder'));
             selectAuthorityBtn.addEventListener('click', () => showRegistrationForm('Authority'));
-
             changeRoleBtn.addEventListener('click', showRoleSelection);
 
+            // Handle form submission
             registrationForm.addEventListener('submit', (event) => {
                 event.preventDefault();
+
                 const formData = new FormData(registrationForm);
                 const data = {};
-                formData.forEach((value, key) => {
-                    data[key] = value;
+                // Basic fields
+                for (const [key, value] of formData.entries()) {
+                     if (!key.startsWith('condition_name') && !key.startsWith('notes') && !key.startsWith('id_type') && !key.startsWith('id_number') && !key.startsWith('id_doc')) {
+                        data[key] = value;
+                    }
+                }
+
+                // Process medical info
+                const medicalEntries = [];
+                medicalInfoContainer.querySelectorAll('.medical-entry').forEach(entry => {
+                    const conditionName = entry.querySelector('input[name="condition_name"]').value;
+                    const notes = entry.querySelector('textarea[name="notes"]').value;
+
+                    if (conditionName || notes) {
+                        medicalEntries.push({
+                            condition_name: conditionName,
+                            notes: notes
+                        });
+                    }
                 });
+                if (medicalEntries.length > 0) {
+                    data.medical_information = medicalEntries;
+                }
+
+                // Process government IDs
+                const governmentIdEntries = [];
+                const visibleIdContainer = document.querySelector('#citizen-id-container, #responder-id-container, #authority-id-container');
+                 if (visibleIdContainer) {
+                    visibleIdContainer.querySelectorAll('.id-entry').forEach(entry => {
+                        const idType = entry.querySelector('select[name="id_type"]').value;
+                        const idNumber = entry.querySelector('input[name="id_number"]').value;
+                        const idDocFile = entry.querySelector('input[name="id_doc"]').files[0];
+
+                        if(idType || idNumber || idDocFile) {
+                            governmentIdEntries.push({
+                                type: idType,
+                                number: idNumber,
+                                file: idDocFile ? idDocFile.name : null // Just showing the name for demo
+                            });
+                        }
+                    });
+                }
+                if (governmentIdEntries.length > 0) {
+                    data.government_ids = governmentIdEntries;
+                }
+
+
                 console.log(`Submitting ${formTitleRole.textContent} registration with data:`, data);
                 alert(`${formTitleRole.textContent} account registration submitted! (Check console for data)`);
             });

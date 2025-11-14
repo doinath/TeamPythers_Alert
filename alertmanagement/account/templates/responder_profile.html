@@ -15,8 +15,9 @@
         .animate-fadeIn {
             animation: fadeIn 0.5s ease-out forwards;
         }
-        .edit-mode {
-            background-color: #f9fafb;
+        /* Helper to hide elements */
+        .hidden {
+            display: none;
         }
     </style>
 </head>
@@ -87,27 +88,30 @@
 
     <main class="container mx-auto p-4 sm:p-6 lg:p-8">
         <div class="space-y-8 animate-fadeIn">
-            <div class="flex justify-between items-center">
-                <h1 class="text-3xl font-bold text-gray-900">Responder Profile</h1>
-                <button id="editButton" class="px-6 py-2 bg-red-700 text-white font-semibold rounded-lg shadow-md hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75 transition-colors">Edit Profile</button>
+            <div class="flex justify-end space-x-2">
+                <button id="edit-profile-btn" class="px-6 py-2 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-75 transition-colors bg-red-700 hover:bg-red-800 focus:ring-red-500">
+                    Edit Profile
+                </button>
+                <button id="save-profile-btn" class="hidden px-6 py-2 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-75 transition-colors bg-blue-600 hover:bg-blue-700 focus:ring-blue-500">
+                    Save Profile
+                </button>
             </div>
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div class="lg:col-span-1 space-y-6">
                     <div class="bg-white p-6 rounded-lg shadow-md text-center">
-                        <img
-                            class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-red-200"
-                            src="https://i.pravatar.cc/150?u=sherieguadez"
-                            alt="Responder Profile"
-                        />
-                        <h2 class="text-2xl font-bold text-gray-800 view-mode">Sherie Guadez</h2>
-                        <input type="text" class="hidden edit-mode text-2xl font-bold text-gray-800 border rounded-md px-2 py-1 w-full text-center" />
-
-                        <p class="text-sm text-gray-500 mt-1 view-mode">sherie.guadez@responder.gov</p>
-                        <input type="email" class="hidden edit-mode text-sm text-gray-500 border rounded-md px-2 py-1 w-full mt-1 text-center" />
-
-                        <p class="text-sm text-gray-500 view-mode">0922-555-9876</p>
-                        <input type="tel" class="hidden edit-mode text-sm text-gray-500 border rounded-md px-2 py-1 w-full text-center" />
-
+                        <img class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-red-200" src="https://i.pravatar.cc/150?u=sherieguadez" alt="Responder Profile"/>
+                        <div data-editable-container>
+                             <h2 class="text-2xl font-bold text-gray-800 data-view">Sherie Guadez</h2>
+                             <input type="text" value="Sherie Guadez" class="hidden data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 text-center text-2xl font-bold"/>
+                        </div>
+                       <div data-editable-container>
+                            <p class="text-sm text-gray-500 mt-1 data-view">sherie.guadez@responder.gov</p>
+                            <input type="email" value="sherie.guadez@responder.gov" class="hidden data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 text-center text-sm"/>
+                       </div>
+                        <div data-editable-container>
+                            <p class="text-sm text-gray-500 data-view">0922-555-9876</p>
+                             <input type="tel" value="0922-555-9876" class="hidden data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 text-center text-sm"/>
+                        </div>
                         <span class="mt-4 inline-block bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">
                             Responder
                         </span>
@@ -115,17 +119,17 @@
                     <div class="bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2 mb-4">Address</h3>
                         <address class="text-sm not-italic text-gray-700 space-y-1">
-                            <div>
-                                <p class="view-mode">456 Oak Ave, Hipodromo</p>
-                                <input type="text" class="hidden edit-mode text-sm w-full border rounded-md p-1">
+                            <div data-editable-container>
+                                <p class="data-view">456 Oak Ave, Hipodromo</p>
+                                <input type="text" value="456 Oak Ave, Hipodromo" class="hidden data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 text-sm"/>
                             </div>
-                            <div>
-                                <p class="view-mode">Mandaue City, Cebu</p>
-                                <input type="text" class="hidden edit-mode text-sm w-full border rounded-md p-1">
+                             <div data-editable-container>
+                                <p class="data-view">Mandaue City, Cebu</p>
+                                <input type="text" value="Mandaue City, Cebu" class="hidden data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 text-sm"/>
                             </div>
-                            <div>
-                                <p class="view-mode">6014</p>
-                                <input type="text" class="hidden edit-mode text-sm w-full border rounded-md p-1">
+                             <div data-editable-container>
+                                <p class="data-view">6014</p>
+                                <input type="text" value="6014" class="hidden data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 text-sm"/>
                             </div>
                         </address>
                     </div>
@@ -136,22 +140,24 @@
                         <dl>
                              <div class="grid grid-cols-3 gap-4 py-3 border-b border-gray-100 last:border-b-0">
                                 <dt class="text-sm font-medium text-gray-500">Department Unit</dt>
-                                <dd class="text-sm text-gray-900 col-span-2 view-mode">Mandaue City Fire Department</dd>
-                                <dd class="col-span-2 hidden edit-mode"><input type="text" class="text-sm text-gray-900 w-full border rounded-md p-1"></dd>
+                                <dd class="text-sm text-gray-900 col-span-2" data-editable-container>
+                                    <p class="data-view">Mandaue City Fire Department</p>
+                                    <input type="text" value="Mandaue City Fire Department" class="hidden data-edit w-full border rounded-md p-1">
+                                </dd>
                             </div>
                             <div class="grid grid-cols-3 gap-4 py-3 border-b border-gray-100 last:border-b-0">
                                 <dt class="text-sm font-medium text-gray-500">Service Area</dt>
-                                <dd class="text-sm text-gray-900 col-span-2 view-mode">Mandaue City</dd>
-                                <dd class="col-span-2 hidden edit-mode"><input type="text" class="text-sm text-gray-900 w-full border rounded-md p-1"></dd>
+                                <dd class="text-sm text-gray-900 col-span-2" data-editable-container>
+                                    <p class="data-view">Mandaue City</p>
+                                    <input type="text" value="Mandaue City" class="hidden data-edit w-full border rounded-md p-1">
+                                </dd>
                             </div>
                             <div class="grid grid-cols-3 gap-4 py-3 border-b border-gray-100 last:border-b-0">
                                 <dt class="text-sm font-medium text-gray-500">Duty Status</dt>
-                                <dd class="text-sm text-gray-900 col-span-2 view-mode">
-                                    <span class="font-bold text-green-600">On Duty</span>
-                                </dd>
-                                <dd class="col-span-2 hidden edit-mode">
-                                    <select class="text-sm text-gray-900 w-full border rounded-md p-1">
-                                        <option>On Duty</option>
+                                <dd class="text-sm text-gray-900 col-span-2" data-editable-container>
+                                    <p class="data-view"><span class="font-bold text-green-600">On Duty</span></p>
+                                    <select class="hidden data-edit w-full border rounded-md p-1">
+                                        <option selected>On Duty</option>
                                         <option>Off Duty</option>
                                         <option>Assigned</option>
                                     </select>
@@ -159,8 +165,10 @@
                             </div>
                             <div class="grid grid-cols-3 gap-4 py-3 border-b border-gray-100 last:border-b-0">
                                 <dt class="text-sm font-medium text-gray-500">Joined Date</dt>
-                                <dd class="text-sm text-gray-900 col-span-2 view-mode">8/15/2022</dd>
-                                <dd class="col-span-2 hidden edit-mode"><input type="date" class="text-sm text-gray-900 w-full border rounded-md p-1" value="2022-08-15"></dd>
+                                 <dd class="text-sm text-gray-900 col-span-2" data-editable-container>
+                                    <p class="data-view">8/15/2022</p>
+                                    <input type="date" value="2022-08-15" class="hidden data-edit w-full border rounded-md p-1">
+                                </dd>
                             </div>
                         </dl>
                     </div>
@@ -169,15 +177,17 @@
                         <dl>
                              <div class="grid grid-cols-3 gap-4 py-3 border-b border-gray-100 last:border-b-0">
                                 <dt class="text-sm font-medium text-gray-500">Date of Birth</dt>
-                                <dd class="text-sm text-gray-900 col-span-2 view-mode">1988-11-22</dd>
-                                <dd class="col-span-2 hidden edit-mode"><input type="date" class="text-sm text-gray-900 w-full border rounded-md p-1" value="1988-11-22"></dd>
+                                <dd class="text-sm text-gray-900 col-span-2" data-editable-container>
+                                    <p class="data-view">1988-11-22</p>
+                                    <input type="date" value="1988-11-22" class="hidden data-edit w-full border rounded-md p-1">
+                                </dd>
                             </div>
                             <div class="grid grid-cols-3 gap-4 py-3 border-b border-gray-100 last:border-b-0">
                                 <dt class="text-sm font-medium text-gray-500">Gender</dt>
-                                <dd class="text-sm text-gray-900 col-span-2 view-mode">Female</dd>
-                                <dd class="col-span-2 hidden edit-mode">
-                                    <select class="text-sm text-gray-900 w-full border rounded-md p-1">
-                                        <option>Female</option>
+                                <dd class="text-sm text-gray-900 col-span-2" data-editable-container>
+                                    <p class="data-view">Female</p>
+                                    <select class="hidden data-edit w-full border rounded-md p-1">
+                                        <option selected>Female</option>
                                         <option>Male</option>
                                         <option>Other</option>
                                     </select>
@@ -185,102 +195,313 @@
                             </div>
                         </dl>
                     </div>
+
+                    <!-- Medical Information Card -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                         <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-4">
+                            <h3 class="text-xl font-bold text-gray-800">Medical Information</h3>
+                             <button class="add-item-btn hidden px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600" data-target-list="#medical-list" data-template-id="medical-template">Add</button>
+                        </div>
+                        <div id="medical-list">
+                            <div class="py-2 border-b border-gray-100 last:border-b-0 editable-list-item">
+                                <button class="remove-item-btn hidden float-right text-red-500 hover:text-red-700 text-2xl font-bold">&times;</button>
+                                <div data-editable-container>
+                                    <h4 class="font-semibold text-gray-800 data-view">Allergy to Penicillin</h4>
+                                    <input type="text" value="Allergy to Penicillin" class="hidden data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm font-semibold"/>
+                                </div>
+                                <div data-editable-container>
+                                    <p class="text-sm text-gray-600 data-view">Causes rash and difficulty breathing.</p>
+                                    <textarea class="hidden data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-sm">Causes rash and difficulty breathing.</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Other Contact Information Card -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-4">
+                            <h3 class="text-xl font-bold text-gray-800">Other Contact Information</h3>
+                             <div class="space-x-2">
+                                <button class="add-item-btn hidden px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600" data-target-list="#contact-list" data-template-id="contact-phone-template">Add Phone</button>
+                                <button class="add-item-btn hidden px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600" data-target-list="#contact-list" data-template-id="contact-email-template">Add Email</button>
+                            </div>
+                        </div>
+                        <ul class="divide-y divide-gray-100" id="contact-list">
+                             <li class="py-3 flex items-center justify-between editable-list-item">
+                                <div class="flex items-center flex-grow">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                    </svg>
+                                    <div data-editable-container class="w-full">
+                                        <p class="text-sm text-gray-700 data-view">0918-123-4567 (Emergency)</p>
+                                        <input type="tel" value="0918-123-4567 (Emergency)" class="hidden data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-sm"/>
+                                    </div>
+                                </div>
+                                <button class="remove-item-btn hidden ml-4 text-red-500 hover:text-red-700 text-2xl font-bold">&times;</button>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Government IDs Card -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                         <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-4">
+                            <h3 class="text-xl font-bold text-gray-800">Government IDs</h3>
+                            <button class="add-item-btn hidden px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600" data-target-list="#gov-id-list" data-template-id="gov-id-template">Add ID</button>
+                        </div>
+                        <ul class="divide-y divide-gray-100" id="gov-id-list">
+                            <li class="py-3 flex justify-between items-center editable-list-item">
+                                <div class="flex-grow pr-4">
+                                    <div data-editable-container>
+                                        <p class="font-semibold text-gray-800 data-view">PRC License</p>
+                                        <input type="text" value="PRC License" class="hidden data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm font-semibold"/>
+                                    </div>
+                                    <div data-editable-container>
+                                        <p class="text-sm text-gray-500 data-view">12345678</p>
+                                        <input type="text" value="12345678" class="hidden data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-sm"/>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                     <span class="text-xs font-medium bg-green-100 text-green-800 px-2 py-0.5 rounded-full view-state">Verified</span>
+                                     <button class="view-id-btn px-3 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 view-state">View ID</button>
+                                     <button class="remove-item-btn hidden text-red-500 hover:text-red-700 text-2xl font-bold">&times;</button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
+
+    <!-- Templates for adding new items -->
+    <template id="medical-template">
+        <div class="py-2 border-b border-gray-100 last:border-b-0 editable-list-item">
+            <button class="remove-item-btn float-right text-red-500 hover:text-red-700 text-2xl font-bold">&times;</button>
+            <div data-editable-container>
+                <h4 class="font-semibold text-gray-800 hidden data-view">New Medical Item</h4>
+                <input type="text" value="New Medical Item" class="data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm font-semibold"/>
+            </div>
+            <div data-editable-container>
+                <p class="text-sm text-gray-600 hidden data-view">Description</p>
+                <textarea class="data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-sm">Description</textarea>
+            </div>
+        </div>
+    </template>
+
+    <template id="contact-phone-template">
+        <li class="py-3 flex items-center justify-between editable-list-item">
+            <div class="flex items-center flex-grow">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                </svg>
+                <div data-editable-container class="w-full">
+                    <p class="text-sm text-gray-700 hidden data-view">New Phone</p>
+                    <input type="tel" value="New Phone" class="data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-sm"/>
+                </div>
+            </div>
+            <button class="remove-item-btn ml-4 text-red-500 hover:text-red-700 text-2xl font-bold">&times;</button>
+        </li>
+    </template>
+
+    <template id="contact-email-template">
+        <li class="py-3 flex items-center justify-between editable-list-item">
+            <div class="flex items-center flex-grow">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+                <div data-editable-container class="w-full">
+                    <p class="text-sm text-gray-700 hidden data-view">New Email</p>
+                    <input type="email" value="New Email" class="data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-sm"/>
+                </div>
+            </div>
+            <button class="remove-item-btn ml-4 text-red-500 hover:text-red-700 text-2xl font-bold">&times;</button>
+        </li>
+    </template>
+
+    <template id="gov-id-template">
+        <li class="py-3 flex justify-between items-center editable-list-item">
+            <div class="flex-grow pr-4">
+                <div data-editable-container>
+                    <p class="font-semibold text-gray-800 hidden data-view">New ID Type</p>
+                    <input type="text" value="New ID Type" class="data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm font-semibold"/>
+                </div>
+                <div data-editable-container>
+                    <p class="text-sm text-gray-500 hidden data-view">ID Number</p>
+                    <input type="text" value="ID Number" class="data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-sm"/>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="flex flex-col items-end">
+                    <label class="px-3 py-1 text-sm bg-purple-500 text-white rounded-md hover:bg-purple-600 cursor-pointer">
+                        Upload ID
+                        <input type="file" class="hidden file-upload-btn"/>
+                    </label>
+                    <span class="text-xs text-gray-500 file-name-display w-24 truncate text-right"></span>
+                </div>
+                <button class="remove-item-btn text-red-500 hover:text-red-700 text-2xl font-bold">&times;</button>
+            </div>
+        </li>
+    </template>
+
+    <!-- ID Modal -->
+    <div id="id-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-lg w-full relative animate-fadeIn">
+            <button id="close-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-3xl font-bold">&times;</button>
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Uploaded Government ID</h3>
+                <img src="https://i.imgur.com/g3010p9.jpeg" alt="Government ID" class="w-full h-auto rounded-md"/>
+            </div>
+        </div>
+    </div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-          const editButton = document.getElementById('editButton');
-          const mainContainer = document.querySelector('main');
-          let isEditMode = false;
+    document.addEventListener('DOMContentLoaded', () => {
+        const editProfileBtn = document.getElementById('edit-profile-btn');
+        const saveProfileBtn = document.getElementById('save-profile-btn');
+        const addItemBtns = document.querySelectorAll('.add-item-btn');
+        const idModal = document.getElementById('id-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const openIcon = document.getElementById('menu-open-icon');
+        const closeIcon = document.getElementById('menu-close-icon');
 
-          editButton.addEventListener('click', () => {
-             isEditMode = !isEditMode;
-             editButton.textContent = isEditMode ? 'Save Changes' : 'Edit Profile';
-             editButton.classList.toggle('bg-green-600', isEditMode);
-             editButton.classList.toggle('hover:bg-green-700', isEditMode);
-             editButton.classList.toggle('bg-red-700', !isEditMode);
-             editButton.classList.toggle('hover:bg-red-800', !isEditMode);
+        let isEditMode = false;
 
-             const viewElements = mainContainer.querySelectorAll('.view-mode');
-             const editElements = mainContainer.querySelectorAll('.edit-mode');
+        // --- Main Edit/Save Toggle ---
+        const toggleEditMode = () => {
+            isEditMode = !isEditMode;
 
-             if (isEditMode) {
-                // Entering Edit Mode
-                viewElements.forEach(viewEl => {
-                    const editSibling = viewEl.nextElementSibling;
-                    if (!editSibling || !editSibling.classList.contains('edit-mode')) return;
+            // Toggle button visibility
+            editProfileBtn.classList.toggle('hidden');
+            saveProfileBtn.classList.toggle('hidden');
 
-                    // Find the actual input field. It might be the sibling itself, or nested inside it.
-                    let input = ['INPUT', 'SELECT', 'TEXTAREA'].includes(editSibling.tagName)
-                        ? editSibling
-                        : editSibling.querySelector('input, select, textarea');
+            // Toggle "Add" and "Remove" buttons
+            document.querySelectorAll('.add-item-btn, .remove-item-btn').forEach(btn => {
+                btn.classList.toggle('hidden', !isEditMode);
+            });
 
-                    if (input) {
-                        // For fields like "Duty Status", the value is inside a child <span>
+            // Toggle view-state elements like "Verified" badge and "View ID" button
+            document.querySelectorAll('.view-state').forEach(el => {
+                el.classList.toggle('hidden', isEditMode);
+            });
+
+            // Toggle editable fields
+            document.querySelectorAll('[data-editable-container]').forEach(container => {
+                const viewEl = container.querySelector('.data-view');
+                const editEl = container.querySelector('.data-edit');
+                if (viewEl && editEl) {
+                    viewEl.classList.toggle('hidden', isEditMode);
+                    editEl.classList.toggle('hidden', !isEditMode);
+
+                    // On save, update view from edit
+                    if (!isEditMode) {
+                       if (['TEXTAREA', 'SELECT'].includes(editEl.tagName)) {
+                            // For SELECT, find the selected option's text if possible
+                            if (editEl.tagName === 'SELECT' && editEl.options[editEl.selectedIndex]) {
+                                (viewEl.querySelector('span') || viewEl).textContent = editEl.options[editEl.selectedIndex].text;
+                            } else {
+                               (viewEl.querySelector('span') || viewEl).innerText = editEl.value;
+                            }
+                       } else if (editEl.type === 'date') {
+                            const date = new Date(editEl.value);
+                            // Format date for display M/D/YYYY
+                            (viewEl.querySelector('span') || viewEl).textContent = date.toLocaleDateString();
+                       }
+                       else {
+                            (viewEl.querySelector('span') || viewEl).textContent = editEl.value;
+                       }
+                    } else {
+                        // On edit, update edit from view
                         const valueSource = viewEl.querySelector('span') || viewEl;
-                        if (input.type === 'date') {
-                            // Handle date inputs which need YYYY-MM-DD format
+                        if(editEl.type === 'date'){
                             try {
-                                input.value = new Date(valueSource.textContent.trim()).toISOString().split('T')[0];
+                                editEl.value = new Date(valueSource.textContent.trim()).toISOString().split('T')[0];
                             } catch (e) {
-                                // Fallback for invalid date text
-                                input.value = '';
+                                editEl.value = '';
                             }
                         } else {
-                            input.value = valueSource.textContent.trim();
+                            editEl.value = valueSource.textContent.trim();
                         }
                     }
-                });
-
-                    viewElements.forEach(el => el.classList.add('hidden'));
-                    editElements.forEach(el => el.classList.remove('hidden'));
-                } else {
-                    // Saving Changes
-                    editElements.forEach(editEl => {
-                         // Find the actual input field. It might be the element itself, or nested.
-                        let input = ['INPUT', 'SELECT', 'TEXTAREA'].includes(editEl.tagName)
-                            ? editEl
-                            : editEl.querySelector('input, select, textarea');
-
-                        if (input) {
-                            // Find the corresponding view element to update.
-                            const viewSibling = editEl.tagName === 'DD' ? editEl.previousElementSibling : input.previousElementSibling;
-
-                            if(viewSibling && viewSibling.classList.contains('view-mode')) {
-                                 // Find the actual element to update (could be a span within the view element)
-                                const valueTarget = viewSibling.querySelector('span') || viewSibling;
-                            if (input.type === 'date') {
-                                // Format date for display
-                                const date = new Date(input.value);
-                                valueTarget.textContent = date.toLocaleDateString();
-                            } else {
-                                valueTarget.textContent = input.value;
-                            }
-                        }
-                    }
-                });
-
-                viewElements.forEach(el => el.classList.remove('hidden'));
-                editElements.forEach(el => el.classList.add('hidden'));
-             }
-          });
-
-          // --- Mobile Menu ---
-          const mobileMenuButton = document.getElementById('mobile-menu-button');
-          const mobileMenu = document.getElementById('mobile-menu');
-          const openIcon = document.getElementById('menu-open-icon');
-          const closeIcon = document.getElementById('menu-close-icon');
-
-          if (mobileMenuButton) {
-            mobileMenuButton.addEventListener('click', () => {
-              mobileMenu.classList.toggle('hidden');
-              openIcon.classList.toggle('hidden');
-              closeIcon.classList.toggle('hidden');
+                }
             });
-          }
+        };
+
+        if (editProfileBtn) editProfileBtn.addEventListener('click', toggleEditMode);
+        if (saveProfileBtn) saveProfileBtn.addEventListener('click', toggleEditMode);
+
+        // --- Add Item Functionality ---
+        addItemBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetListSelector = btn.dataset.targetList;
+                const templateId = btn.dataset.templateId;
+                const targetList = document.querySelector(targetListSelector);
+                const template = document.getElementById(templateId);
+
+                if (targetList && template) {
+                    const clone = template.content.cloneNode(true);
+                    // Ensure new items are immediately in edit mode state
+                    clone.querySelectorAll('.data-view').forEach(el => el.classList.add('hidden'));
+                    clone.querySelectorAll('.data-edit').forEach(el => el.classList.remove('hidden'));
+                    clone.querySelector('.remove-item-btn')?.classList.remove('hidden');
+
+                    targetList.appendChild(clone);
+                }
+            });
         });
+
+        // --- Remove Item Functionality (using event delegation) ---
+        document.addEventListener('click', (e) => {
+            if (e.target && e.target.classList.contains('remove-item-btn')) {
+                e.target.closest('.editable-list-item').remove();
+            }
+        });
+
+        // --- File Upload Display ---
+        document.addEventListener('change', e => {
+            if (e.target && e.target.classList.contains('file-upload-btn')) {
+                const file = e.target.files[0];
+                const fileNameDisplay = e.target.closest('li').querySelector('.file-name-display');
+                if (file && fileNameDisplay) {
+                    fileNameDisplay.textContent = file.name;
+                }
+            }
+        });
+
+        // --- Modal Functionality ---
+        const openModal = () => idModal.classList.remove('hidden');
+        const closeModal = () => idModal.classList.add('hidden');
+
+        document.addEventListener('click', e => {
+            if (e.target && e.target.classList.contains('view-id-btn')) {
+                openModal();
+            }
+        });
+
+        if(closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+
+        if(idModal) idModal.addEventListener('click', (e) => {
+            if (e.target === idModal) { // Click on the background overlay
+                closeModal();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && idModal && !idModal.classList.contains('hidden')) {
+                closeModal();
+            }
+        });
+
+        // --- Mobile Menu ---
+        if (mobileMenuButton) {
+          mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            openIcon.classList.toggle('hidden');
+            closeIcon.classList.toggle('hidden');
+          });
+        }
+    });
     </script>
 </body>
 </html>

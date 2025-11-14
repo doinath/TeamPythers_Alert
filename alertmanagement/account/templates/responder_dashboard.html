@@ -9,7 +9,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
         .leaflet-control-zoom, .leaflet-control-attribution {
             display: none !important;
         }
@@ -83,65 +89,198 @@
 
             <!-- Main Content -->
             <main class="container mx-auto p-4 sm:p-6 lg:p-8">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <!-- Left Column -->
-                    <div class="flex flex-col gap-8">
-                        <!-- Event Details Card -->
-                        <div class="bg-gradient-to-r from-red-50 to-white p-6 rounded-lg shadow-lg">
-                            <div class="flex items-baseline space-x-4">
-                                <h2 class="text-xl font-bold text-red-800">EMERGENCY EVENT:</h2>
-                                <p class="text-lg text-gray-700">MEDICAL ASSISTANCE</p>
+                <!-- Tab Navigation -->
+                <div class="mb-6 border-b border-gray-200">
+                  <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                    <button id="responder-tab" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 border-red-600 text-red-600">
+                      Responder Dashboard
+                    </button>
+                    <button id="citizen-tab" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                      My Citizen Account
+                    </button>
+                  </nav>
+                </div>
+
+                <!-- Responder View -->
+                <div id="responder-view">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Left Column -->
+                        <div class="flex flex-col gap-8">
+                            <!-- Event Details Card -->
+                            <div class="bg-gradient-to-r from-red-50 to-white p-6 rounded-lg shadow-lg">
+                                <div class="flex items-baseline space-x-4">
+                                    <h2 class="text-xl font-bold text-red-800">EMERGENCY EVENT:</h2>
+                                    <p class="text-lg text-gray-700">MEDICAL ASSISTANCE</p>
+                                </div>
+                                <div class="flex items-baseline space-x-4 mt-2">
+                                    <h2 class="text-xl font-bold text-red-800">SEVERITY:</h2>
+                                    <p class="text-lg text-gray-700">HIGH</p>
+                                </div>
                             </div>
-                            <div class="flex items-baseline space-x-4 mt-2">
-                                <h2 class="text-xl font-bold text-red-800">SEVERITY:</h2>
-                                <p class="text-lg text-gray-700">HIGH</p>
+
+                            <!-- Citizen Info Card -->
+                            <div class="bg-gradient-to-r from-red-50 to-white p-6 rounded-lg shadow-lg">
+                                <dl>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1 py-2 border-b border-gray-100 last:border-b-0">
+                                        <dt class="text-lg font-bold text-red-800 md:text-left">LOCATION:</dt>
+                                        <dd class="md:col-span-2 text-lg text-gray-700">Caigit, Cebu City</dd>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1 py-2 border-b border-gray-100 last:border-b-0">
+                                        <dt class="text-lg font-bold text-red-800 md:text-left">CITIZEN:</dt>
+                                        <dd class="md:col-span-2 text-lg text-gray-700">
+                                            Kyle Plando
+                                            <br />
+                                            0931-112-3490
+                                        </dd>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1 py-2 border-b border-gray-100 last:border-b-0">
+                                        <dt class="text-lg font-bold text-red-800 md:text-left">DESCRIPTION:</dt>
+                                        <dd class="md:col-span-2 text-lg text-gray-700">Patient experiencing severe chest pain and shortness of breath. History of cardiac issues. Needs immediate transport.</dd>
+                                    </div>
+                                </dl>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div id="action-buttons" class="mt-8 flex flex-col items-center justify-center space-y-4">
+                                <button id="acknowledge-btn" class="w-64 py-3 px-6 font-bold text-lg uppercase rounded-lg shadow-lg transform active:scale-95 transition-transform duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-gradient-to-b from-red-600 to-red-800 text-white border-b-4 border-red-900 active:border-b-0 hover:from-red-500 hover:to-red-700 focus:ring-red-500">
+                                    Acknowledge
+                                </button>
+                                <button id="on-scene-btn" class="w-64 py-3 px-6 font-bold text-lg uppercase rounded-lg shadow-lg transform active:scale-95 transition-transform duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-gradient-to-b from-blue-600 to-blue-800 text-white border-b-4 border-blue-900 active:border-b-0 hover:from-blue-500 hover:to-blue-700 focus:ring-blue-500 hidden">
+                                    On Scene
+                                </button>
+                                <button id="resolve-btn" class="w-64 py-3 px-6 font-bold text-lg uppercase rounded-lg shadow-lg transform active:scale-95 transition-transform duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-gradient-to-b from-green-600 to-green-800 text-white border-b-4 border-green-900 active:border-b-0 hover:from-green-500 hover:to-green-700 focus:ring-green-500 hidden">
+                                    Resolve
+                                </button>
+                                 <p id="pending-withdrawal-msg" class="text-center text-gray-600 font-semibold hidden">Withdrawal request submitted.<br>Awaiting confirmation from dispatch.</p>
                             </div>
                         </div>
 
-                        <!-- Citizen Info Card -->
-                        <div class="bg-gradient-to-r from-red-50 to-white p-6 rounded-lg shadow-lg">
-                            <dl>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1 py-2 border-b border-gray-100 last:border-b-0">
-                                    <dt class="text-lg font-bold text-red-800 md:text-left">LOCATION:</dt>
-                                    <dd class="md:col-span-2 text-lg text-gray-700">Caigit, Cebu City</dd>
+                        <!-- Right Column -->
+                        <div class="h-full">
+                            <!-- Map Card -->
+                            <div class="bg-white rounded-lg shadow-lg overflow-hidden relative h-full min-h-[400px] lg:min-h-0">
+                                 <div id="map" class="w-full h-full"></div>
+                                <div class="absolute top-4 left-1/2 -translate-x-1/2 bg-gradient-to-b from-red-600 to-red-800 text-white text-lg font-bold py-2 px-6 rounded-lg shadow-xl z-[1000]">
+                                    Emergency Location
                                 </div>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1 py-2 border-b border-gray-100 last:border-b-0">
-                                    <dt class="text-lg font-bold text-red-800 md:text-left">CITIZEN:</dt>
-                                    <dd class="md:col-span-2 text-lg text-gray-700">
-                                        Kyle Plando
-                                        <br />
-                                        0931-112-3490
-                                    </dd>
-                                </div>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-1 py-2 border-b border-gray-100 last:border-b-0">
-                                    <dt class="text-lg font-bold text-red-800 md:text-left">DESCRIPTION:</dt>
-                                    <dd class="md:col-span-2 text-lg text-gray-700">Patient experiencing severe chest pain and shortness of breath. History of cardiac issues. Needs immediate transport.</dd>
-                                </div>
-                            </dl>
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div id="action-buttons" class="mt-8 flex flex-col items-center justify-center space-y-4">
-                            <button id="acknowledge-btn" class="w-64 py-3 px-6 font-bold text-lg uppercase rounded-lg shadow-lg transform active:scale-95 transition-transform duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-gradient-to-b from-red-600 to-red-800 text-white border-b-4 border-red-900 active:border-b-0 hover:from-red-500 hover:to-red-700 focus:ring-red-500">
-                                Acknowledge
-                            </button>
-                            <button id="on-scene-btn" class="w-64 py-3 px-6 font-bold text-lg uppercase rounded-lg shadow-lg transform active:scale-95 transition-transform duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-gradient-to-b from-blue-600 to-blue-800 text-white border-b-4 border-blue-900 active:border-b-0 hover:from-blue-500 hover:to-blue-700 focus:ring-blue-500 hidden">
-                                On Scene
-                            </button>
-                            <button id="resolve-btn" class="w-64 py-3 px-6 font-bold text-lg uppercase rounded-lg shadow-lg transform active:scale-95 transition-transform duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-gradient-to-b from-green-600 to-green-800 text-white border-b-4 border-green-900 active:border-b-0 hover:from-green-500 hover:to-green-700 focus:ring-green-500 hidden">
-                                Resolve
-                            </button>
-                             <p id="pending-withdrawal-msg" class="text-center text-gray-600 font-semibold hidden">Withdrawal request submitted.<br>Awaiting confirmation from dispatch.</p>
+                            </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Right Column -->
-                    <div class="h-full">
-                        <!-- Map Card -->
-                        <div class="bg-white rounded-lg shadow-lg overflow-hidden relative h-full min-h-[400px] lg:min-h-0">
-                             <div id="map" class="w-full h-full"></div>
-                            <div class="absolute top-4 left-1/2 -translate-x-1/2 bg-gradient-to-b from-red-600 to-red-800 text-white text-lg font-bold py-2 px-6 rounded-lg shadow-xl z-[1000]">
-                                Emergency Location
+                <!-- Citizen View -->
+                <div id="citizen-view" class="hidden">
+                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+                        <!-- Left Column -->
+                        <div class="lg:col-span-4 flex flex-col gap-8">
+                            <!-- Quick Call Card -->
+                            <div class="bg-white p-6 rounded-xl shadow-lg text-center">
+                                <h2 class="text-xl font-bold text-gray-800 mb-4">Quick Call</h2>
+                                <button id="sos-button" class="relative w-48 h-48 mx-auto rounded-full bg-red-700 shadow-2xl shadow-red-600/50 flex items-center justify-center group transform hover:scale-105 transition-transform duration-300">
+                                    <div class="absolute inset-0 rounded-full border-4 border-white animate-pulse"></div>
+                                    <div class="absolute inset-2 rounded-full bg-white/20"></div>
+                                    <span class="text-5xl font-extrabold text-white tracking-widest group-hover:tracking-normal transition-all duration-300">SOS</span>
+                                </button>
+                            </div>
+
+                            <!-- Emergency Contacts -->
+                            <div class="bg-white p-6 rounded-xl shadow-lg">
+                                <h2 class="text-xl font-bold text-gray-800 mb-4">Emergency Contacts</h2>
+                                <div class="space-y-4">
+                                    <div class="contact-section">
+                                        <h3 class="font-semibold text-red-700 mb-2 pb-1 border-b">Police & Law Enforcement</h3>
+                                        <ul class="text-sm text-gray-600 space-y-2">
+                                            <li class="flex justify-between items-center"><span>Cebu City Police Hotline</span><span class="text-gray-500 font-mono text-xs">(555) 233-9111</span></li>
+                                            <li class="flex justify-between items-center"><span>Waterfront Police Station</span><span class="text-gray-500 font-mono text-xs">(555) 254-6277</span></li>
+                                            <li class="flex justify-between items-center"><span>Fuente Osmeña Police Station</span><span class="text-gray-500 font-mono text-xs">(555) 255-7355</span></li>
+                                            <li class="flex justify-between items-center"><span>Mobile Patrol Group</span><span class="text-gray-500 font-mono text-xs">(555) 233-5564</span></li>
+                                        </ul>
+                                    </div>
+                                     <div class="contact-section">
+                                        <h3 class="font-semibold text-red-700 mb-2 pb-1 border-b">Fire Department & Rescue</h3>
+                                        <ul class="text-sm text-gray-600 space-y-2">
+                                            <li class="flex justify-between items-center"><span>Cebu City Fire Department</span><span class="text-gray-500 font-mono text-xs">(555) 256-0541</span></li>
+                                            <li class="flex justify-between items-center"><span>Mandaue City Fire Department</span><span class="text-gray-500 font-mono text-xs">(555) 344-4747</span></li>
+                                            <li class="flex justify-between items-center"><span>Fil-Chinese Volunteer Fire Brigade</span><span class="text-gray-500 font-mono text-xs">(555) 254-0222</span></li>
+                                        </ul>
+                                    </div>
+                                    <div class="contact-section">
+                                        <h3 class="font-semibold text-red-700 mb-2 pb-1 border-b">Hospitals & Medical Services</h3>
+                                        <ul class="text-sm text-gray-600 space-y-2">
+                                            <li class="flex justify-between items-center"><span>Chong Hua Hospital</span><span class="text-gray-500 font-mono text-xs">(555) 255-8000</span></li>
+                                            <li class="flex justify-between items-center"><span>Cebu Doctors' Hospital</span><span class="text-gray-500 font-mono text-xs">(555) 255-5555</span></li>
+                                            <li class="flex justify-between items-center"><span>Velez General Hospital</span><span class="text-gray-500 font-mono text-xs">(555) 253-1871</span></li>
+                                            <li class="flex justify-between items-center"><span>Perpetual Succour Hospital</span><span class="text-gray-500 font-mono text-xs">(555) 233-8620</span></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="lg:col-span-8 flex flex-col">
+                             <div class="bg-white p-6 rounded-xl shadow-lg">
+                                <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 mb-6">What <span class="text-red-600">KIND</span> of Emergency?</h1>
+                                <div id="emergency-buttons-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
+                                    <button data-type="Fire" class="emergency-button flex flex-col items-center justify-center p-8 text-white bg-gradient-to-br from-orange-500 via-red-600 to-rose-700 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300">
+                                        <img src="{% static 'images/fire_icon.png' %}" alt="Fire Icon" class="h-12 w-auto" />
+                                        <span class="font-semibold">Fire</span>
+                                    </button>
+                                    <button data-type="Flood" class="emergency-button flex flex-col items-center justify-center p-8 text-white bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300">
+                                        <img src="{% static 'images/flood_icon.png' %}" alt="Flood Icon" class="h-12 w-auto" />
+                                        <span class="font-semibold">Flood</span>
+                                    </button>
+                                    <button data-type="Accident" class="emergency-button flex flex-col items-center justify-center p-8 text-white bg-gradient-to-br from-rose-400 via-rose-500 to-red-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300">
+                                        <img src="{% static 'images/accidents_icon.png' %}" alt="Accident Icon" class="h-12 w-auto" />
+                                        <span class="font-semibold">Accident</span>
+                                    </button>
+                                    <button data-type="Crime" class="emergency-button flex flex-col items-center justify-center p-8 text-white bg-gradient-to-br from-slate-500 via-indigo-600 to-purple-700 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300">
+                                        <img src="{% static 'images/crime_icon.png' %}" alt="Crime Icon" class="h-12 w-auto" />
+                                        <span class="font-semibold">Crime</span>
+                                    </button>
+                                    <button data-type="Earthquake" class="emergency-button flex flex-col items-center justify-center p-8 text-white bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300">
+                                        <img src="{% static 'images/earthquake_icon.png' %}" alt="Earthquake Icon" class="h-12 w-auto" />
+                                        <span class="font-semibold">Earthquake</span>
+                                    </button>
+                                </div>
+                                <!-- Response Container (Initially Hidden) -->
+                                <div id="response-container" class="hidden text-center py-8">
+                                    <svg class="w-16 h-16 mx-auto text-green-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <p id="response-message" class="text-lg font-semibold text-gray-800">Responders are on their way.</p>
+                                    <p class="text-sm text-gray-500 mt-1">Your location has been shared.</p>
+                                    <div class="mt-8 flex justify-center gap-4">
+                                        <button id="cancel-button" class="px-8 py-3 bg-gray-200 text-gray-800 font-bold rounded-lg hover:bg-gray-300 transition-transform transform hover:scale-105">Cancel</button>
+                                        <button id="chat-button" class="px-8 py-3 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition-transform transform hover:scale-105">Chat with Responders</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white p-6 rounded-xl shadow-lg mt-8 flex-grow flex flex-col">
+                                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
+                                    <label for="search-location" class="text-lg font-bold text-gray-800">Search Location</label>
+                                    <button id="pin-location-btn" class="mt-2 sm:mt-0 flex items-center justify-center space-x-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                                        </svg>
+                                        <span>Pin My Current Location</span>
+                                    </button>
+                                 </div>
+                                 <div id="map-container" class="flex-grow w-full h-64 md:h-full bg-gray-200 rounded-lg overflow-hidden relative flex items-center justify-center">
+                                     <div id="map-loader" class="text-center text-gray-600">
+                                        <svg class="animate-spin h-8 w-8 text-gray-500 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        <p class="mt-2 text-sm">Fetching your location...</p>
+                                    </div>
+                                    <iframe id="map-iframe" class="w-full h-full hidden" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                    <div id="location-status" class="absolute bottom-2 left-2 bg-white/80 backdrop-blur-sm px-3 py-1 rounded-md text-xs font-semibold text-gray-700 shadow-md hidden">
+                                        Location pinned!
+                                    </div>
+                                 </div>
                             </div>
                         </div>
                     </div>
@@ -155,16 +294,11 @@
         <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm">
             <h3 class="text-lg font-bold text-gray-800 mb-4" id="confirmation-title">Confirm Action</h3>
             <p class="text-gray-600 mb-6" id="confirmation-message">Are you sure you want to proceed?</p>
-
-            <!-- Modal Actions Container -->
             <div class="mt-6">
-                <!-- Generic Actions: Shown for On-Scene, etc. -->
                 <div id="generic-actions" class="flex justify-end space-x-4">
                     <button id="cancel-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancel</button>
                     <button id="confirm-generic-btn" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Confirm</button>
                 </div>
-
-                <!-- Acknowledge Actions: Shown only for Acknowledge -->
                 <div id="acknowledge-actions" class="hidden flex flex-col space-y-4">
                     <button id="confirm-acknowledge-btn" class="w-full py-3 px-6 font-bold text-lg uppercase rounded-lg shadow-lg transform active:scale-95 transition-transform duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-gradient-to-b from-red-600 to-red-800 text-white border-b-4 border-red-900 active:border-b-0 hover:from-red-500 hover:to-red-700 focus:ring-red-500">
                         Confirm
@@ -215,12 +349,36 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
-            //--- Mobile Menu ---
+            // --- USER DATA ---
+            const users = {
+                responder: {
+                    name: 'Bessie Cooper',
+                    email: 'bessie.cooper@example.com',
+                    avatar: 'https://picsum.photos/id/237/100/100',
+                },
+                citizen: {
+                    name: 'Bessie Cooper',
+                    email: 'bessie.cooper@example.com',
+                    avatar: 'https://i.pravatar.cc/40?u=bessie',
+                }
+            };
+
+            //--- Global Elements ---
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
             const openIcon = document.getElementById('menu-open-icon');
             const closeIcon = document.getElementById('menu-close-icon');
 
+            // Header Elements
+            const userNameEl = document.getElementById('user-name');
+            const userAvatarEl = document.getElementById('user-avatar');
+            const desktopStatusBadge = document.getElementById('desktop-status-badge');
+            const mobileUserNameEl = document.getElementById('mobile-user-name');
+            const mobileUserEmailEl = document.getElementById('mobile-user-email');
+            const mobileUserAvatarEl = document.getElementById('mobile-user-avatar');
+            const mobileStatusBadgeContainer = document.getElementById('mobile-status-badge-container');
+
+            // --- Mobile Menu Toggle ---
             if (mobileMenuButton) {
                  mobileMenuButton.addEventListener('click', () => {
                     mobileMenu.classList.toggle('hidden');
@@ -229,19 +387,73 @@
                 });
             }
 
+            //--- TABS ---
+            const responderTab = document.getElementById('responder-tab');
+            const citizenTab = document.getElementById('citizen-tab');
+            const responderView = document.getElementById('responder-view');
+            const citizenView = document.getElementById('citizen-view');
+            let isCitizenMapInitialized = false;
+
+            function updateHeader(view) {
+                const user = (view === 'citizen') ? users.citizen : users.responder;
+                userNameEl.textContent = user.name;
+                userAvatarEl.src = user.avatar;
+                mobileUserNameEl.textContent = user.name;
+                mobileUserEmailEl.textContent = user.email;
+                mobileUserAvatarEl.src = user.avatar;
+
+                if (view === 'citizen') {
+                    desktopStatusBadge.classList.add('hidden');
+                    mobileStatusBadgeContainer.classList.add('hidden');
+                } else {
+                    desktopStatusBadge.classList.remove('hidden');
+                    mobileStatusBadgeContainer.classList.remove('hidden');
+                }
+            }
+
+            responderTab.addEventListener('click', () => {
+                // Style tabs
+                responderTab.classList.add('border-red-600', 'text-red-600');
+                responderTab.classList.remove('border-transparent', 'text-gray-500');
+                citizenTab.classList.remove('border-red-600', 'text-red-600');
+                citizenTab.classList.add('border-transparent', 'text-gray-500');
+                // Show/hide content
+                responderView.classList.remove('hidden');
+                citizenView.classList.add('hidden');
+                updateHeader('responder');
+            });
+
+            citizenTab.addEventListener('click', () => {
+                // Style tabs
+                citizenTab.classList.add('border-red-600', 'text-red-600');
+                citizenTab.classList.remove('border-transparent', 'text-gray-500');
+                responderTab.classList.remove('border-red-600', 'text-red-600');
+                responderTab.classList.add('border-transparent', 'text-gray-500');
+                // Show/hide content
+                citizenView.classList.remove('hidden');
+                responderView.classList.add('hidden');
+                updateHeader('citizen');
+
+                if (!isCitizenMapInitialized) {
+                    initializeCitizenMap();
+                    isCitizenMapInitialized = true;
+                }
+            });
+
+            // ===============================================
+            // RESPONDER DASHBOARD LOGIC
+            // ===============================================
+
             // --- STATE ---
             let appState = 'ASSIGNED'; // ASSIGNED, ACKNOWLEDGED, ON_SCENE, RESOLVED, WITHDRAWAL_REQUESTED
             let confirmCallback = null;
 
             // --- ELEMENTS ---
-            const desktopStatusBadge = document.getElementById('desktop-status-badge');
             const mobileStatusBadge = document.getElementById('mobile-status-badge');
             const acknowledgeBtn = document.getElementById('acknowledge-btn');
             const onSceneBtn = document.getElementById('on-scene-btn');
             const resolveBtn = document.getElementById('resolve-btn');
             const pendingWithdrawalMsg = document.getElementById('pending-withdrawal-msg');
-
-            // Confirmation Modal
             const confirmationModal = document.getElementById('confirmation-modal');
             const confirmationTitle = document.getElementById('confirmation-title');
             const confirmationMessage = document.getElementById('confirmation-message');
@@ -251,124 +463,88 @@
             const acknowledgeActions = document.getElementById('acknowledge-actions');
             const confirmAcknowledgeBtn = document.getElementById('confirm-acknowledge-btn');
             const requestWithdrawBtn = document.getElementById('request-withdraw-btn');
-
-            // Resolution Modal
             const resolutionModal = document.getElementById('resolution-modal');
             const resolutionForm = document.getElementById('resolution-form');
             const cancelResolveBtn = document.getElementById('cancel-resolve-btn');
-
-            // Withdrawal Modal
             const withdrawalModal = document.getElementById('withdrawal-modal');
             const withdrawalForm = document.getElementById('withdrawal-form');
             const cancelWithdrawalBtn = document.getElementById('cancel-withdrawal-btn');
-
-            // Toast
             const toast = document.getElementById('toast');
             const toastMessage = document.getElementById('toast-message');
 
             // --- MAP INITIALIZATION ---
-            const emergencyCoords = [10.3157, 123.8854]; // Cebu City coordinates
-            const map = L.map('map').setView(emergencyCoords, 13);
+            let responderMap = null;
+            function initializeResponderMap() {
+                if (responderMap) return;
+                const emergencyCoords = [10.3157, 123.8854]; // Cebu City coordinates
+                responderMap = L.map('map').setView(emergencyCoords, 13);
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-            }).addTo(map);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(responderMap);
 
-            const redIcon = new L.Icon({
-                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34],
-                shadowSize: [41, 41]
-            });
-            L.marker(emergencyCoords, { icon: redIcon }).addTo(map).bindPopup("<b>Emergency Location</b><br>Caigit, Cebu City").openPopup();
-
-            // --- GEOLOCATION ---
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(position => {
-                    const userCoords = [position.coords.latitude, position.coords.longitude];
-                     const blueIcon = new L.Icon({
-                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
-                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                        iconSize: [25, 41],
-                        iconAnchor: [12, 41],
-                        popupAnchor: [1, -34],
-                        shadowSize: [41, 41]
-                    });
-                    L.marker(userCoords, { icon: blueIcon }).addTo(map).bindPopup("Your Location");
-                    map.fitBounds([emergencyCoords, userCoords], { padding: [50, 50] });
-                }, () => {
-                    console.warn('Could not get user location. Map will be centered on the emergency.');
-                    map.setView(emergencyCoords, 14);
+                const redIcon = new L.Icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                    iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
                 });
+                L.marker(emergencyCoords, { icon: redIcon }).addTo(responderMap).bindPopup("<b>Emergency Location</b><br>Caigit, Cebu City").openPopup();
+
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(position => {
+                        const userCoords = [position.coords.latitude, position.coords.longitude];
+                         const blueIcon = new L.Icon({
+                            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+                            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                            iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+                        });
+                        L.marker(userCoords, { icon: blueIcon }).addTo(responderMap).bindPopup("Your Location");
+                        responderMap.fitBounds([emergencyCoords, userCoords], { padding: [50, 50] });
+                    }, () => {
+                        console.warn('Could not get user location. Map will be centered on the emergency.');
+                        responderMap.setView(emergencyCoords, 14);
+                    });
+                }
             }
 
             // --- UI UPDATE LOGIC ---
-            const updateUI = () => {
-                // Reset button states
+            const updateResponderUI = () => {
                 acknowledgeBtn.classList.add('hidden');
                 onSceneBtn.classList.add('hidden');
                 resolveBtn.classList.add('hidden');
                 pendingWithdrawalMsg.classList.add('hidden');
 
-                // Array of all badge elements to simplify updates
                 const allBadges = [desktopStatusBadge, mobileStatusBadge].filter(el => el);
-
-                // Function to safely set badge properties
                 const setBadgeState = (text, classes) => {
                     allBadges.forEach(badge => {
                         badge.className = 'text-white text-xs font-bold px-3 py-1 rounded-full shadow-md transition-all duration-300';
-
                         badge.textContent = text;
                         badge.classList.add(...classes);
-
-                        if (badge.id === 'desktop-status-badge') {
-                            badge.classList.add('hidden', 'md:block');
-                        } else if (badge.id === 'mobile-status-badge') {
-                            badge.classList.add('inline-block');
-                        }
+                        if (badge.id === 'desktop-status-badge') badge.classList.add('hidden', 'md:block');
+                        else if (badge.id === 'mobile-status-badge') badge.classList.add('inline-block');
                     });
                 };
 
                 switch(appState) {
                     case 'ASSIGNED':
-                        setBadgeState(
-                            'ON DUTY - Assigned',
-                            ['bg-gradient-to-b', 'from-red-600', 'to-red-800']
-                        );
+                        setBadgeState('ON DUTY - Assigned', ['bg-gradient-to-b', 'from-red-600', 'to-red-800']);
                         acknowledgeBtn.classList.remove('hidden');
                         break;
                     case 'ACKNOWLEDGED':
-                        setBadgeState(
-                            'ON DUTY - Acknowledged',
-                            ['bg-gradient-to-b', 'from-blue-600', 'to-blue-800']
-                        );
+                        setBadgeState('ON DUTY - Acknowledged', ['bg-gradient-to-b', 'from-blue-600', 'to-blue-800']);
                         onSceneBtn.classList.remove('hidden');
                         break;
                     case 'ON_SCENE':
-                        setBadgeState(
-                            'ON DUTY - On Scene',
-                            ['bg-gradient-to-b', 'from-indigo-600', 'to-indigo-800']
-                        );
+                        setBadgeState('ON DUTY - On Scene', ['bg-gradient-to-b', 'from-indigo-600', 'to-indigo-800']);
                         resolveBtn.classList.remove('hidden');
                         break;
                     case 'RESOLVED':
-                        setBadgeState(
-                            'ON DUTY - Resolved',
-                            ['bg-gradient-to-b', 'from-green-600', 'to-green-800']
-                        );
+                        setBadgeState('ON DUTY - Resolved', ['bg-gradient-to-b', 'from-green-600', 'to-green-800']);
                         resolveBtn.classList.remove('hidden');
-                        // ... (rest of the resolved button styling logic remains)
                         resolveBtn.disabled = true;
                         resolveBtn.textContent = 'Event Resolved';
                         resolveBtn.classList.add('from-gray-400', 'to-gray-500', 'border-gray-500', 'cursor-not-allowed');
                         break;
                     case 'WITHDRAWAL_REQUESTED':
-                        setBadgeState(
-                            'ON DUTY - Withdrawal Requested',
-                            ['bg-gradient-to-b', 'from-yellow-500', 'to-yellow-700']
-                        );
+                        setBadgeState('ON DUTY - Withdrawal Requested', ['bg-gradient-to-b', 'from-yellow-500', 'to-yellow-700']);
                         pendingWithdrawalMsg.classList.remove('hidden');
                         break;
                 }
@@ -384,29 +560,18 @@
                 confirmationModal.classList.remove('hidden');
             };
 
-            const hideConfirmationModal = () => {
-                confirmationModal.classList.add('hidden');
-                confirmCallback = null;
-            };
-
+            const hideConfirmationModal = () => { confirmationModal.classList.add('hidden'); confirmCallback = null; };
             const showResolutionModal = () => resolutionModal.classList.remove('hidden');
             const hideResolutionModal = () => resolutionModal.classList.add('hidden');
-
             const showWithdrawalModal = () => withdrawalModal.classList.remove('hidden');
             const hideWithdrawalModal = () => withdrawalModal.classList.add('hidden');
 
             const showToast = (message, type = 'success') => {
                 toastMessage.textContent = message;
-                toast.classList.remove('bg-green-500', 'bg-blue-500'); // remove old colors
-                if (type === 'success') {
-                    toast.classList.add('bg-green-500');
-                } else {
-                    toast.classList.add('bg-blue-500');
-                }
+                toast.classList.remove('bg-green-500', 'bg-blue-500');
+                toast.classList.add(type === 'success' ? 'bg-green-500' : 'bg-blue-500');
                 toast.classList.remove('translate-y-20', 'opacity-0');
-                setTimeout(() => {
-                    toast.classList.add('translate-y-20', 'opacity-0');
-                }, 3000);
+                setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
             };
 
             // --- EVENT HANDLERS ---
@@ -419,62 +584,137 @@
             });
 
             onSceneBtn.addEventListener('click', () => {
-                showConfirmationModal(
-                    'Mark as On Scene',
-                    'Confirm that you have arrived at the scene.',
-                    () => {
-                        appState = 'ON_SCENE';
-                        updateUI();
-                        hideConfirmationModal();
-                    }
-                );
+                showConfirmationModal('Mark as On Scene', 'Confirm that you have arrived at the scene.', () => {
+                    appState = 'ON_SCENE';
+                    updateResponderUI();
+                    hideConfirmationModal();
+                });
             });
 
             resolveBtn.addEventListener('click', showResolutionModal);
-
-            // Modal Buttons
-            confirmGenericBtn.addEventListener('click', () => {
-                if (confirmCallback) confirmCallback();
-            });
-
-            confirmAcknowledgeBtn.addEventListener('click', () => {
-                appState = 'ACKNOWLEDGED';
-                updateUI();
-                hideConfirmationModal();
-            });
-
-            requestWithdrawBtn.addEventListener('click', () => {
-                hideConfirmationModal();
-                showWithdrawalModal();
-            });
-
+            confirmGenericBtn.addEventListener('click', () => { if (confirmCallback) confirmCallback(); });
+            confirmAcknowledgeBtn.addEventListener('click', () => { appState = 'ACKNOWLEDGED'; updateResponderUI(); hideConfirmationModal(); });
+            requestWithdrawBtn.addEventListener('click', () => { hideConfirmationModal(); showWithdrawalModal(); });
             cancelBtn.addEventListener('click', hideConfirmationModal);
             cancelResolveBtn.addEventListener('click', hideResolutionModal);
             cancelWithdrawalBtn.addEventListener('click', hideWithdrawalModal);
 
-            // Form Submissions
             resolutionForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                const notes = document.getElementById('resolution-notes').value;
-                console.log('Resolution Notes:', notes);
                 appState = 'RESOLVED';
-                updateUI();
+                updateResponderUI();
                 hideResolutionModal();
                 showToast('Event resolved successfully!', 'success');
             });
 
             withdrawalForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                const reason = document.getElementById('withdrawal-reason').value;
-                console.log('Withdrawal Reason:', reason);
                 appState = 'WITHDRAWAL_REQUESTED';
-                updateUI();
+                updateResponderUI();
                 hideWithdrawalModal();
                 showToast('Withdrawal request submitted.', 'info');
             });
-            
-            // Initial UI setup
-            updateUI();
+
+            // ===============================================
+            // CITIZEN DASHBOARD LOGIC
+            // ===============================================
+            const sosButton = document.getElementById('sos-button');
+            const emergencyButtons = document.querySelectorAll('.emergency-button');
+            const pinLocationButton = document.getElementById('pin-location-btn');
+            const locationStatus = document.getElementById('location-status');
+            const mapIframe = document.getElementById('map-iframe');
+            const mapLoader = document.getElementById('map-loader');
+            const emergencyButtonsGrid = document.getElementById('emergency-buttons-grid');
+            const responseContainer = document.getElementById('response-container');
+            const responseMessage = document.getElementById('response-message');
+            const cancelButton = document.getElementById('cancel-button');
+            const chatButton = document.getElementById('chat-button');
+
+            const geoOptions = { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 };
+
+            async function getCurrentLocation() {
+                return new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(
+                        pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+                        err => {
+                            console.warn(`ERROR(${err.code}): ${err.message}`);
+                            reject(err);
+                        },
+                        geoOptions
+                    );
+                });
+            }
+
+            function updateCitizenMap(lat, lon) {
+                const bbox = 0.005; // Zoom factor
+                const url = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - bbox},${lat - bbox},${lon + bbox},${lat + bbox}&layer=mapnik&marker=${lat},${lon}`;
+                if (mapIframe.src !== url) mapIframe.src = url;
+                mapIframe.onload = () => {
+                    mapLoader.classList.add('hidden');
+                    mapIframe.classList.remove('hidden');
+                };
+            }
+
+            async function initializeCitizenMap() {
+                try {
+                    const location = await getCurrentLocation();
+                    updateCitizenMap(location.lat, location.lon);
+                } catch(e) {
+                    mapLoader.innerHTML = `<div class="p-4 text-center"><p class="text-sm text-gray-700">Could not get your location.</p><p class="text-xs text-gray-500 mt-1">Please enable location services and <button id="retry-location-btn" class="text-red-600 underline">try again</button>.</p></div>`;
+                    const retryBtn = document.getElementById('retry-location-btn');
+                    if (retryBtn) {
+                        retryBtn.addEventListener('click', () => {
+                            mapLoader.innerHTML = `<div class="text-center text-gray-600"><svg class="animate-spin h-8 w-8 text-gray-500 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><p class="mt-2 text-sm">Fetching your location...</p></div>`;
+                            initializeCitizenMap();
+                        });
+                    }
+                }
+            }
+
+            sosButton.addEventListener('click', async () => {
+                try {
+                    const location = await getCurrentLocation();
+                    alert(`SOS SIGNAL SENT!\n\nLocation: Lat: ${location.lat.toFixed(6)}, Lon: ${location.lon.toFixed(6)}\n\nResponders dispatched.`);
+                } catch (e) { alert('Could not get location. Please enable location services.'); }
+            });
+
+            emergencyButtons.forEach(button => {
+                button.addEventListener('click', async () => {
+                    const emergencyType = button.dataset.type;
+                     try {
+                        await getCurrentLocation();
+                        responseMessage.textContent = `${emergencyType} responders are on their way.`;
+                        emergencyButtonsGrid.classList.add('hidden');
+                        responseContainer.classList.remove('hidden');
+                    } catch (e) { alert('Could not get location. Please enable location services.'); }
+                });
+            });
+
+            cancelButton.addEventListener('click', () => {
+                responseContainer.classList.add('hidden');
+                emergencyButtonsGrid.classList.remove('hidden');
+            });
+
+            chatButton.addEventListener('click', () => alert('Opening chat...'));
+
+            pinLocationButton.addEventListener('click', async () => {
+                locationStatus.textContent = `Pinning...`;
+                locationStatus.classList.remove('hidden');
+                try {
+                    const location = await getCurrentLocation();
+                    updateCitizenMap(location.lat, location.lon);
+                    locationStatus.textContent = `Pinned: ${location.lat.toFixed(4)}, ${location.lon.toFixed(4)}`;
+                    setTimeout(() => locationStatus.classList.add('hidden'), 4000);
+                } catch(e) {
+                    locationStatus.textContent = `Failed to pin.`;
+                    setTimeout(() => locationStatus.classList.add('hidden'), 4000);
+                }
+            });
+
+            // --- INITIALIZATION ---
+            initializeResponderMap();
+            updateResponderUI();
+            updateHeader('responder');
         });
     </script>
 </body>

@@ -5,6 +5,10 @@ class RegisterView(View):
     def get(self, request):
         return render(request, "register.html")
 
+class CitizenProfileCompletionView(View):
+    def get(self, request):
+        return render(request, "citizen_profile_completion.html")
+
 class IndexView(View):
     def get(self, request):
         return render(request, "index.html")

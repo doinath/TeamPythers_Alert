@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 from .views import RoleVerification, GovernmentDocument, SubmittedDocument
 
-app_name = 'communication'
+app_name = 'verification'
 
 # path('messages/', MessageListView.as_view(), name='message_list'),
 

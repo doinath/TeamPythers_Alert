@@ -28,11 +28,28 @@ class EmergencyEvent(models.Model):
 
     eventID = models.AutoField(primary_key=True)
 
-    authority = models.ForeignKey(Authority,on_delete=models.SET_NULL, null=True, blank=True, related_name="emergency_events")
+    # FIXED: unique related_name for each FK
+    authority = models.ForeignKey(
+        Authority,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="emergency_events_as_authority"
+    )
 
-    responder = models.ForeignKey(Responder, on_delete=models.SET_NULL, null=True, blank=True, related_name="emergency_events")
+    responder = models.ForeignKey(
+        Responder,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="emergency_events_as_responder"
+    )
 
-    userID = models.ForeignKey(Citizen, on_delete=models.CASCADE, related_name="emergency_events")
+    userID = models.ForeignKey(
+        Citizen,
+        on_delete=models.CASCADE,
+        related_name="emergency_events_reported"
+    )
 
     category = models.CharField(max_length=50, choices=EVENT_CATEGORIES)
     description = models.TextField()
@@ -64,20 +81,23 @@ class EventAssignment(models.Model):
     assigned_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
 
+    # FIXED: unique related names for avoid clashes
     authority = models.ForeignKey(
         Authority,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="event_assignments"
+        related_name="assignments_as_authority"
     )
+
     responder = models.ForeignKey(
         Responder,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="event_assignments"
+        related_name="assignments_as_responder"
     )
+
     emergency_event = models.ForeignKey(
         EmergencyEvent,
         on_delete=models.CASCADE,
@@ -86,12 +106,15 @@ class EventAssignment(models.Model):
 
     def __str__(self):
         return f"Assignment {self.assignment_id} - {self.role} ({self.status})"
-#Government Documents, Medical Condition
+
 
 class MedicalCondition(models.Model):
-
     condition_id = models.AutoField(primary_key=True)
     condition_name = models.CharField(max_length=100)
     notes = models.TextField()
 
+    # GOOD: User FK is correct
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.condition_name

@@ -1,10 +1,7 @@
 from django.db import models
-
 from emergency.models import EmergencyEvent
-
 from account.models import User
 
-# Create your models here.
 class Message(models.Model):
     message_id = models.AutoField(primary_key=True)
     message_text = models.TextField()
@@ -12,20 +9,26 @@ class Message(models.Model):
 
     emergency_event = models.ForeignKey(EmergencyEvent, on_delete=models.CASCADE)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-        #Fk user
+
     def __str__(self):
         return self.message_text
 
-class CallLog(models.Model): #needs user
+
+class CallLog(models.Model):
+    CALL_TYPES = [
+        ("incoming", "Incoming"),
+        ("outgoing", "Outgoing"),
+        ("missed", "Missed"),
+    ]
+
     call_id = models.AutoField(primary_key=True)
     start_time = models.DateTimeField(auto_now_add=True)
-    end_time = models.DateTimeField(auto_now=True)
-    duration = models.IntegerField()
-    call_type = models.IntegerField() # needs a choice
-    #fk user
-    #fk emergency event
+    end_time = models.DateTimeField(null=True, blank=True)
+    duration = models.IntegerField(null=True, blank=True)
+    call_type = models.CharField(max_length=20, choices=CALL_TYPES)
+
     emergency_event = models.ForeignKey(EmergencyEvent, on_delete=models.CASCADE)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.call_id
+        return str(self.call_id)

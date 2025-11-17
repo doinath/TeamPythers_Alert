@@ -10,4 +10,5 @@ urlpatterns = [
 
     # URL for viewing all call logs, mapped to the CallLogListView class
     path('call-logs/', CallLogListView.as_view(), name='call_log_list'),
+
 ]

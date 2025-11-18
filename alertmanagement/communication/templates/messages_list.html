@@ -1,41 +1,323 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Message List</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - ALERT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; margin: 2em; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        h1 { color: #333; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+        }
+        /* Custom scrollbar for chat list */
+        .chat-list-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-list-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .chat-list-scroll::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 3px;
+        }
+        .chat-list-scroll::-webkit-scrollbar-thumb:hover {
+            background: #bbb;
+        }
     </style>
 </head>
-<body>
-    <h1>All Messages 💬</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Message ID</th>
-                <th>User</th>
-                <th>Emergency Event ID</th>
-                <th>Message Text</th>
-                <th>Timestamp</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for message in messages %}
-            <tr>
-                <td>{{ message.message_id }}</td>
-                <td>{{ message.user_id.username }}</td> <td>{{ message.emergency_event.pk }}</td> <td>{{ message.message_text }}</td>
-                <td>{{ message.timestamp }}</td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="5">No messages found.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<body class="flex flex-col h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo and Nav -->
+                <div class="flex items-center space-x-12 -ml-4">
+                    <div class="flex items-center space-x-2">
+                        <img src="{% static 'images/com_logo.png' %}" alt="ALERT Logo" class="h-10 w-auto object-contain" />
+                        <!-- <span class="text-xl font-bold text-red-600">ALERT</span> -->
+                    </div>
+                    <nav class="hidden md:flex items-center space-x-12">
+                        <a href="#dashboard" class="text-gray-500 hover:text-red-600 transition-colors">Dashboard</a>
+                        <a href="{% url 'communication:messages' %}" class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Chat</a>
+                        <a href="{% url 'communication:call_logs' %}" class="text-gray-500 hover:text-red-600 transition-colors">Call Logs</a>
+                    </nav>
+                </div>
+
+                <!-- User Profile -->
+                <div class="flex items-center space-x-10">
+                    <div class="hidden md:flex items-center space-x-4">
+
+                        <!-- User Name -->
+                        {% if request.user.is_authenticated %}
+                            <span class="text-gray-800 font-medium text-sm mr-3">
+                                {{ request.user.first_name }} {{ request.user.last_name }}
+                            </span>
+                        {% else %}
+                            <span class="text-gray-800 font-medium text-sm mr-3">
+                                John Doe
+                            </span>
+                        {% endif %}
+
+                        <!-- Clickable Profile Picture with Role-Based URL + Hover -->
+                        {% if request.user.role == 'citizen' %}
+                            <a href="{% url 'citizen_profile' %}" class="group">
+                                {% if request.user.profile_picture %}
+                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
+                                         src="{{ request.user.profile_picture.url }}"
+                                         alt="User Avatar" />
+                                {% else %}
+                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
+                                         src="https://i.pravatar.cc/40?u={{ request.user.username }}"
+                                         alt="User Avatar" />
+                                {% endif %}
+                            </a>
+                        {% elif request.user.role == 'responder' %}
+                            <a href="{% url 'responder_profile' %}" class="group">
+                                {% if request.user.profile_picture %}
+                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
+                                         src="{{ request.user.profile_picture.url }}"
+                                         alt="User Avatar" />
+                                {% else %}
+                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
+                                         src="https://i.pravatar.cc/40?u={{ request.user.username }}"
+                                         alt="User Avatar" />
+                                {% endif %}
+                            </a>
+                        {% elif request.user.role == 'authority' %}
+                            <a href="{% url 'authority_profile' %}" class="group">
+                                {% if request.user.profile_picture %}
+                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
+                                         src="{{ request.user.profile_picture.url }}"
+                                         alt="User Avatar" />
+                                {% else %}
+                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
+                                         src="https://i.pravatar.cc/40?u={{ request.user.username }}"
+                                         alt="User Avatar" />
+                                {% endif %}
+                            </a>
+                        {% else %}
+                            <a href="#" class="group">
+                                {% if request.user.profile_picture %}
+                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
+                                         src="{{ request.user.profile_picture.url }}"
+                                         alt="User Avatar" />
+                                {% else %}
+                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
+                                         src="https://i.pravatar.cc/40?u={{ request.user.username }}"
+                                         alt="User Avatar" />
+                                {% endif %}
+                            </a>
+                        {% endif %}
+                    </div>
+
+                    <!-- Mobile Menu Button -->
+                    <div class="md:hidden flex items-center">
+                        <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-800 focus:outline-none">
+                            <svg id="menu-open-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"
+                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                            <svg id="menu-close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden"
+                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <nav class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#dashboard" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Dashboard</a>
+                <a href="{% url 'communication:messages' %}" class="block px-3 py-2 rounded-md text-base font-medium bg-red-50 text-red-700">Chat</a>
+                <a href="{% url 'communication:call_logs' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Call logs</a>
+            </nav>
+            <div class="pt-4 pb-3 border-t border-gray-200">
+                <div class="flex items-center px-5">
+                    {% if request.user.profile_picture %}
+                        <img class="h-10 w-10 rounded-full object-cover" src="{{ request.user.profile_picture.url }}" alt="User Avatar" />
+                    {% else %}
+                        <img class="h-10 w-10 rounded-full object-cover" src="https://i.pravatar.cc/100?u={{ request.user.username }}" alt="User Avatar" />
+                    {% endif %}
+                    <div class="ml-3">
+                        <div class="text-base font-medium text-gray-800">{{ request.user.first_name }} {{ request.user.last_name }}</div>
+                        <div class="text-sm font-medium text-gray-500">{{ request.user.email }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 flex overflow-hidden">
+        <!-- Left Panel: Chat List -->
+        <div class="w-1/3 border-r border-gray-200 bg-white flex flex-col">
+            <div class="p-4 border-b border-gray-200">
+                <input type="text" placeholder="Search or start a new chat" class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500" />
+            </div>
+            <div class="flex-1 overflow-y-auto chat-list-scroll">
+                {% if chat_conversations %}
+                    {% for convo in chat_conversations %}
+                        <a href="{% url 'chat_detail' convo.emergency_event.pk %}" class="flex items-center p-4 border-b border-gray-100 hover:bg-gray-50 {% if selected_event and selected_event.pk == convo.emergency_event.pk %}bg-gray-100{% endif %}">
+                            <div class="relative">
+                                {% if convo.emergency_event.citizen.profile_picture %}
+                                    <img class="h-10 w-10 rounded-full object-cover" src="{{ convo.emergency_event.citizen.profile_picture.url }}" alt="Avatar" />
+                                {% else %}
+                                    <img class="h-10 w-10 rounded-full object-cover" src="https://i.pravatar.cc/40?u={{ convo.emergency_event.citizen.username }}" alt="Avatar" />
+                                {% endif %}
+                                <span class="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-white bg-green-400"></span>
+                            </div>
+                            <div class="ml-3 flex-1">
+                                <p class="text-sm font-semibold text-gray-800">{{ convo.emergency_event.citizen.get_full_name }}</p>
+                                <p class="text-xs text-gray-500 truncate">{{ convo.last_message_text }}</p>
+                            </div>
+                            <div class="text-right text-xs text-gray-400">
+                                <p>{{ convo.last_message_timestamp|date:"h:i A" }}</p>
+                                {% if convo.unread_count > 0 %}
+                                    <span class="inline-flex items-center justify-center px-2 py-0.5 ml-auto text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">{{ convo.unread_count }}</span>
+                                {% endif %}
+                            </div>
+                        </a>
+                    {% endfor %}
+                {% else %}
+                    <p class="p-4 text-center text-gray-500">No active conversations.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Right Panel: Chat Conversation -->
+        <div class="flex-1 flex flex-col bg-gray-50">
+            {% if selected_event %}
+                <!-- Chat Header -->
+                <div class="p-4 border-b border-gray-200 bg-white flex items-center justify-between shadow-sm">
+                    <div class="flex items-center">
+                        {% if selected_event.citizen.profile_picture %}
+                            <img class="h-10 w-10 rounded-full object-cover" src="{{ selected_event.citizen.profile_picture.url }}" alt="Avatar" />
+                        {% else %}
+                            <img class="h-10 w-10 rounded-full object-cover" src="https://i.pravatar.cc/40?u={{ selected_event.citizen.username }}" alt="Avatar" />
+                        {% endif %}
+                        <div class="ml-3">
+                            <p class="text-base font-semibold text-gray-800">{{ selected_event.citizen.get_full_name }}</p>
+                            <p class="text-sm text-gray-500">
+                                {% if selected_event.is_active %}Active{% else %}Resolved{% endif %} Emergency
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button class="text-gray-500 hover:text-gray-800">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                            </svg>
+                        </button>
+                        <button class="text-gray-500 hover:text-gray-800">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chat Messages -->
+                <div class="flex-1 p-6 overflow-y-auto space-y-4">
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if message.user_id == request.user %}
+                                <!-- Sender message (red background) -->
+                                <div class="flex justify-end">
+                                    <div class="bg-red-600 text-white p-3 rounded-lg max-w-xs sm:max-w-md break-words shadow-md">
+                                        <p class="text-sm">{{ message.message_text }}</p>
+                                        <span class="block text-right text-xs mt-1 text-red-200">{{ message.timestamp|date:"h:i A" }}</span>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <!-- Receiver message (gray background) -->
+                                <div class="flex justify-start">
+                                    <div class="bg-white text-gray-800 p-3 rounded-lg max-w-xs sm:max-w-md break-words shadow-md">
+                                        <p class="text-sm">{{ message.message_text }}</p>
+                                        {% if message.message_audio %} {# Example for audio message #}
+                                            <div class="flex items-center mt-2">
+                                                <audio controls class="w-full">
+                                                    <source src="{{ message.message_audio.url }}" type="audio/mpeg">
+                                                    Your browser does not support the audio element.
+                                                </audio>
+                                            </div>
+                                        {% endif %}
+                                        <span class="block text-left text-xs mt-1 text-gray-500">{{ message.timestamp|date:"h:i A" }}</span>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <div class="flex items-center justify-center h-full">
+                            <p class="text-lg text-gray-500">No messages yet.</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Message Input -->
+                <div class="p-4 bg-white border-t border-gray-200">
+                    <form method="post" action="{% url 'send_message' selected_event.pk %}" class="flex items-center space-x-3">
+                        {% csrf_token %}
+                        <input type="text" name="message_text" placeholder="Type your message here..." class="flex-1 p-3 border border-gray-300 rounded-full focus:outline-none focus:ring-1 focus:ring-red-500" required />
+                        <button type="submit" class="bg-red-600 text-white p-3 rounded-full hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                            </svg>
+                        </button>
+                        <button type="button" class="bg-gray-200 text-gray-600 p-3 rounded-full hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            {% else %}
+                <div class="flex items-center justify-center h-full">
+                    <p class="text-lg text-gray-500">Select a chat to start a conversation.</p>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuOpenIcon = document.getElementById('menu-open-icon');
+        const menuCloseIcon = document.getElementById('menu-close-icon');
+
+        if (mobileMenuButton) {
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                menuOpenIcon.classList.toggle('hidden');
+                menuCloseIcon.classList.toggle('hidden');
+            });
+        }
+
+        // Scroll to the bottom of the chat messages
+        const chatMessagesContainer = document.querySelector('.flex-1.p-6.overflow-y-auto');
+        if (chatMessagesContainer) {
+            chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+        }
+
+        // Handle chat list item click (for active state)
+        document.querySelectorAll('.chat-list-scroll a').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.chat-list-scroll a').forEach(link => {
+                    link.classList.remove('bg-gray-100');
+                });
+                item.classList.add('bg-gray-100');
+            });
+        });
+
+    </script>
 </body>
 </html>

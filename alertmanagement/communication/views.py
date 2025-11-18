@@ -7,7 +7,7 @@ class MessageListView(View):
     """
     A class-based view to display a list of all messages.
     """
-    template_name = "communication/message_list.html"
+    template_name = "messages_list.html"
 
     def get(self, request, *args, **kwargs):
         # Fetch all message objects from the database, ordering by the newest first
@@ -26,7 +26,7 @@ class CallLogListView(View):
     """
     A class-based view to display a list of all call logs.
     """
-    template_name = "communication/call_log_list.html"
+    template_name = "call_log_list.html"
 
     def get(self, request, *args, **kwargs):
         # Fetch all call log objects, ordering by the most recent start time

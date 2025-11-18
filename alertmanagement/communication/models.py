@@ -32,3 +32,21 @@ class CallLog(models.Model):
 
     def __str__(self):
         return str(self.call_id)
+
+    @property
+    def formatted_duration(self):
+        if self.duration is None:
+            return "00:00"
+
+        total_seconds = self.duration
+
+        hours = total_seconds // 3600
+        remaining_seconds = total_seconds % 3600
+        minutes = remaining_seconds // 60
+        seconds = remaining_seconds % 60
+
+        # Format the output based on whether there are hours, minutes, or just seconds.
+        # Ensure two-digit formatting for minutes and seconds.
+        if hours > 0:
+            return f"{hours}:{minutes:02d}:{seconds:02d}"
+        return f"{minutes:02d}:{seconds:02d}"

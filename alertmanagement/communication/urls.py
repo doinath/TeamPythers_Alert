@@ -6,9 +6,9 @@ app_name = 'communication'
 
 urlpatterns = [
     # URL for viewing all messages, mapped to the MessageListView class
-    path('messages/', MessageListView.as_view(), name='message_list'),
+    path('messages/', MessageListView.as_view(), name='messages'),
 
     # URL for viewing all call logs, mapped to the CallLogListView class
-    path('call-logs/', CallLogListView.as_view(), name='call_log_list'),
+    path('call-logs/', CallLogListView.as_view(), name='call_logs'),
 
 ]

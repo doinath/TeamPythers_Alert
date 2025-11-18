@@ -36,47 +36,110 @@
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo and Nav -->
-                <div class="flex items-center space-x-8">
+                <div class="flex items-center space-x-12 -ml-4">
                     <div class="flex items-center space-x-2">
                         <img src="{% static 'images/com_logo.png' %}" alt="ALERT Logo" class="h-10 w-auto object-contain" />
                         <!-- <span class="text-xl font-bold text-red-600">ALERT</span> -->
                     </div>
-                    <nav class="hidden md:flex items-center space-x-6">
-                        <a href="{% url 'dashboard' %}" class="text-gray-500 hover:text-red-600 transition-colors">Dashboard</a>
-                        <a href="{% url 'messages' %}" class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Chat</a>
-                        <a href="{% url 'call-logs' %}" class="text-gray-500 hover:text-red-600 transition-colors">Call Logs</a>
+                    <nav class="hidden md:flex items-center space-x-12">
+                        <a href="#dashboard" class="text-gray-500 hover:text-red-600 transition-colors">Dashboard</a>
+                        <a href="{% url 'communication:messages' %}" class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Chat</a>
+                        <a href="{% url 'communication:call_logs' %}" class="text-gray-500 hover:text-red-600 transition-colors">Call Logs</a>
                     </nav>
                 </div>
 
                 <!-- User Profile -->
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-10">
                     <div class="hidden md:flex items-center space-x-4">
-                        <!-- <span class="text-gray-800 font-medium text-sm mr-3">{{ request.user.first_name }} {{ request.user.last_name }}</span>
-                        {% if request.user.profile_picture %}
-                            <img class="h-8 w-8 rounded-full object-cover" src="{{ request.user.profile_picture.url }}" alt="User Avatar" />
+
+                        <!-- User Name -->
+                        {% if request.user.is_authenticated %}
+                            <span class="text-gray-800 font-medium text-sm mr-3">
+                                {{ request.user.first_name }} {{ request.user.last_name }}
+                            </span>
                         {% else %}
-                            <img class="h-8 w-8 rounded-full object-cover" src="https://i.pravatar.cc/40?u={{ request.user.username }}" alt="User Avatar" />
-                        {% endif %} -->
+                            <span class="text-gray-800 font-medium text-sm mr-3">
+                                John Doe
+                            </span>
+                        {% endif %}
+
+                        <!-- Clickable Profile Picture with Role-Based URL + Hover -->
+                        {% if request.user.role == 'citizen' %}
+                            <a href="{% url 'citizen_profile' %}" class="group">
+                                {% if request.user.profile_picture %}
+                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
+                                         src="{{ request.user.profile_picture.url }}"
+                                         alt="User Avatar" />
+                                {% else %}
+                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
+                                         src="https://i.pravatar.cc/40?u={{ request.user.username }}"
+                                         alt="User Avatar" />
+                                {% endif %}
+                            </a>
+                        {% elif request.user.role == 'responder' %}
+                            <a href="{% url 'responder_profile' %}" class="group">
+                                {% if request.user.profile_picture %}
+                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
+                                         src="{{ request.user.profile_picture.url }}"
+                                         alt="User Avatar" />
+                                {% else %}
+                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
+                                         src="https://i.pravatar.cc/40?u={{ request.user.username }}"
+                                         alt="User Avatar" />
+                                {% endif %}
+                            </a>
+                        {% elif request.user.role == 'authority' %}
+                            <a href="{% url 'authority_profile' %}" class="group">
+                                {% if request.user.profile_picture %}
+                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
+                                         src="{{ request.user.profile_picture.url }}"
+                                         alt="User Avatar" />
+                                {% else %}
+                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
+                                         src="https://i.pravatar.cc/40?u={{ request.user.username }}"
+                                         alt="User Avatar" />
+                                {% endif %}
+                            </a>
+                        {% else %}
+                            <a href="#" class="group">
+                                {% if request.user.profile_picture %}
+                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
+                                         src="{{ request.user.profile_picture.url }}"
+                                         alt="User Avatar" />
+                                {% else %}
+                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
+                                         src="https://i.pravatar.cc/40?u={{ request.user.username }}"
+                                         alt="User Avatar" />
+                                {% endif %}
+                            </a>
+                        {% endif %}
                     </div>
+
+                    <!-- Mobile Menu Button -->
                     <div class="md:hidden flex items-center">
                         <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-800 focus:outline-none">
-                            <svg id="menu-open-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            <svg id="menu-open-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"
+                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
-                            <svg id="menu-close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            <svg id="menu-close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden"
+                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
                     </div>
                 </div>
             </div>
         </div>
+
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
             <nav class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="{% url 'dashboard' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Dashboard</a>
-                <a href="{% url 'chat_list' %}" class="block px-3 py-2 rounded-md text-base font-medium bg-red-50 text-red-700">Chat</a>
-                <a href="{% url 'call_logs' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Call logs</a>
+                <a href="#dashboard" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Dashboard</a>
+                <a href="{% url 'communication:messages' %}" class="block px-3 py-2 rounded-md text-base font-medium bg-red-50 text-red-700">Chat</a>
+                <a href="{% url 'communication:call_logs' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Call logs</a>
             </nav>
             <div class="pt-4 pb-3 border-t border-gray-200">
                 <div class="flex items-center px-5">

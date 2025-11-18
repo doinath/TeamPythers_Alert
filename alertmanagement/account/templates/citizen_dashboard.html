@@ -14,6 +14,18 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+
+        .animate-pulse-slow {
+            animation: pulse-slow 3s infinite ease-in-out;
+        }
+        @keyframes pulse-slow {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -215,6 +227,108 @@
                             </div>
                          </div>
                     </div>
+
+                    <!-- SOS Calling Popup -->
+                    <div id="sos-call-popup" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-[100] hidden p-4">
+                        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm mx-auto">
+                            <div class="flex items-center space-x-3 mb-6">
+                                <div class="p-2 bg-red-100 rounded-full">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-800">Authority 1</h3>
+                                <span class="ml-auto text-red-600 font-medium animate-pulse-slow">Calling...</span>
+                            </div>
+                            <div class="flex flex-col items-center justify-center py-8">
+                                <div class="relative mb-4">
+                                    <img class="h-24 w-24 rounded-full object-cover ring-4 ring-red-200" src="https://i.pravatar.cc/150?img=68" alt="Caller Avatar" />
+                                    <span class="absolute bottom-0 right-0 p-2 bg-green-500 rounded-full border-2 border-white"></span>
+                                </div>
+                                <p class="text-xl font-bold text-gray-900">Nate Navaja</p>
+                            </div>
+                            <div class="mt-6">
+                                <button id="cancel-call-button" class="w-full flex items-center justify-center space-x-2 bg-red-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-red-700 transition-colors shadow-lg">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    <span>Cancel (<span id="cancel-timer">30</span> seconds)</span>
+                                </button>
+                                <p class="text-xs text-gray-500 mt-4 text-center">Wait for a few seconds...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Report Form Page (Placeholder - Hidden by default) -->
+                    <div id="report-form-page" class="fixed inset-0 bg-gray-50 flex items-center justify-center z-[100] hidden p-4">
+                        <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-2xl mx-auto">
+                            <h2 class="text-3xl font-bold text-red-700 mb-6 text-center">Emergency Report Form</h2>
+                            <form class="space-y-6">
+                                <div>
+                                    <label for="emergency-type" class="block text-sm font-medium text-gray-700">Type of Emergency</label>
+                                    <input type="text" id="emergency-type" name="emergency-type" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" placeholder="e.g., Fire, Accident, Crime" readonly>
+                                </div>
+                                <div>
+                                    <label for="location-details" class="block text-sm font-medium text-gray-700">Location Details</label>
+                                    <textarea id="location-details" name="location-details" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" placeholder="Provide specific details about the location" readonly></textarea>
+                                </div>
+                                <div>
+                                    <label for="description" class="block text-sm font-medium text-gray-700">Description of Emergency</label>
+                                    <textarea id="description" name="description" rows="5" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" placeholder="Describe what happened"></textarea>
+                                </div>
+                                <div>
+                                    <label for="contact-number" class="block text-sm font-medium text-gray-700">Contact Number</label>
+                                    <input type="tel" id="contact-number" name="contact-number" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" placeholder="Your contact number (optional)">
+                                </div>
+                                <div class="flex justify-end space-x-4">
+                                    <button type="button" id="close-report-form" class="inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                        Close
+                                    </button>
+                                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                        Submit Report
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Emergency Response Popup (for specific emergency types) -->
+                    <div id="emergency-response-popup" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-[100] hidden p-4">
+                        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm mx-auto">
+                            <div class="flex items-center space-x-3 mb-6">
+                                <div class="p-2 bg-red-100 rounded-full">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-800" id="response-authority-name">Responder 1</h3>
+                                <span class="ml-auto text-yellow-600 font-medium" id="response-status">Waiting...</span>
+                            </div>
+                            <div class="flex flex-col items-center justify-center py-8">
+                                <div class="relative mb-4">
+                                    <img class="h-24 w-24 rounded-full object-cover ring-4 ring-red-200" src="https://i.pravatar.cc/150?img=68" alt="Caller Avatar" />
+                                    <span class="absolute bottom-0 right-0 p-2 bg-yellow-400 rounded-full border-2 border-white" id="responder-status-dot"></span>
+                                </div>
+                                <p class="text-xl font-bold text-gray-900">Responders</p>
+                                <p class="text-sm text-gray-500" id="response-connecting-message">connecting...</p>
+                            </div>
+                            <div class="mt-6 flex space-x-4">
+                                <button id="emergency-cancel-button" class="flex-1 flex items-center justify-center space-x-2 bg-red-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-red-700 transition-colors shadow-lg">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    <span>Cancel (<span id="emergency-cancel-timer">60</span>)</span>
+                                </button>
+                                <button id="emergency-report-form-button" class="flex-1 flex items-center justify-center space-x-2 bg-gray-400 text-white font-semibold py-3 px-4 rounded-lg shadow-lg cursor-not-allowed" disabled>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                                    </svg>
+                                    <span>Report Form</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </main>
@@ -230,6 +344,33 @@
             const mapLoader = document.getElementById('map-loader');
             const fileReportBtn = document.getElementById('file-report-btn');
 
+            // SOS Call Popup elements
+            const sosCallPopup = document.getElementById('sos-call-popup');
+            const cancelCallButton = document.getElementById('cancel-call-button');
+            const cancelTimerDisplay = document.getElementById('cancel-timer');
+
+            // Emergency Response Popup elements (NEW)
+            const emergencyResponsePopup = document.getElementById('emergency-response-popup');
+            const emergencyCancelButton = document.getElementById('emergency-cancel-button');
+            const emergencyCancelTimerDisplay = document.getElementById('emergency-cancel-timer');
+            const emergencyReportFormButton = document.getElementById('emergency-report-form-button');
+            const responseStatus = document.getElementById('response-status');
+            const responseConnectingMessage = document.getElementById('response-connecting-message');
+            const responderStatusDot = document.getElementById('responder-status-dot');
+            const responseAuthorityName = document.getElementById('response-authority-name'); // Added for clarity
+
+            // Report Form elements
+            const reportFormPage = document.getElementById('report-form-page');
+            const closeReportForm = document.getElementById('close-report-form');
+            const reportEmergencyType = document.getElementById('emergency-type');
+            const reportLocationDetails = document.getElementById('location-details');
+
+            let sosCancelCountdownInterval;
+            let sosCallTimeout;
+            let emergencyCountdownInterval; // NEW: for emergency type buttons
+            let emergencyAutoProceedTimeout; // NEW: for emergency type buttons
+
+
             //--- Mobile Menu ---
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
@@ -243,13 +384,6 @@
                     closeIcon.classList.toggle('hidden');
                 });
             }
-
-            // Elements for response flow
-            const emergencyButtonsGrid = document.getElementById('emergency-buttons-grid');
-            const responseContainer = document.getElementById('response-container');
-            const responseMessage = document.getElementById('response-message');
-            const cancelButton = document.getElementById('cancel-button');
-            const chatButton = document.getElementById('chat-button');
 
             const options = {
                 enableHighAccuracy: true,
@@ -268,6 +402,10 @@
 
             async function getCurrentLocation() {
                 return new Promise((resolve, reject) => {
+                    if (!navigator.geolocation) {
+                        reject(new Error("Geolocation is not supported by your browser."));
+                        return;
+                    }
                     navigator.geolocation.getCurrentPosition(
                         pos => resolve(success(pos)),
                         err => {
@@ -312,57 +450,185 @@
             // File Report Button Handler
             if (fileReportBtn) {
                 fileReportBtn.addEventListener('click', () => {
-                    alert('The "File Report" feature is coming soon! This will be used for non-urgent incidents.');
+                    reportEmergencyType.value = '';
+                    reportLocationDetails.value = '';
+                    document.getElementById('description').value = '';
+                    document.getElementById('contact-number').value = '';
+                    reportFormPage.classList.remove('hidden');
                 });
+            }
+
+            // Function to start the 30-second cancellation timer for SOS
+            function startSosCancelTimer(locationData) {
+                let timeLeft = 30;
+                cancelTimerDisplay.textContent = timeLeft;
+                cancelCallButton.disabled = false;
+                cancelCallButton.classList.remove('bg-gray-400', 'hover:bg-gray-400', 'cursor-not-allowed');
+                cancelCallButton.classList.add('bg-red-600', 'hover:bg-red-700');
+
+                clearInterval(sosCancelCountdownInterval);
+
+                sosCancelCountdownInterval = setInterval(() => {
+                    timeLeft--;
+                    cancelTimerDisplay.textContent = timeLeft;
+
+                    if (timeLeft <= 0) {
+                        clearInterval(sosCancelCountdownInterval);
+                        cancelCallButton.disabled = true;
+                        cancelCallButton.classList.remove('bg-red-600', 'hover:bg-red-700');
+                        cancelCallButton.classList.add('bg-gray-400', 'hover:bg-gray-400', 'cursor-not-allowed');
+                        console.log("SOS Cancellation window closed. Proceeding with call.");
+
+                        clearTimeout(sosCallTimeout);
+                        sosCallPopup.classList.add('hidden');
+                        showReportForm('General SOS', `Latitude: ${locationData.lat.toFixed(6)}, Longitude: ${locationData.lon.toFixed(6)}`);
+                    }
+                }, 1000);
             }
 
             // SOS Button Handler
             sosButton.addEventListener('click', async () => {
+                sosCallPopup.classList.remove('hidden');
+
                 try {
                     const location = await getCurrentLocation();
-                    alert(`SOS SIGNAL SENT!\n\nAn emergency call is being initiated from your location:\nLatitude: ${location.lat.toFixed(6)}\nLongitude: ${location.lon.toFixed(6)}\n\nResponders have been dispatched.`);
+                    console.log(`SOS SIGNAL SENT!\nLatitude: ${location.lat.toFixed(6)}\nLongitude: ${location.lon.toFixed(6)}`);
+
+                    startSosCancelTimer(location);
+
+                    sosCallTimeout = setTimeout(() => {
+                        clearInterval(sosCancelCountdownInterval);
+                        sosCallPopup.classList.add('hidden');
+                        showReportForm('General SOS', `Latitude: ${location.lat.toFixed(6)}, Longitude: ${location.lon.toFixed(6)}`);
+                    }, 30000 + 5000); // 30 seconds for cancel window + 5 seconds for call
+
                 } catch (e) {
+                    sosCallPopup.classList.add('hidden');
                     alert('Could not get your location. Please enable location services in your browser and try again.');
                 }
             });
 
-            // Emergency Type Buttons Handler
+            // Cancel SOS Call Button Handler
+            cancelCallButton.addEventListener('click', () => {
+                clearInterval(sosCancelCountdownInterval);
+                clearTimeout(sosCallTimeout);
+                sosCallPopup.classList.add('hidden');
+                console.log("SOS call cancelled by user.");
+            });
+
+            // Function to start the 60-second cancellation timer for emergency types (NEW)
+            function startEmergencyCancelTimer(emergencyType, locationData) {
+                let timeLeft = 60;
+                emergencyCancelTimerDisplay.textContent = timeLeft;
+                emergencyCancelButton.disabled = false;
+                emergencyCancelButton.classList.remove('bg-gray-400', 'hover:bg-gray-400', 'cursor-not-allowed');
+                emergencyCancelButton.classList.add('bg-red-600', 'hover:bg-red-700');
+
+                emergencyReportFormButton.disabled = true; // Disable Report Form initially
+                emergencyReportFormButton.classList.remove('bg-green-600', 'hover:bg-green-700');
+                emergencyReportFormButton.classList.add('bg-gray-400', 'cursor-not-allowed');
+
+                responseStatus.textContent = 'Waiting...';
+                responseStatus.classList.remove('text-green-600');
+                responseStatus.classList.add('text-yellow-600');
+                responseConnectingMessage.textContent = 'connecting...';
+                responderStatusDot.classList.remove('bg-green-500');
+                responderStatusDot.classList.add('bg-yellow-400');
+
+                clearInterval(emergencyCountdownInterval); // Clear any existing interval
+
+                emergencyCountdownInterval = setInterval(() => {
+                    timeLeft--;
+                    emergencyCancelTimerDisplay.textContent = timeLeft;
+
+                    if (timeLeft <= 0) {
+                        clearInterval(emergencyCountdownInterval);
+                        emergencyCancelButton.disabled = true;
+                        emergencyCancelButton.classList.remove('bg-red-600', 'hover:bg-red-700');
+                        emergencyCancelButton.classList.add('bg-gray-400', 'hover:bg-gray-400', 'cursor-not-allowed');
+
+                        // Timer is up, update messages and enable Report Form
+                        responseStatus.textContent = 'Processing...'; // As per image 2
+                        responseConnectingMessage.textContent = 'are on the way...'; // As per image 2
+                        responderStatusDot.classList.remove('bg-yellow-400');
+                        responderStatusDot.classList.add('bg-green-500'); // Change dot color to green
+
+                        emergencyReportFormButton.disabled = false; // Enable Report Form
+                        emergencyReportFormButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
+                        emergencyReportFormButton.classList.add('bg-green-600', 'hover:bg-green-700');
+
+                        console.log(`${emergencyType} - Cancellation window closed. Responders dispatched.`);
+
+                        // Simulate the "event is done" after some time (e.g., another 10 seconds)
+                        emergencyAutoProceedTimeout = setTimeout(() => {
+                            emergencyResponsePopup.classList.add('hidden');
+                            showReportForm(emergencyType, `Latitude: ${locationData.lat.toFixed(6)}, Longitude: ${locationData.lon.toFixed(6)}`);
+                        }, 10000); // 10 seconds after timer is up, auto-proceed to report form
+                    }
+                }, 1000);
+            }
+
+            // Emergency Type Buttons Handler (MODIFIED)
             emergencyButtons.forEach(button => {
                 button.addEventListener('click', async () => {
                     const emergencyType = button.dataset.type;
+                    emergencyResponsePopup.classList.remove('hidden'); // Show the emergency response popup
+
                      try {
                         const location = await getCurrentLocation();
-                        responseMessage.textContent = `${emergencyType} responders are on their way.`;
-                        emergencyButtonsGrid.classList.add('hidden');
-                        responseContainer.classList.remove('hidden');
+                        console.log(`Emergency Type: ${emergencyType} - Request initiated from:\nLatitude: ${location.lat.toFixed(6)}\nLongitude: ${location.lon.toFixed(6)}`);
+
+                        // Update authority name based on type (example)
+                        responseAuthorityName.textContent = emergencyType + ' Responder';
+
+                        startEmergencyCancelTimer(emergencyType, location); // Start the 60-second timer
+
                     } catch (e) {
+                        emergencyResponsePopup.classList.add('hidden');
                         alert('Could not get your location. Please enable location services in your browser and try again.');
                     }
                 });
             });
 
-            // Cancel Button Handler
-            cancelButton.addEventListener('click', () => {
-                responseContainer.classList.add('hidden');
-                emergencyButtonsGrid.classList.remove('hidden');
+            // Emergency Cancel Button Handler (NEW)
+            emergencyCancelButton.addEventListener('click', () => {
+                clearInterval(emergencyCountdownInterval); // Stop the timer
+                clearTimeout(emergencyAutoProceedTimeout); // Stop the auto-proceed timeout
+                emergencyResponsePopup.classList.add('hidden'); // Hide popup
+                console.log("Emergency request cancelled by user.");
             });
 
-            // Chat Button Handler
-            chatButton.addEventListener('click', () => {
-                alert('Opening chat with emergency services...');
-                // Optional: Visually switch to the chat tab in the nav
-                const navLinks = document.querySelectorAll('header nav a');
-                navLinks.forEach(link => {
-                    link.classList.remove('text-red-600', 'border-b-2', 'border-red-600', 'font-semibold');
-                    link.classList.add('text-gray-500', 'hover:text-red-600');
-                    if (link.textContent.trim() === 'Chat') {
-                        link.classList.add('text-red-600', 'border-b-2', 'border-red-600', 'font-semibold');
-                        link.classList.remove('text-gray-500', 'hover:text-red-600');
-                    }
-                });
+            // Emergency Report Form Button Handler (NEW)
+            emergencyReportFormButton.addEventListener('click', async () => {
+                clearInterval(emergencyCountdownInterval); // Stop any running timer
+                clearTimeout(emergencyAutoProceedTimeout); // Stop auto-proceed
+                emergencyResponsePopup.classList.add('hidden'); // Hide the response popup
+
+                try {
+                    const location = await getCurrentLocation(); // Get current location again for the report
+                    const emergencyType = responseAuthorityName.textContent.replace(' Responder', ''); // Derive type from current popup display
+                    showReportForm(emergencyType, `Latitude: ${location.lat.toFixed(6)}, Longitude: ${location.lon.toFixed(6)}`);
+                } catch (e) {
+                    alert('Could not get your location for the report form. Please try again.');
+                    showReportForm(responseAuthorityName.textContent.replace(' Responder', ''), 'Location could not be fetched.');
+                }
             });
 
-            // Pin Location on Map Handler
+
+            // Function to show report form
+            function showReportForm(type, location) {
+                reportEmergencyType.value = type;
+                reportLocationDetails.value = location;
+                document.getElementById('description').value = '';
+                document.getElementById('contact-number').value = '';
+                reportFormPage.classList.remove('hidden');
+            }
+
+            closeReportForm.addEventListener('click', () => {
+                reportFormPage.classList.add('hidden');
+            });
+
+            // Pin Location on Map Handler (UNCHANGED)
             pinLocationButton.addEventListener('click', async () => {
                 locationStatus.textContent = `Pinning your location...`;
                 locationStatus.classList.remove('hidden');
@@ -380,7 +646,6 @@
                     }, 4000);
                 }
             });
-
         });
     </script>
 </body>

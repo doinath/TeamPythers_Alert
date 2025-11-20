@@ -1,11 +1,229 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>System kunohay ni</title>
-    <p>Pero hindi diay ni mao ang systema nang pinas</p>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ALERT Authority Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-gray-100 font-sans">
+    <div id="app">
+        <header class="bg-white shadow-sm sticky top-0 z-50">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center space-x-8">
+                        <div class="flex items-center space-x-2">
+                            <img src="{% static 'images/logo.png' %}" alt="ALERT Logo" class="h-10 w-auto object-contain" />
+                        </div>
+                        <nav class="hidden md:flex items-center space-x-6">
+                            <a href="#" class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Dashboard</a>
+                            <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">Chat</a>
+                            <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">Call Logs</a>
+                        </nav>
+                    </div>
+                    <div class="hidden md:flex items-center space-x-4">
+                        <span class="text-gray-700 font-medium">Bessie Cooper</span>
+                        <img class="h-10 w-10 rounded-full object-cover" src="https://picsum.photos/id/237/100/100" alt="User Avatar" />
+                    </div>
+                    <div class="md:hidden flex items-center">
+                        <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-800 focus:outline-none">
+                            <svg id="menu-open-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                            <svg id="menu-close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
 
+            <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+                <nav class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                    <a href="#" class="block px-3 py-2 rounded-md text-base font-medium bg-red-50 text-red-700">Dashboard</a>
+                    <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Chat</a>
+                    <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Call logs</a>
+                </nav>
+                <div class="pt-4 pb-3 border-t border-gray-200">
+                    <div class="flex items-center px-5">
+                        <img class="h-10 w-10 rounded-full object-cover" src="https://picsum.photos/id/237/100/100" alt="User Avatar" />
+                        <div class="ml-3">
+                            <div class="text-base font-medium text-gray-800">Bessie Cooper</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+
+            <div id="authority-dashboard-view">
+                <div class="space-y-6 flex justify-center">
+                    <div class="w-full max-w-7xl">
+                         <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                            <div class="px-4 py-3 sm:px-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-3 sm:space-y-0">
+                                <h3 class="text-lg leading-6 font-semibold text-gray-900">Recent System Logs</h3>
+                                <div class="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
+
+                                    <div class="flex items-center space-x-2 w-full sm:w-auto">
+                                        <label for="date-from" class="text-sm font-medium text-gray-700 whitespace-nowrap hidden lg:block">From:</label>
+                                        <input type="date" id="date-from" placeholder="Date From" class="border rounded-md px-2 py-1 text-sm focus:ring-red-500 focus:border-red-500 w-full sm:w-auto"/>
+                                        <label for="date-to" class="text-sm font-medium text-gray-700 whitespace-nowrap hidden lg:block">To:</label>
+                                        <input type="date" id="date-to" placeholder="Date To" class="border rounded-md px-2 py-1 text-sm focus:ring-red-500 focus:border-red-500 w-full sm:w-auto"/>
+                                    </div>
+
+                                    <input type="text" placeholder="Search logs..." class="border rounded-md px-2 py-1 text-sm focus:ring-red-500 focus:border-red-500 w-full sm:w-48"/>
+
+                                    <button class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-1 px-3 rounded-md transition w-full sm:w-auto">Search</button>
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Log ID</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">1008</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">System Health</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-normal">Database connection pool utilization at **55%**. Status: <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Normal</span></td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">7/28/2024, 7:35:00 PM</td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">1007</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Event Update</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-normal">Event **#1001** status changed to **Resolved** by Responder John D.</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">7/28/2024, 7:30:00 PM</td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">1006</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">User Activity</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-normal">Responder **John D** updated location via GPS ping.</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">7/28/2024, 7:25:00 PM</td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">1005</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Alert System</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-normal">Mass SMS alert sent to users in Sector A regarding **Flood** warning.</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">7/28/2024, 7:20:00 PM</td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">1004</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Assignment</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-normal">Responder **Jane S** assigned to Event #1002 (Accident). Status: <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Medium</span></td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">7/28/2024, 7:15:00 PM</td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">1003</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Event Creation</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-normal">New **Accident** event reported near Highway 5. Severity: <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Medium</span></td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">7/28/2024, 7:05:00 PM</td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">1002</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">User Activity</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-normal">Authority **Bessie Cooper** logged in successfully.</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">7/28/2024, 6:45:00 PM</td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">1001</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Event Creation</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-normal">New **Fire** event reported in Sector B. Severity: <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">High</span></td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">7/28/2024, 6:30:00 PM</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="px-4 py-3 sm:px-6 bg-gray-50 flex items-center justify-between border-t border-gray-200">
+                                <div class="flex-1 flex justify-between sm:hidden">
+                                    <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Previous</a>
+                                    <a href="#" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Next</a>
+                                </div>
+                                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-700">
+                                            Showing <span class="font-medium">1</span> to <span class="font-medium">8</span> of <span class="font-medium">792</span> results
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                                            <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                                <span class="sr-only">Previous</span>
+                                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                                </svg>
+                                            </a>
+                                            <a href="#" aria-current="page" class="z-10 bg-red-50 border-red-500 text-red-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">1</a>
+                                            <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">2</a>
+                                            <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 hidden md:inline-flex relative items-center px-4 py-2 border text-sm font-medium">3</a>
+                                            <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">...</span>
+                                            <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 hidden md:inline-flex relative items-center px-4 py-2 border text-sm font-medium">98</a>
+                                            <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">99</a>
+                                            <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                                <span class="sr-only">Next</span>
+                                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                                </svg>
+                                            </a>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="citizen-view" class="hidden">
+                 <p>Citizen Account View would be here.</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const openIcon = document.getElementById('menu-open-icon');
+            const closeIcon = document.getElementById('menu-close-icon');
+
+            if (mobileMenuButton) {
+                 mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                    openIcon.classList.toggle('hidden');
+                    closeIcon.classList.toggle('hidden');
+                });
+            }
+
+            const authorityDashboardView = document.getElementById('authority-dashboard-view');
+            const citizenView = document.getElementById('citizen-view');
+
+            function showView(viewToShow) {
+                // Only toggle visibility for the remaining main views
+                [authorityDashboardView, citizenView].forEach(view => {
+                    if (view) view.classList.add('hidden');
+                });
+                if (viewToShow) viewToShow.classList.remove('hidden');
+            }
+
+            // Initial view
+            showView(authorityDashboardView);
+        });
+    </script>
 </body>
 </html>

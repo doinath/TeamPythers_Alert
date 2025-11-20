@@ -1,5 +1,8 @@
+from django.contrib.auth.models import User
+from django.contrib import messages
 from django.views import View
 from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 class RegisterView(View):
     def get(self, request):

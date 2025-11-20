@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User as AuthUser
 from datetime import date
 
 
@@ -6,30 +7,33 @@ from datetime import date
 #   USER (BASE ENTITY)
 # -----------------------------------------------------------
 class User(models.Model):
+    account = models.OneToOneField(AuthUser, on_delete=models.CASCADE, related_name='custom_profile', null=True, blank=True)
 
     type_gender = (('M', 'Male'), ('F', 'Female'))
 
     user_id = models.AutoField(primary_key=True)
 
     first_name = models.CharField(max_length=50)
-    middle_name = models.CharField(max_length=50)
+    middle_name = models.CharField(max_length=50, null=True, blank=True)
     last_name = models.CharField(max_length=50)
 
-    date_of_birth = models.DateField()
-    gender = models.CharField(max_length=1, choices=type_gender)
+    date_of_birth = models.DateField(null=True, blank=True)
+    gender = models.CharField(max_length=1, choices=type_gender, null=True, blank=True)
 
-    street = models.CharField(max_length=50)
-    city = models.CharField(max_length=50)
-    municipality = models.CharField(max_length=50)
-    province = models.CharField(max_length=50)
-    country = models.CharField(max_length=50)
-    zip_code = models.CharField(max_length=4)
+    street = models.CharField(max_length=50, null=True, blank=True)
+    city = models.CharField(max_length=50, null=True, blank=True)
+    municipality = models.CharField(max_length=50, null=True, blank=True)
+    province = models.CharField(max_length=50, null=True, blank=True)
+    country = models.CharField(max_length=50, null=True, blank=True)
+    zip_code = models.CharField(max_length=4, null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     @property
     def age(self):
+        if not self.date_of_birth:
+            return None
         today = date.today()
         return (
             today.year - self.date_of_birth.year
@@ -44,24 +48,28 @@ class User(models.Model):
 #   ADDITIONAL INFORMATION
 # -----------------------------------------------------------
 class ContactInfo(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='contact_numbers')
     contact_info = models.CharField(max_length=15)
 
+    def __str__(self):
+        return f"{self.user_id} - {self.contact_info}"
 
 class Email(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='secondary_emails')
     email = models.EmailField()
+
+    def __str__(self):
+        return f"{self.user_id} - {self.email}"
 
 
 # -----------------------------------------------------------
 #   CITIZEN (SUBTYPE OF USER)
 # -----------------------------------------------------------
 class Citizen(models.Model):
-    user_id = models.OneToOneField(User, on_delete=models.CASCADE)
+    user_id = models.OneToOneField(User, on_delete=models.CASCADE, related_name='citizen_profile')
 
     def __str__(self):
-        user = self.user_id
-        return f"Citizen: {user.first_name} {user.last_name}"
+        return f"Citizen: {self.user_id.first_name} {self.user_id.last_name}"
 
 
 # -----------------------------------------------------------
@@ -87,7 +95,7 @@ class Responder(models.Model):
         ('REL', 'Released'),
     )
 
-    citizen = models.OneToOneField(Citizen, on_delete=models.CASCADE)
+    citizen = models.OneToOneField(Citizen, on_delete=models.CASCADE, related_name='responder_profile')
 
     department_unit = models.CharField(max_length=50)
     role = models.CharField(max_length=15, choices=role_type)

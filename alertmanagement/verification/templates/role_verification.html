@@ -49,7 +49,7 @@
             <div class="data-rows-container">
                 <ul class="data-row">
                     <li class="col-person">
-                        <i class="fas fa-user-circle"></i> Dela Cruz, Juan Y.
+                        <i class="fas fa-user-circle"></i> <span class="person-name">Dela Cruz, Juan Y.</span>
                     </li>
                     <li class="col-time">14:10 31/10/25</li>
                     <li class="col-location">Iyawan, Talisay City</li>
@@ -60,7 +60,7 @@
 
                 <ul class="data-row">
                     <li class="col-person">
-                        <i class="fas fa-user-circle"></i> Doe, Jane D.
+                        <i class="fas fa-user-circle"></i> <span class="person-name">Doe, Jane D.</span>
                     </li>
                     <li class="col-time">14:07 31/10/25</li>
                     <li class="col-location">Tabunok, Talisay City</li>
@@ -71,7 +71,7 @@
 
                 <ul class="data-row">
                     <li class="col-person">
-                        <i class="fas fa-user-circle"></i> Tan, Rombo
+                        <i class="fas fa-user-circle"></i> <span class="person-name">Tan, Rombo</span>
                     </li>
                     <li class="col-time">12:21 31/10/25</li>
                     <li class="col-location">Mohon, Talisay City</li>
@@ -81,7 +81,7 @@
                 </ul>
                 <ul class="data-row">
                     <li class="col-person">
-                        <i class="fas fa-user-circle"></i> Angcastillo, Natan Jedd N.
+                        <i class="fas fa-user-circle"></i> <span class="person-name">Angcastillo, Natan Jedd N.</span>
                     </li>
                     <li class="col-time">11:11 31/10/25</li>
                     <li class="col-location">Tabunok, Talisay City</li>
@@ -91,7 +91,7 @@
                 </ul>
                 <ul class="data-row">
                     <li class="col-person">
-                        <i class="fas fa-user-circle"></i> Poldo, Kylie N.
+                        <i class="fas fa-user-circle"></i> <span class="person-name">Poldo, Kylie N.</span>
                     </li>
                     <li class="col-time">14:44 30/10/25</li>
                     <li class="col-location">Cansojong, Talisay City</li>
@@ -101,7 +101,7 @@
                 </ul>
                 <ul class="data-row">
                     <li class="col-person">
-                        <i class="fas fa-user-circle"></i> Badyanha, Sherry Lyn C.
+                        <i class="fas fa-user-circle"></i> <span class="person-name">Badyanha, Sherry Lyn C.</span>
                     </li>
                     <li class="col-time">11:55 30/10/25</li>
                     <li class="col-location">Dumlog, Talisay City</li>
@@ -109,10 +109,66 @@
                         <span class="status-tag declined">DECLINED</span>
                     </li>
                 </ul>
-
             </div>
         </section>
     </main>
+
+    <div id="verificationModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <i class="fas fa-user-tie modal-profile-icon"></i>
+                <h2 id="modalPersonName" class="modal-title"></h2>
+            </div>
+
+            <div class="modal-body">
+                <div class="document-section">
+                    <p class="document-label">Documents Uploaded:</p>
+                    <div class="document-placeholder"></div>
+                    <div class="document-placeholder" style="width: 70%;"></div>
+                </div>
+
+                <div class="role-section">
+                    <p class="document-label">Role Requested:</p>
+                    <div class="role-placeholder"></div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="modal-btn btn-approve">APPROVE</button>
+                <button class="modal-btn btn-decline">DECLINE</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('verificationModal');
+            const modalTitle = document.getElementById('modalPersonName');
+            const dataRows = document.querySelectorAll('.data-row');
+
+            dataRows.forEach(row => {
+                row.addEventListener('click', function() {
+
+                    const personNameElement = row.querySelector('.person-name');
+                    const name = personNameElement ? personNameElement.textContent.trim() : 'Unknown User';
+
+                    modalTitle.textContent = name;
+                    modal.style.display = 'flex';
+                });
+            });
+
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            document.querySelectorAll('.modal-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    modal.style.display = 'none';
+                });
+            });
+        });
+    </script>
 </div>
 </body>
 </html>

@@ -43,7 +43,7 @@ class ReceiveCallView(View):
 
 #Actual htmls
 class AssignmentListView(View):
-    template_name = "EmergencyEvent/assignment_list.html"
+    template_name = "EventAssignment/assignment_list.html"
     def get(self, request):
         return render(request, self.template_name)
 
@@ -57,7 +57,7 @@ class EventDetailsAuthorityView(View):
     def get(self, request):
         return render(request, self.template_name)
 class EventListView(View):
-    template_name = "EmergencyEvent/event_list.html"
+    template_name = "EventAssignment/event_list.html"
     def get(self, request):
         return render(request, self.template_name)
 class CreateReportView(View):
@@ -65,6 +65,6 @@ class CreateReportView(View):
     def get(self, request):
         return render(request, self.template_name)
 class ResponderAvailabilityView(View):
-    template_name = "EmergencyEvent/responder_availability_emergency.html"
+    template_name = "EventAssignment/responder_availability_emergency.html"
     def get(self, request):
         return render(request, self.template_name)

@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,15 +7,15 @@
     <title>Responder Availability List</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="responder_avail_emg.css">
+    <link rel="stylesheet" href="{% static 'emergency/responder_avail_emg.css' %}">
 </head>
 <body>
 
     <div class="container">
-        
+
         <nav class="navbar">
             <div class="logo">
-                <img src="logo.jpg" alt="ALERT Logo">
+                <img src="{% static 'emergency/logo.jpg' %}" alt="ALERT Logo">
             </div>
 
             <div class="nav-links">
@@ -25,7 +26,7 @@
 
             <div class="user-info">
                 <span>Julian Andales</span>
-                <img src="profile_image.jpg" alt="User Profile" class="profile-pic">
+                <img src="{% static 'emergency/profile_image.jpg' %}" alt="User Profile" class="profile-pic">
             </div>
         </nav>
 
@@ -40,7 +41,7 @@
             </div>
 
             <div style="display: flex; align-items: center; gap: 15px;">
-                
+
                 <div class="counter-pill">0/6</div>
 
                 <div class="search-box">

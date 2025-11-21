@@ -1,118 +1,162 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event List</title>
-    <link rel="stylesheet" href="events.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Responder Availability List</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="{% static 'responder_avail_emg.css' %}">
 </head>
 <body>
+
     <div class="container">
-        <header class="navbar">
+
+        <nav class="navbar">
             <div class="logo">
-                <img src="logo.jpg" alt="ALERT Logo">
-                <span class="logo-text"></span>
+                <img src="{% static 'logo.jpg' %}" alt="ALERT Logo">
             </div>
-            <nav class="nav-links">
+
+            <div class="nav-links">
                 <a href="#">Dashboard</a>
                 <a href="#">Chat</a>
                 <a href="#" class="active">Call Logs</a>
-            </nav>
+            </div>
+
             <div class="user-info">
                 <span>Julian Andales</span>
-                <img src="profile_image.jpg" alt="User Profile" class="profile-pic">
-                <i class="fas fa-ellipsis-v settings-icon"></i>
+                <img src="{% static 'profile_image.jpg' %}" alt="User Profile" class="profile-pic">
             </div>
-        </header>
+        </nav>
 
-        <main class="content-area">
-            <div class="filter-bar">
-                <div class="filter-tabs">
-                    <button class="tab active">All</button>
-                    <button class="tab">Pending</button>
-                    <button class="tab">Assigned</button>
-                    <button class="tab">Resolved</button>
-                    <button class="tab">Cancelled</button>
-                </div>
+        <h2 style="margin-bottom: 20px; color: #555;">Responder Availability List</h2>
+
+        <div class="filter-bar">
+            <div class="filter-tabs">
+                <button class="tab active">All</button>
+                <button class="tab">Available</button>
+                <button class="tab">Busy</button>
+                <button class="tab">Off Duty</button>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 15px;">
+
+                <div class="counter-pill">0/6</div>
+
                 <div class="search-box">
-                    <i class="fas fa-search"></i>
+                    <i class="fa-solid fa-magnifying-glass"></i>
                     <input type="text" placeholder="Search">
                 </div>
             </div>
+        </div>
 
-            <div class="events-table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>EMERGENCY</th>
-                            <th>SENDER</th>
-                            <th>TIME AND DATE</th>
-                            <th>LOCATION</th>
-                            <th>URGENCY</th>
-                            <th>STATUS</th>
-                            <th></th> </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><i class="fas fa-fire icon-red"></i> Fire</td>
-                            <td>Dela Cruz, Juan Y.</td>
-                            <td>14:10 31/10/25</td>
-                            <td>Iwayan, Talisay City</td>
-                            <td><span class="urgency-tag very-high">Very High</span></td>
-                            <td>Pending</td>
-                            <td><button class="action-btn assign-btn">ASSIGN</button></td>
-                        </tr>
-                        <tr>
-                            <td><i class="fas fa-house-damage icon-orange"></i> Earthquake</td>
-                            <td>Doe, Jane D.</td>
-                            <td>14:07 31/10/25</td>
-                            <td>Tabunok, Talisay City</td>
-                            <td><span class="urgency-tag low">Low</span></td>
-                            <td>Assigned</td>
-                            <td><button class="action-btn view-btn">VIEW REPORT</button></td>
-                        </tr>
-                        <tr>
-                            <td><i class="fas fa-water icon-blue"></i> Flood</td>
-                            <td>Tan, Rambo</td>
-                            <td>12:21 31/10/25</td>
-                            <td>Mohon, Talisay City</td>
-                            <td><span class="urgency-tag low">Low</span></td>
-                            <td>Resolved</td>
-                            <td><button class="action-btn view-btn">VIEW REPORT</button></td>
-                        </tr>
-                        <tr>
-                            <td><i class="fas fa-car-crash icon-dark-orange"></i> Accident</td>
-                            <td>Angcastillo, Natan Jedd N.</td>
-                            <td>11:11 31/10/25</td>
-                            <td>Tabunok, Talisay City</td>
-                            <td><span class="urgency-tag moderate">Moderate</span></td>
-                            <td>Resolved</td>
-                            <td><button class="action-btn view-btn">VIEW REPORT</button></td>
-                        </tr>
-                        <tr>
-                            <td><i class="fas fa-user-secret icon-brown"></i> Crime</td>
-                            <td>Paldo, Kylie N.</td>
-                            <td>14:44 30/10/25</td>
-                            <td>Cansojong, Talisay City</td>
-                            <td><span class="urgency-tag high">High</span></td>
-                            <td>Resolved</td>
-                            <td><button class="action-btn view-btn">VIEW REPORT</button></td>
-                        </tr>
-                        <tr>
-                            <td><i class="fas fa-poo-storm icon-gray"></i> Storm</td>
-                            <td>Bodyanha, Sherry Lyn C.</td>
-                            <td>11:55 30/10/25</td>
-                            <td>Dumlog, Talisay City</td>
-                            <td><span class="urgency-tag high">High</span></td>
-                            <td>Cancelled</td>
-                            <td><button class="action-btn view-btn">VIEW REPORT</button></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </main>
+        <div class="assignments-table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Agency</th>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>Availability</th>
+                        <th style="text-align: center;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <i class="fa-solid fa-fire-extinguisher icon-red"></i>
+                            Bureau Of Fire Protection
+                        </td>
+                        <td>Alab, Christopher K.</td>
+                        <td>Fire Inspector</td>
+                        <td>
+                            <span class="status-badge grad-very-high">Busy</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <button class="action-btn grad-blue">View</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <i class="fa-solid fa-kit-medical icon-dark-orange"></i>
+                            LDRRMC
+                        </td>
+                        <td>Yuta, Segismundo L.</td>
+                        <td>Search And Rescue Team Leader</td>
+                        <td>
+                            <span class="status-badge grad-low">Available</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <button class="action-btn grad-assign">Assign</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <i class="fa-solid fa-kit-medical icon-dark-orange"></i>
+                            LDRRMC
+                        </td>
+                        <td>Bahabaha, Isabelle Mae T.</td>
+                        <td>Search and Rescue Volunteer</td>
+                        <td>
+                            <span class="status-badge grad-low">Available</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <button class="action-btn grad-assign">Assign</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <i class="fa-solid fa-shield-halved icon-blue"></i>
+                            Philippine National Police
+                        </td>
+                        <td>Baril, Efren Joshua K.</td>
+                        <td>Police Lieutenant</td>
+                        <td>
+                            <span class="status-badge grad-moderate">Off Duty</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <button class="action-btn grad-moderate" disabled>Unavailable</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <i class="fa-solid fa-shield-halved icon-blue"></i>
+                            Philippine National Police
+                        </td>
+                        <td>Pinereso, Ernesto Jr. P.</td>
+                        <td>Police Lieutenant</td>
+                        <td>
+                            <span class="status-badge grad-moderate">Off Duty</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <button class="action-btn grad-moderate" disabled>Unavailable</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <i class="fa-solid fa-person-military-rifle icon-brown"></i>
+                            Armed Forces
+                        </td>
+                        <td>Dimataub, Leonarda Joshua L.</td>
+                        <td>First Lieutenant</td>
+                        <td>
+                            <span class="status-badge grad-moderate">Off Duty</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <button class="action-btn grad-moderate" disabled>Unavailable</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
+
 </body>
 </html>

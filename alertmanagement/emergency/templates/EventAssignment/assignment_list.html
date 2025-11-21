@@ -1,10 +1,11 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assignment List</title>
-    <link rel="stylesheet" href="assignment_list_design.css">
+    <link rel="stylesheet" href="{% static 'emergency/assignment_list_design.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -12,7 +13,7 @@
     <div class="container">
         <header class="navbar">
             <div class="logo">
-                <img src="logo.jpg" alt="ALERT Logo">
+                <img src="{% static 'emergency/logo.jpg' %}" alt="ALERT Logo">
                 <span class="logo-text"></span>
             </div>
             <nav class="nav-links">
@@ -22,7 +23,7 @@
             </nav>
             <div class="user-info">
                 <span>Bessie Cooper</span>
-                <img src="profile_image.jpg" alt="User Profile" class="profile-pic">
+                <img src="{% static 'emergency/profile_image.jpg' %}" alt="User Profile" class="profile-pic">
                 <i class="fas fa-ellipsis-v settings-icon"></i>
             </div>
         </header>
@@ -71,41 +72,4 @@
                             <td>Assigned</td>
                         </tr>
                         <tr>
-                            <td><i class="fas fa-water icon-blue"></i> Flood</td>
-                            <td>Tan, Rambo</td>
-                            <td>11:20 31/10/25</td>
-                            <td>Mohon, Talisay City</td>
-                            <td><span class="severity-tag low">Low</span></td>
-                            <td>On the way</td>
-                        </tr>
-                        <tr>
-                            <td><i class="fas fa-user-injured icon-dark-orange"></i> Accident</td>
-                            <td>Angcastillo, Natan Jedd N.</td>
-                            <td>11:11 31/10/25</td>
-                            <td>Tabunok, Talisay City</td>
-                            <td><span class="severity-tag moderate">Moderate</span></td>
-                            <td>On the way</td>
-                        </tr>
-                        <tr>
-                            <td><i class="fas fa-user-secret icon-brown"></i> Crime</td>
-                            <td>Paldo, Kylie N.</td>
-                            <td>10:55 31/10/25</td>
-                            <td>Cansojong, Talisay City</td>
-                            <td><span class="severity-tag high">High</span></td>
-                            <td>In location</td>
-                        </tr>
-                        <tr>
-                            <td><i class="fas fa-poo-storm icon-gray"></i> Storm</td>
-                            <td>Bodyanha, Sherry Lyn C.</td>
-                            <td>09:30 31/10/25</td>
-                            <td>Dumlog, Talisay City</td>
-                            <td><span class="severity-tag high">High</span></td>
-                            <td>In location</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </main>
-    </div>
-</body>
-</html>
+                            <td><i class="

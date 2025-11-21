@@ -68,7 +68,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'alertmanagement',
         'USER': 'root',
-        'PASSWORD': 'Sherie@#$2505',
+        'PASSWORD': 'alduind',
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {
@@ -100,12 +100,13 @@ USE_TZ = True
 
 # -------------------- STATIC FILES --------------------
 STATIC_URL = '/static/'
+
 STATICFILES_DIRS = [
     BASE_DIR / 'account' / 'assets',
-    BASE_DIR / "communication" / "com_assets"
+    BASE_DIR / 'communication' / 'com_assets',
+    BASE_DIR / 'emergency' / 'static',
 ]
 
-STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

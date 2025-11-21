@@ -17,10 +17,10 @@ urlpatterns = [
     path("call/receive/", views.ReceiveCallView.as_view(), name="receive_call"),
 
     #Actual Htmls
-    path("assignment/viewlist/", views.AssignmentListView.as_view(), name="assignment_list"),
-    path("emergency/details-authority",views.EventDetailsAuthorityView.as_view(), name="event_details_authority"),
-    path("emergency/details-responder/", views.EventDetailsResponderView.as_view(), name="event_details_responder"),
-    path("emergency/event-list/", views.EventListView.as_view(), name="event_list"),
-    path("emergency/report-incident/", views.CreateReportView.as_view(), name="report_form"),
-    path("emergency/responder-availability/", views.ResponderAvailabilityView.as_view(), name="responder_availability"),
+    path("viewlist/", views.AssignmentListView.as_view(), name="assignment_list"),
+    path("details-authority",views.EventDetailsAuthorityView.as_view(), name="event_details_authority"),
+    path("details-responder/", views.EventDetailsResponderView.as_view(), name="event_details_responder"),
+    path("event-list/", views.EventListView.as_view(), name="event_list"),
+    path("report-incident/", views.CreateReportView.as_view(), name="report_form"),
+    path("responder-availability/", views.ResponderAvailabilityView.as_view(), name="responder_availability"),
 ]

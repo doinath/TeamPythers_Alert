@@ -1,17 +1,18 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Details (Authority)</title>
-    <link rel="stylesheet" href="event_detail.css">
+    <link rel="stylesheet" href="{% static 'emergency/event_detail.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    </head>
+</head>
 <body>
     <div class="container">
         <header class="navbar">
             <div class="logo">
-                <img src="logo.jpg" alt="ALERT Logo">
+                <img src="{% static 'emergency/logo.jpg' %}" alt="ALERT Logo">
                 <span class="logo-text"></span>
             </div>
             <nav class="nav-links">
@@ -21,7 +22,7 @@
             </nav>
             <div class="user-info">
                 <span>Julian Andales</span>
-                <img src="profile_image.jpg" alt="User Profile" class="profile-pic">
+                <img src="{% static 'emergency/profile_image.jpg' %}" alt="User Profile" class="profile-pic">
             </div>
         </header>
 
@@ -57,7 +58,7 @@
                     <div class="action-buttons-top">
                         <button class="action-button assign-btn">ASSIGN</button>
                     </div>
-                    
+
                     <div class="action-buttons-bottom">
                         <button class="action-button secondary-btn medical-records-btn">MEDICAL RECORDS</button>
                         <button class="action-button secondary-btn call-btn">CALL</button>
@@ -68,7 +69,7 @@
 
             <div class="right-panel">
                 <div class="map-card">
-                    <img src="map_image.png" alt="Emergency Location Map" class="map-image">
+                    <img src="{% static 'emergency/map_image.png' %}" alt="Emergency Location Map" class="map-image">
                     <div class="map-overlay">Emergency Locations</div>
                 </div>
             </div>

@@ -68,7 +68,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'alertmanagement',
         'USER': 'root',
-        'PASSWORD': 'kyle.12323',
+        'PASSWORD': 'Admin#123',
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {
@@ -103,6 +103,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'account' / 'assets',
     BASE_DIR / "communication" / "com_assets"
+    BASE_DIR / 'verification' / "assets"
 ]
 
 STATIC_URL = 'static/'

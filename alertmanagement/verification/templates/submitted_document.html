@@ -2,9 +2,113 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Submitted Document</title>
-</head>
-<body>
+    <title>Submitted Document Review</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../assets/role_verification.css">
 
+    <style>
+        /* Add specific styles for the document viewer page */
+        .document-viewer {
+            padding: 30px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .document-header {
+            border-bottom: 2px solid #eee;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+        }
+        .document-header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .document-header p {
+            font-size: 16px;
+            color: #555;
+            margin: 0;
+        }
+        .file-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .file-item {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .file-item img {
+            width: 100%;
+            height: 250px; /* Uniform height for placeholders */
+            object-fit: cover;
+            background-color: #f5f5f5;
+        }
+        .file-caption {
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            background-color: #f8f8f8;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <header class="top-header">
+            <div class="header-left-group">
+                <div class="alert-logo">
+                    <img src="../assets/imgs/alert_logo.jpg" alt="ALERT Logo">
+                </div>
+
+                <ul class="nav-tabs">
+                    <li><a href="#">Dashboard</a></li>
+                    <li><a href="#">Chat</a></li>
+                    <li class="active"><a href="#">Verification</a></li>
+                </ul>
+            </div>
+
+            <div class="user-profile">
+                <span class="user-name">Shervin</span>
+                <img src="../assets/imgs/shervin_pfp.jpg" alt="Shervin's Profile" class="profile-pic">
+                <i class="fas fa-ellipsis-v"></i>
+            </div>
+        </header>
+
+        <main class="document-viewer">
+            <div class="document-header">
+                <h1>Review: Badyanha, Sherry Lyn C.</h1>
+                <p>Role Requested: **Authority** | Status: **Declined**</p>
+            </div>
+
+            <div class="file-gallery">
+                <div class="file-item">
+                    <img src="placeholder_id_front.jpg" alt="Front of ID">
+                    <div class="file-caption">Government ID (Front)</div>
+                </div>
+                <div class="file-item">
+                    <img src="placeholder_id_back.jpg" alt="Back of ID">
+                    <div class="file-caption">Government ID (Back)</div>
+                </div>
+                <div class="file-item">
+                    <img src="placeholder_certificate.jpg" alt="Certificate">
+                    <div class="file-caption">Employment Certificate</div>
+                </div>
+                <div class="file-item">
+                    <img src="placeholder_proof.jpg" alt="Proof of Address">
+                    <div class="file-caption">Proof of Address</div>
+                </div>
+            </div>
+
+            <div class="modal-footer" style="margin-top: 40px; border-top: 2px solid #eee;">
+                <button class="modal-btn btn-approve">APPROVE</button>
+                <button class="modal-btn btn-decline">DECLINE</button>
+            </div>
+        </main>
+    </div>
 </body>
 </html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responder Availability List</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="responder_avail_emg.css">
+</head>
+<body>
+
+    <div class="container">
+        
+        <nav class="navbar">
+            <div class="logo">
+                <img src="logo.jpg" alt="ALERT Logo">
+            </div>
+
+            <div class="nav-links">
+                <a href="#">Dashboard</a>
+                <a href="#">Chat</a>
+                <a href="#" class="active">Call Logs</a>
+            </div>
+
+            <div class="user-info">
+                <span>Julian Andales</span>
+                <img src="profile_image.jpg" alt="User Profile" class="profile-pic">
+            </div>
+        </nav>
+
+        <h2 style="margin-bottom: 20px; color: #555;">Responder Availability List</h2>
+
+        <div class="filter-bar">
+            <div class="filter-tabs">
+                <button class="tab active">All</button>
+                <button class="tab">Available</button>
+                <button class="tab">Busy</button>
+                <button class="tab">Off Duty</button>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 15px;">
+                
+                <div class="counter-pill">0/6</div>
+
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search">
+                </div>
+            </div>
+        </div>
+
+        <div class="assignments-table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Agency</th>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>Availability</th>
+                        <th style="text-align: center;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <i class="fa-solid fa-fire-extinguisher icon-red"></i>
+                            Bureau Of Fire Protection
+                        </td>
+                        <td>Alab, Christopher K.</td>
+                        <td>Fire Inspector</td>
+                        <td>
+                            <span class="status-badge grad-very-high">Busy</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <button class="action-btn grad-blue">View</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <i class="fa-solid fa-kit-medical icon-dark-orange"></i>
+                            LDRRMC
+                        </td>
+                        <td>Yuta, Segismundo L.</td>
+                        <td>Search And Rescue Team Leader</td>
+                        <td>
+                            <span class="status-badge grad-low">Available</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <button class="action-btn grad-assign">Assign</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <i class="fa-solid fa-kit-medical icon-dark-orange"></i>
+                            LDRRMC
+                        </td>
+                        <td>Bahabaha, Isabelle Mae T.</td>
+                        <td>Search and Rescue Volunteer</td>
+                        <td>
+                            <span class="status-badge grad-low">Available</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <button class="action-btn grad-assign">Assign</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <i class="fa-solid fa-shield-halved icon-blue"></i>
+                            Philippine National Police
+                        </td>
+                        <td>Baril, Efren Joshua K.</td>
+                        <td>Police Lieutenant</td>
+                        <td>
+                            <span class="status-badge grad-moderate">Off Duty</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <button class="action-btn grad-moderate" disabled>Unavailable</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <i class="fa-solid fa-shield-halved icon-blue"></i>
+                            Philippine National Police
+                        </td>
+                        <td>Pinereso, Ernesto Jr. P.</td>
+                        <td>Police Lieutenant</td>
+                        <td>
+                            <span class="status-badge grad-moderate">Off Duty</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <button class="action-btn grad-moderate" disabled>Unavailable</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <i class="fa-solid fa-person-military-rifle icon-brown"></i>
+                            Armed Forces
+                        </td>
+                        <td>Dimataub, Leonarda Joshua L.</td>
+                        <td>First Lieutenant</td>
+                        <td>
+                            <span class="status-badge grad-moderate">Off Duty</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <button class="action-btn grad-moderate" disabled>Unavailable</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>

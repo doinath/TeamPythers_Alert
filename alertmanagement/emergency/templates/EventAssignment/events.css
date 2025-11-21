@@ -1,0 +1,262 @@
+/* General Reset and Body Styling */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f2f5;
+    color: #333;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* --- Navbar Styling (Retained) --- */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+    font-weight: 700;
+    color: #d9534f;
+}
+
+.logo img {
+    height: 50px;
+    width: 80px;
+    margin-right: 5px;
+}
+
+.nav-links a {
+    margin: 0 15px;
+    text-decoration: none;
+    color: #666;
+    padding: 5px 0;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.nav-links .active {
+    color: #333;
+    border-bottom: 3px solid #d9534f;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-info span {
+    margin-right: 10px;
+    font-weight: 600;
+}
+
+.profile-pic {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: #ccc;
+}
+
+.settings-icon {
+    color: #888;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+/* --- Filter Bar and Search (Retained) --- */
+.filter-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px 20px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.filter-tabs {
+    display: flex;
+    gap: 15px;
+}
+
+.tab {
+    background: none;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #666;
+    border-radius: 5px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.tab.active {
+    background-color: #f0f0f0;
+    color: #333;
+    border-bottom: 3px solid #d9534f;
+    padding-bottom: 5px;
+}
+
+.tab:hover:not(.active) {
+    background-color: #f5f5f5;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 5px 15px;
+    background-color: #fff;
+}
+
+.search-box input {
+    border: none;
+    outline: none;
+    padding: 5px;
+    font-size: 14px;
+    width: 200px;
+}
+
+.search-box i {
+    color: #999;
+    margin-right: 8px;
+}
+
+/* --- Events Table (Retained) --- */
+.events-table-container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+thead {
+    background-color: #f8f8f8;
+}
+
+th {
+    padding: 15px 15px;
+    text-align: left;
+    font-weight: 700;
+    color: #555;
+    text-transform: uppercase;
+}
+
+td {
+    padding: 15px 15px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+td:first-child {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+td:first-child i {
+    margin-right: 8px;
+    font-size: 18px;
+    width: 20px;
+    text-align: center;
+}
+
+/* Icon Colors (Retained) */
+.icon-red { color: #d9534f; }
+.icon-orange { color: #f0ad4e; }
+.icon-blue { color: #5bc0de; }
+.icon-dark-orange { color: #e76f51; }
+.icon-brown { color: #8d5b4c; }
+.icon-gray { color: #777; }
+
+
+/* FIX 1: Urgency Tag Gradients */
+.urgency-tag {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: 700;
+    color: white;
+    font-size: 12px;
+    min-width: 60px;
+    text-align: center;
+}
+
+.urgency-tag.very-high { background: linear-gradient(to right, #BF0000, #490000); } /* Red/Maroon */
+.urgency-tag.high { background: linear-gradient(to right, #F7CA6A, #A37304); } /* Orange/Gold */
+.urgency-tag.moderate { background: linear-gradient(to right, #FFE812, #A89905); } /* Yellow */
+.urgency-tag.low { background: linear-gradient(to right, #58E07F, #307A45); } /* Green */
+
+/* Status Column Styling (Retained) */
+td:nth-last-child(2) {
+    font-weight: 600;
+    color: #555;
+}
+
+/* FIX 2: Action Button Styling - Gradients & Fixed Width */
+.action-btn {
+    /* Fixed width for uniform sizing */
+    width: 110px; 
+    padding: 8px 0;
+    border: none;
+    border-radius: 5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: white;
+    text-align: center;
+}
+
+/* ASSIGN Button: Green Gradient */
+.assign-btn {
+    background: linear-gradient(to right, #58E07F, #307A45); /* Lighter to Darker Green */
+}
+
+/* VIEW REPORT Button: Blue Gradient */
+.view-btn {
+    background: linear-gradient(to right, #3C97FF, #151D8D); /* Lighter to Darker Blue */
+}
+
+/* Hover Effect: Slightly darken the gradient on hover */
+.action-btn:hover {
+    opacity: 1;
+    /* Darken Green on hover */
+    background: linear-gradient(to right, #307A45, #1d4b2c); 
+}
+
+.view-btn:hover {
+    /* Darken Blue on hover */
+    background: linear-gradient(to right, #151D8D, #0f145c); 
+}
+
+/* Last row has no bottom border (Retained) */
+tbody tr:last-child td {
+    border-bottom: none;
+}

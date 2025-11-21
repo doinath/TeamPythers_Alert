@@ -40,3 +40,31 @@ class ReceiveCallView(View):
 
     def get(self, request):
         return render(request, self.template_name)
+
+#Actual htmls
+class AssignmentListView(View):
+    template_name = "EmergencyEvent/assignment_list.html"
+    def get(self, request):
+        return render(request, self.template_name)
+
+class EventDetailsResponderView(View):
+    template_name = "EmergencyEvent/event_details_responder.html"
+    def get(self, request):
+        return render(request, self.template_name)
+
+class EventDetailsAuthorityView(View):
+    template_name = "EmergencyEvent/event_details_authority.html"
+    def get(self, request):
+        return render(request, self.template_name)
+class EventListView(View):
+    template_name = "EmergencyEvent/event_list.html"
+    def get(self, request):
+        return render(request, self.template_name)
+class CreateReportView(View):
+    template_name = "EmergencyEvent/report_form.html"
+    def get(self, request):
+        return render(request, self.template_name)
+class ResponderAvailabilityView(View):
+    template_name = "EmergencyEvent/responder_availability_emergency.html"
+    def get(self, request):
+        return render(request, self.template_name)

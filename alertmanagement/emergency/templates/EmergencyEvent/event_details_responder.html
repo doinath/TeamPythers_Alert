@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Details (Responder)</title>
+    <link rel="stylesheet" href="event_detail.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="navbar">
+            <div class="logo">
+                <img src="logo.jpg" alt="ALERT Logo">
+                <span class="logo-text"></span>
+            </div>
+            <nav class="nav-links">
+                <a href="#" class="active">Dashboard</a>
+                <a href="#">Chat</a>
+                <a href="#">Call Logs</a>
+            </nav>
+            <div class="user-info">
+                <span class="status-tag">ON DUTY - Assigned</span>
+                <span>Julian Andales</span>
+                <img src="profile_image.jpg" alt="User Profile" class="profile-pic">
+            </div>
+        </header>
+
+        <main class="content-area">
+            <div class="left-column">
+                <div class="card event-details-card">
+                    <div class="detail-row">
+                        <span class="label primary-label">EMERGENCY EVENT:</span>
+                        <span class="value primary-value">MEDICAL ASSISTANCE</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">SEVERITY:</span>
+                        <span class="value high-severity">HIGH</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">LOCATION:</span>
+                        <span class="value">CAIGIT, CEBU CITY</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">CITIZEN:</span>
+                        <span class="value">KYLE PLANDO</span>
+                    </div>
+                    <div class="detail-row phone-row">
+                        <span class="value phone-number">0931-112-3490</span>
+                    </div>
+                    <div class="detail-row description-row">
+                        <span class="label">DESCRIPTION:</span>
+                        <p class="value description-text">Patient experiencing severe chest pain and shortness of breath. History of cardiac issues. Needs immediate transport.</p>
+                    </div>
+                </div>
+
+                <div class="action-buttons-container">
+                    
+                    <div class="action-buttons-top responder-top-row">
+                        <button class="action-button secondary-btn resolved-btn">RESOLVED</button>
+                        <button class="action-button secondary-btn acknowledge-btn">ACKNOWLEDGE</button>
+                        <button class="action-button secondary-btn on-scene-btn">ON SCENE</button>
+                    </div>
+                    
+                    <div class="action-buttons-bottom responder-bottom-row">
+                        <button class="action-button secondary-btn medical-records-btn">MEDICAL RECORDS</button>
+                        <button class="action-button secondary-btn call-btn">CALL</button>
+                        <button class="action-button secondary-btn chat-btn">CHAT</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <div class="map-card">
+                    <img src="map_image.png" alt="Emergency Location Map" class="map-image">
+                    <div class="map-overlay">Emergency Locations</div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

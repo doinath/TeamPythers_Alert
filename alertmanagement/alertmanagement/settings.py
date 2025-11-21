@@ -102,7 +102,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'account' / 'assets',
-    BASE_DIR / "communication" / "com_assets"
+    BASE_DIR / "communication" / "com_assets",
     BASE_DIR / 'verification' / "assets"
 ]
 

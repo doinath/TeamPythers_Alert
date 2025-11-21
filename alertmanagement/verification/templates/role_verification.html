@@ -3,8 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <title>Role Verification</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../assets/role_verification.css">
 </head>
-<body>
 
+<body>
+    <div class="dashboard-container">
+    <header class="top-header">
+        <div class="header-left-group">
+            <div class="alert-logo">
+                <img src="../assets/imgs/alert_logo.jpg" alt="ALERT Logo">
+            </div>
+            
+            <ul class="nav-tabs">
+                <li><a href="#">Dashboard</a></li>
+                <li><a href="#">Chat</a></li>
+                <li class="active"><a href="#">Verification</a></li>
+            </ul>
+        </div>
+
+        <div class="user-profile">
+            <span class="user-name">Shervin</span>
+            <img src="../assets/imgs/shervin_pfp.jpg" alt="Shervin's Profile" class="profile-pic">
+            <i class="fas fa-ellipsis-v"></i>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <nav class="sidebar"></nav>
+
+        <section class="table-section">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder=" Search">
+            </div>
+
+            <ul class="table-header">
+                <li class="col-person">PERSON</li>
+                <li class="col-time">TIME AND DATE</li>
+                <li class="col-location">LOCATION</li>
+                <li class="col-status">STATUS</li>
+            </ul>
+
+            <div class="data-rows-container">
+                <ul class="data-row">
+                    <li class="col-person">
+                        <i class="fas fa-user-circle"></i> Dela Cruz, Juan Y.
+                    </li>
+                    <li class="col-time">14:10 31/10/25</li>
+                    <li class="col-location">Iyawan, Talisay City</li>
+                    <li class="col-status">
+                        <span class="status-tag approved">APPROVED</span>
+                    </li>
+                </ul>
+
+                <ul class="data-row">
+                    <li class="col-person">
+                        <i class="fas fa-user-circle"></i> Doe, Jane D.
+                    </li>
+                    <li class="col-time">14:07 31/10/25</li>
+                    <li class="col-location">Tabunok, Talisay City</li>
+                    <li class="col-status">
+                        <span class="status-tag declined">DECLINED</span>
+                    </li>
+                </ul>
+
+                <ul class="data-row">
+                    <li class="col-person">
+                        <i class="fas fa-user-circle"></i> Tan, Rombo
+                    </li>
+                    <li class="col-time">12:21 31/10/25</li>
+                    <li class="col-location">Mohon, Talisay City</li>
+                    <li class="col-status">
+                        <span class="status-tag declined">DECLINED</span>
+                    </li>
+                </ul>
+                <ul class="data-row">
+                    <li class="col-person">
+                        <i class="fas fa-user-circle"></i> Angcastillo, Natan Jedd N.
+                    </li>
+                    <li class="col-time">11:11 31/10/25</li>
+                    <li class="col-location">Tabunok, Talisay City</li>
+                    <li class="col-status">
+                        <span class="status-tag approved">APPROVED</span>
+                    </li>
+                </ul>
+                <ul class="data-row">
+                    <li class="col-person">
+                        <i class="fas fa-user-circle"></i> Poldo, Kylie N.
+                    </li>
+                    <li class="col-time">14:44 30/10/25</li>
+                    <li class="col-location">Cansojong, Talisay City</li>
+                    <li class="col-status">
+                        <span class="status-tag approved">APPROVED</span>
+                    </li>
+                </ul>
+                <ul class="data-row">
+                    <li class="col-person">
+                        <i class="fas fa-user-circle"></i> Badyanha, Sherry Lyn C.
+                    </li>
+                    <li class="col-time">11:55 30/10/25</li>
+                    <li class="col-location">Dumlog, Talisay City</li>
+                    <li class="col-status">
+                        <span class="status-tag declined">DECLINED</span>
+                    </li>
+                </ul>
+
+            </div>
+        </section>
+    </main>
+</div>
 </body>
 </html>

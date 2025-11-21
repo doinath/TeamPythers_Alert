@@ -186,6 +186,11 @@ body {
     color: #28a745;
 }
 
+.pending {
+    background-color: #e6f7ed;
+    color: #e7cf34;
+}
+
 .declined {
     background-color: #fde8e8;
     color: #dc3545;

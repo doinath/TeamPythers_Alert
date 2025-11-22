@@ -275,7 +275,129 @@
 
             <!-- Citizen View -->
             <div id="citizen-view" class="hidden">
-                 <p>Citizen Account View would be here.</p>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+                    <!-- Left Column -->
+                    <div class="lg:col-span-4 flex flex-col gap-8">
+                        <!-- Quick Call Card -->
+                        <div class="bg-white p-6 rounded-xl shadow-lg text-center">
+                            <h2 class="text-xl font-bold text-gray-800 mb-4">Quick Call</h2>
+                            <button id="sos-button" class="relative w-48 h-48 mx-auto rounded-full bg-red-700 shadow-2xl shadow-red-600/50 flex items-center justify-center group transform hover:scale-105 transition-transform duration-300">
+                                <div class="absolute inset-0 rounded-full border-4 border-white animate-pulse"></div>
+                                <div class="absolute inset-2 rounded-full bg-white/20"></div>
+                                <span class="text-5xl font-extrabold text-white tracking-widest group-hover:tracking-normal transition-all duration-300">SOS</span>
+                            </button>
+                        </div>
+
+                        <!-- Emergency Contacts -->
+                        <div class="bg-white p-6 rounded-xl shadow-lg">
+                            <h2 class="text-xl font-bold text-gray-800 mb-4">Emergency Contacts</h2>
+                            <div class="space-y-4">
+                                <div class="contact-section">
+                                    <h3 class="font-semibold text-red-700 mb-2 pb-1 border-b">Police & Law Enforcement</h3>
+                                    <ul class="text-sm text-gray-600 space-y-2">
+                                        <li class="flex justify-between items-center"><span>Cebu City Police Hotline</span><span class="text-gray-500 font-mono text-xs">(555) 233-9111</span></li>
+                                        <li class="flex justify-between items-center"><span>Waterfront Police Station</span><span class="text-gray-500 font-mono text-xs">(555) 254-6277</span></li>
+                                        <li class="flex justify-between items-center"><span>Fuente Osmeña Police Station</span><span class="text-gray-500 font-mono text-xs">(555) 255-7355</span></li>
+                                        <li class="flex justify-between items-center"><span>Mobile Patrol Group</span><span class="text-gray-500 font-mono text-xs">(555) 233-5564</span></li>
+                                    </ul>
+                                </div>
+                                <div class="contact-section">
+                                    <h3 class="font-semibold text-red-700 mb-2 pb-1 border-b">Fire Department & Rescue</h3>
+                                    <ul class="text-sm text-gray-600 space-y-2">
+                                        <li class="flex justify-between items-center"><span>Cebu City Fire Department</span><span class="text-gray-500 font-mono text-xs">(555) 256-0541</span></li>
+                                        <li class="flex justify-between items-center"><span>Mandaue City Fire Department</span><span class="text-gray-500 font-mono text-xs">(555) 344-4747</span></li>
+                                        <li class="flex justify-between items-center"><span>Fil-Chinese Volunteer Fire Brigade</span><span class="text-gray-500 font-mono text-xs">(555) 254-0222</span></li>
+                                    </ul>
+                                </div>
+                                <div class="contact-section">
+                                    <h3 class="font-semibold text-red-700 mb-2 pb-1 border-b">Hospitals & Medical Services</h3>
+                                    <ul class="text-sm text-gray-600 space-y-2">
+                                        <li class="flex justify-between items-center"><span>Chong Hua Hospital</span><span class="text-gray-500 font-mono text-xs">(555) 255-8000</span></li>
+                                        <li class="flex justify-between items-center"><span>Cebu Doctors' Hospital</span><span class="text-gray-500 font-mono text-xs">(555) 255-5555</span></li>
+                                        <li class="flex justify-between items-center"><span>Velez General Hospital</span><span class="text-gray-500 font-mono text-xs">(555) 253-1871</span></li>
+                                        <li class="flex justify-between items-center"><span>Perpetual Succour Hospital</span><span class="text-gray-500 font-mono text-xs">(555) 233-8620</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="lg:col-span-8 flex flex-col">
+                        <div class="bg-white p-6 rounded-xl shadow-lg">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+                                <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900">What <span class="text-red-600">KIND</span> of Emergency?</h1>
+                                <button id="file-report-btn" class="mt-4 sm:mt-0 flex items-center justify-center space-x-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z"></path>
+                                        <path fill-rule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>File a Report</span>
+                                </button>
+                            </div>
+                            <div id="emergency-buttons-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
+                                <button data-type="Fire" class="emergency-button flex flex-col items-center justify-center p-8 text-white bg-gradient-to-br from-orange-500 via-red-600 to-rose-700 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300">
+                                    <img src="{% static 'images/fire_icon.png' %}" alt="Fire Icon" class="h-12 w-auto" />
+                                    <span class="font-semibold">Fire</span>
+                                </button>
+                                <button data-type="Flood" class="emergency-button flex flex-col items-center justify-center p-8 text-white bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300">
+                                    <img src="{% static 'images/flood_icon.png' %}" alt="Flood Icon" class="h-12 w-auto" />
+                                    <span class="font-semibold">Flood</span>
+                                </button>
+                                <button data-type="Accident" class="emergency-button flex flex-col items-center justify-center p-8 text-white bg-gradient-to-br from-rose-400 via-rose-500 to-red-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300">
+                                    <img src="{% static 'images/accidents_icon.png' %}" alt="Accident Icon" class="h-12 w-auto" />
+                                    <span class="font-semibold">Accident</span>
+                                </button>
+                                <button data-type="Crime" class="emergency-button flex flex-col items-center justify-center p-8 text-white bg-gradient-to-br from-slate-500 via-indigo-600 to-purple-700 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300">
+                                    <img src="{% static 'images/crime_icon.png' %}" alt="Crime Icon" class="h-12 w-auto" />
+                                    <span class="font-semibold">Crime</span>
+                                </button>
+                                <button data-type="Earthquake" class="emergency-button flex flex-col items-center justify-center p-8 text-white bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300">
+                                    <img src="{% static 'images/earthquake_icon.png' %}" alt="Earthquake Icon" class="h-12 w-auto" />
+                                    <span class="font-semibold">Earthquake</span>
+                                </button>
+                            </div>
+                            <!-- Response Container (Initially Hidden) -->
+                            <div id="response-container" class="hidden text-center py-8">
+                                <svg class="w-16 h-16 mx-auto text-green-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <p id="response-message" class="text-lg font-semibold text-gray-800">Responders are on their way.</p>
+                                <p class="text-sm text-gray-500 mt-1">Your location has been shared.</p>
+                                <div class="mt-8 flex justify-center gap-4">
+                                    <button id="cancel-button" class="px-8 py-3 bg-gray-200 text-gray-800 font-bold rounded-lg hover:bg-gray-300 transition-transform transform hover:scale-105">Cancel</button>
+                                    <button id="chat-button" class="px-8 py-3 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition-transform transform hover:scale-105">Chat with Responders</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-xl shadow-lg mt-8 flex-grow flex flex-col">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
+                                <label for="search-location" class="text-lg font-bold text-gray-800">Search Location</label>
+                                <button id="pin-location-btn" class="mt-2 sm:mt-0 flex items-center justify-center space-x-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                                    </svg>
+                                    <span>Pin My Current Location</span>
+                                </button>
+                            </div>
+                            <div id="map-container" class="flex-grow w-full h-64 md:h-full bg-gray-200 rounded-lg overflow-hidden relative flex items-center justify-center">
+                                <div id="map-loader" class="text-center text-gray-600">
+                                    <svg class="animate-spin h-8 w-8 text-gray-500 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <p class="mt-2 text-sm">Fetching your location...</p>
+                                </div>
+                                <iframe id="map-iframe" class="w-full h-full hidden" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                <div id="location-status" class="absolute bottom-2 left-2 bg-white/80 backdrop-blur-sm px-3 py-1 rounded-md text-xs font-semibold text-gray-700 shadow-md hidden">
+                                    Location pinned!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>

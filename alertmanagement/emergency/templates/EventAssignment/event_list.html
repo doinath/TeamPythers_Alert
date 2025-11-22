@@ -2,161 +2,281 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responder Availability List</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event List - ALERT</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Inter Font (Consistent with previous files) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="{% static 'responder_avail_emg.css' %}">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn { animation: fadeIn 0.5s ease-out forwards; }
+    </style>
 </head>
-<body>
+<body class="bg-gray-100 font-sans text-gray-800">
 
-    <div class="container">
-
-        <nav class="navbar">
-            <div class="logo">
-                <img src="{% static 'logo.jpg' %}" alt="ALERT Logo">
-            </div>
-
-            <div class="nav-links">
-                <a href="#">Dashboard</a>
-                <a href="#">Chat</a>
-                <a href="#" class="active">Call Logs</a>
-            </div>
-
-            <div class="user-info">
-                <span>Julian Andales</span>
-                <img src="{% static 'profile_image.jpg' %}" alt="User Profile" class="profile-pic">
-            </div>
-        </nav>
-
-        <h2 style="margin-bottom: 20px; color: #555;">Responder Availability List</h2>
-
-        <div class="filter-bar">
-            <div class="filter-tabs">
-                <button class="tab active">All</button>
-                <button class="tab">Available</button>
-                <button class="tab">Busy</button>
-                <button class="tab">Off Duty</button>
-            </div>
-
-            <div style="display: flex; align-items: center; gap: 15px;">
-
-                <div class="counter-pill">0/6</div>
-
-                <div class="search-box">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Search">
+    <!-- HEADER -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Left Side -->
+                <div class="flex items-center space-x-8">
+                    <div class="flex items-center space-x-2">
+                        <img src="{% static 'emergency/logo.jpg' %}" alt="ALERT Logo" class="h-10 w-auto object-contain" />
+                    </div>
+                    <nav class="hidden md:flex items-center space-x-6">
+                        <a href="#" class="text-gray-500 hover:text-red-600 transition-colors font-medium">Dashboard</a>
+                        <a href="#" class="text-gray-500 hover:text-red-600 transition-colors font-medium">Chat</a>
+                        <a href="#" class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Call Logs</a>
+                    </nav>
+                </div>
+                <!-- Right Side -->
+                <div class="flex items-center space-x-4">
+                    <div class="hidden md:flex items-center space-x-4">
+                        <span class="text-gray-800 font-medium text-sm mr-2">Julian Andales</span>
+                        <img class="h-8 w-8 rounded-full object-cover border border-gray-200" src="{% static 'emergency/profile_image.jpg' %}" alt="User Avatar" />
+                        <button class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                    </div>
+                    <!-- Mobile Menu Button -->
+                    <div class="md:hidden flex items-center">
+                        <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-800 focus:outline-none">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="assignments-table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Agency</th>
-                        <th>Name</th>
-                        <th>Role</th>
-                        <th>Availability</th>
-                        <th style="text-align: center;">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <i class="fa-solid fa-fire-extinguisher icon-red"></i>
-                            Bureau Of Fire Protection
-                        </td>
-                        <td>Alab, Christopher K.</td>
-                        <td>Fire Inspector</td>
-                        <td>
-                            <span class="status-badge grad-very-high">Busy</span>
-                        </td>
-                        <td style="text-align: center;">
-                            <button class="action-btn grad-blue">View</button>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <i class="fa-solid fa-kit-medical icon-dark-orange"></i>
-                            LDRRMC
-                        </td>
-                        <td>Yuta, Segismundo L.</td>
-                        <td>Search And Rescue Team Leader</td>
-                        <td>
-                            <span class="status-badge grad-low">Available</span>
-                        </td>
-                        <td style="text-align: center;">
-                            <button class="action-btn grad-assign">Assign</button>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <i class="fa-solid fa-kit-medical icon-dark-orange"></i>
-                            LDRRMC
-                        </td>
-                        <td>Bahabaha, Isabelle Mae T.</td>
-                        <td>Search and Rescue Volunteer</td>
-                        <td>
-                            <span class="status-badge grad-low">Available</span>
-                        </td>
-                        <td style="text-align: center;">
-                            <button class="action-btn grad-assign">Assign</button>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <i class="fa-solid fa-shield-halved icon-blue"></i>
-                            Philippine National Police
-                        </td>
-                        <td>Baril, Efren Joshua K.</td>
-                        <td>Police Lieutenant</td>
-                        <td>
-                            <span class="status-badge grad-moderate">Off Duty</span>
-                        </td>
-                        <td style="text-align: center;">
-                            <button class="action-btn grad-moderate" disabled>Unavailable</button>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <i class="fa-solid fa-shield-halved icon-blue"></i>
-                            Philippine National Police
-                        </td>
-                        <td>Pinereso, Ernesto Jr. P.</td>
-                        <td>Police Lieutenant</td>
-                        <td>
-                            <span class="status-badge grad-moderate">Off Duty</span>
-                        </td>
-                        <td style="text-align: center;">
-                            <button class="action-btn grad-moderate" disabled>Unavailable</button>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <i class="fa-solid fa-person-military-rifle icon-brown"></i>
-                            Armed Forces
-                        </td>
-                        <td>Dimataub, Leonarda Joshua L.</td>
-                        <td>First Lieutenant</td>
-                        <td>
-                            <span class="status-badge grad-moderate">Off Duty</span>
-                        </td>
-                        <td style="text-align: center;">
-                            <button class="action-btn grad-moderate" disabled>Unavailable</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t p-4">
+            <nav class="space-y-2">
+                <a href="#" class="block py-2 text-gray-600 hover:bg-gray-50 rounded px-2">Dashboard</a>
+                <a href="#" class="block py-2 text-gray-600 hover:bg-gray-50 rounded px-2">Chat</a>
+                <a href="#" class="block py-2 text-red-600 font-bold bg-red-50 rounded px-2">Call Logs</a>
+            </nav>
         </div>
-    </div>
+    </header>
 
+    <!-- MAIN CONTENT -->
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8 animate-fadeIn">
+
+        <!-- Filter Bar -->
+        <div class="bg-white rounded-lg shadow-sm p-4 mb-6 flex flex-col lg:flex-row justify-between items-center gap-4">
+            <!-- Tabs -->
+            <div class="flex space-x-2 overflow-x-auto w-full lg:w-auto pb-2 lg:pb-0">
+                <button class="px-4 py-2 text-sm font-semibold text-gray-800 bg-gray-100 rounded-md border-b-2 border-red-600 whitespace-nowrap">All</button>
+                <button class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-md transition-colors whitespace-nowrap">Pending</button>
+                <button class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-md transition-colors whitespace-nowrap">Assigned</button>
+                <button class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-md transition-colors whitespace-nowrap">Resolved</button>
+                <button class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-md transition-colors whitespace-nowrap">Cancelled</button>
+            </div>
+
+            <!-- Search -->
+            <div class="relative w-full lg:w-64">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                    <i class="fas fa-search"></i>
+                </span>
+                <input type="text" placeholder="Search" class="w-full py-2 pl-10 pr-4 text-sm text-gray-700 bg-white border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent shadow-sm">
+            </div>
+        </div>
+
+        <!-- Table Container -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Emergency</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Sender</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Time And Date</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Location</th>
+                            <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Urgency</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+
+                        <!-- Row 1: Fire (Very High - Pending) -->
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center font-semibold text-gray-800 gap-3">
+                                    <div class="w-5 text-center"><i class="fas fa-fire text-[#d9534f] text-lg"></i></div>
+                                    Fire
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Dela Cruz, Juan Y.</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">14:10 31/10/25</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Iwayan, Talisay City</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <!-- Very High Gradient -->
+                                <span class="inline-block px-3 py-1.5 text-xs font-bold text-white rounded shadow-sm min-w-[80px] text-center bg-gradient-to-r from-[#BF0000] to-[#490000]">
+                                    Very High
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-600">Pending</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <!-- Assign Btn (Green Gradient) -->
+                                <button class="w-[110px] py-2 text-xs font-bold text-white uppercase rounded shadow-md transition-opacity hover:opacity-90 bg-gradient-to-r from-[#58E07F] to-[#307A45]">
+                                    Assign
+                                </button>
+                            </td>
+                        </tr>
+
+                        <!-- Row 2: Earthquake (Low - Assigned) -->
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center font-semibold text-gray-800 gap-3">
+                                    <div class="w-5 text-center"><i class="fas fa-house-damage text-[#f0ad4e] text-lg"></i></div>
+                                    Earthquake
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Doe, Jane D.</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">14:07 31/10/25</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Tabunok, Talisay City</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <!-- Low Gradient -->
+                                <span class="inline-block px-3 py-1.5 text-xs font-bold text-white rounded shadow-sm min-w-[80px] text-center bg-gradient-to-r from-[#58E07F] to-[#307A45]">
+                                    Low
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-blue-600">Assigned</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <!-- View Btn (Blue Gradient) -->
+                                <button class="w-[110px] py-2 text-xs font-bold text-white uppercase rounded shadow-md transition-opacity hover:opacity-90 bg-gradient-to-r from-[#3C97FF] to-[#151D8D]">
+                                    View Report
+                                </button>
+                            </td>
+                        </tr>
+
+                        <!-- Row 3: Flood (Low - Resolved) -->
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center font-semibold text-gray-800 gap-3">
+                                    <div class="w-5 text-center"><i class="fas fa-water text-[#5bc0de] text-lg"></i></div>
+                                    Flood
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Tan, Rambo</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">12:21 31/10/25</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Mohon, Talisay City</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <span class="inline-block px-3 py-1.5 text-xs font-bold text-white rounded shadow-sm min-w-[80px] text-center bg-gradient-to-r from-[#58E07F] to-[#307A45]">
+                                    Low
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600">Resolved</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <button class="w-[110px] py-2 text-xs font-bold text-white uppercase rounded shadow-md transition-opacity hover:opacity-90 bg-gradient-to-r from-[#3C97FF] to-[#151D8D]">
+                                    View Report
+                                </button>
+                            </td>
+                        </tr>
+
+                        <!-- Row 4: Accident (Moderate - Resolved) -->
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center font-semibold text-gray-800 gap-3">
+                                    <div class="w-5 text-center"><i class="fas fa-car-crash text-[#e76f51] text-lg"></i></div>
+                                    Accident
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Angcastillo, Natan Jedd N.</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">11:11 31/10/25</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Tabunok, Talisay City</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <!-- Moderate Gradient -->
+                                <span class="inline-block px-3 py-1.5 text-xs font-bold text-white rounded shadow-sm min-w-[80px] text-center bg-gradient-to-r from-[#FFE812] to-[#A89905]">
+                                    Moderate
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600">Resolved</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <button class="w-[110px] py-2 text-xs font-bold text-white uppercase rounded shadow-md transition-opacity hover:opacity-90 bg-gradient-to-r from-[#3C97FF] to-[#151D8D]">
+                                    View Report
+                                </button>
+                            </td>
+                        </tr>
+
+                        <!-- Row 5: Crime (High - Resolved) -->
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center font-semibold text-gray-800 gap-3">
+                                    <div class="w-5 text-center"><i class="fas fa-user-secret text-[#8d5b4c] text-lg"></i></div>
+                                    Crime
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Paldo, Kylie N.</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">14:44 30/10/25</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Cansojong, Talisay City</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <!-- High Gradient -->
+                                <span class="inline-block px-3 py-1.5 text-xs font-bold text-white rounded shadow-sm min-w-[80px] text-center bg-gradient-to-r from-[#F7CA6A] to-[#A37304]">
+                                    High
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600">Resolved</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <button class="w-[110px] py-2 text-xs font-bold text-white uppercase rounded shadow-md transition-opacity hover:opacity-90 bg-gradient-to-r from-[#3C97FF] to-[#151D8D]">
+                                    View Report
+                                </button>
+                            </td>
+                        </tr>
+
+                        <!-- Row 6: Storm (High - Cancelled) -->
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center font-semibold text-gray-800 gap-3">
+                                    <div class="w-5 text-center"><i class="fas fa-poo-storm text-[#777] text-lg"></i></div>
+                                    Storm
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Bodyanha, Sherry Lyn C.</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">11:55 30/10/25</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Dumlog, Talisay City</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <span class="inline-block px-3 py-1.5 text-xs font-bold text-white rounded shadow-sm min-w-[80px] text-center bg-gradient-to-r from-[#F7CA6A] to-[#A37304]">
+                                    High
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-500">Cancelled</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <button class="w-[110px] py-2 text-xs font-bold text-white uppercase rounded shadow-md transition-opacity hover:opacity-90 bg-gradient-to-r from-[#3C97FF] to-[#151D8D]">
+                                    View Report
+                                </button>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Menu Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            if (mobileMenuButton) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+        });
+    </script>
 </body>
 </html>

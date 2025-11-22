@@ -173,19 +173,22 @@ td {
     vertical-align: middle;
 }
 
-/* Emergency Column Styling */
-td:first-child {
+/* Fix: Emergency Content Wrapper Styling */
+.emergency-content {
     font-weight: 600;
+    /* This Flexbox container ensures the icon and text are aligned vertically */
     display: flex;
     align-items: center;
 }
 
-td:first-child i {
+.emergency-content i {
     margin-right: 8px;
     font-size: 18px;
     width: 20px;
     text-align: center;
 }
+
+/* Remove the old td:first-child rule, keep padding/border settings on td */
 
 /* Icon Colors (Reused) */
 .icon-red { color: #d9534f; }
@@ -209,10 +212,10 @@ td:first-child i {
 }
 
 /* Severity Colors with Specified Gradients */
-.severity-tag.very-high { background: linear-gradient(to right, #BF0000, #490000); } 
-.severity-tag.high { background: linear-gradient(to right, #F7CA6A, #A37304); } 
-.severity-tag.moderate { background: linear-gradient(to right, #FFE812, #A89905); } 
-.severity-tag.low { background: linear-gradient(to right, #58E07F, #307A45); } 
+.severity-tag.very-high { background: linear-gradient(to right, #BF0000, #490000); }
+.severity-tag.high { background: linear-gradient(to right, #F7CA6A, #A37304); }
+.severity-tag.moderate { background: linear-gradient(to right, #FFE812, #A89905); }
+.severity-tag.low { background: linear-gradient(to right, #58E07F, #307A45); }
 
 /* Status Column Styling */
 td:nth-last-child(1) {

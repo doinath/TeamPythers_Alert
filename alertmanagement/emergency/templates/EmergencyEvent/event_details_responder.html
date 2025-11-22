@@ -2,82 +2,185 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Details (Responder)</title>
-    <link rel="stylesheet" href="{% static 'emergency/event_detail.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event Details (Responder) - ALERT</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn { animation: fadeIn 0.5s ease-out forwards; }
+    </style>
 </head>
-<body>
-    <div class="container">
-        <header class="navbar">
-            <div class="logo">
-                <img src="{% static 'emergency/logo.jpg' %}" alt="ALERT Logo">
-                <span class="logo-text"></span>
+<body class="bg-[#f0f2f5] font-sans text-[#333] min-h-screen flex flex-col">
+
+    <!-- HEADER -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Left Side -->
+                <div class="flex items-center space-x-8">
+                    <div class="flex items-center space-x-2">
+                        <img src="{% static 'emergency/logo.jpg' %}" alt="ALERT Logo" class="h-10 w-auto object-contain" />
+                    </div>
+                    <nav class="hidden md:flex items-center space-x-6">
+                        <a href="#" class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Dashboard</a>
+                        <a href="#" class="text-gray-500 hover:text-red-600 transition-colors font-medium">Chat</a>
+                        <a href="#" class="text-gray-500 hover:text-red-600 transition-colors font-medium">Call Logs</a>
+                    </nav>
+                </div>
+                <!-- Right Side -->
+                <div class="flex items-center space-x-4">
+                    <div class="hidden md:flex items-center space-x-4">
+                        <!-- On Duty Tag -->
+                        <span class="bg-[#d9534f] text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2">
+                            ON DUTY - Assigned
+                        </span>
+                        <span class="text-gray-800 font-medium text-sm mr-2">Julian Andales</span>
+                        <img class="h-8 w-8 rounded-full object-cover border border-gray-200" src="{% static 'emergency/profile_image.jpg' %}" alt="User Avatar" />
+                    </div>
+                    <!-- Mobile Menu Button -->
+                    <div class="md:hidden flex items-center">
+                        <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-800 focus:outline-none">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
-            <nav class="nav-links">
-                <a href="#" class="active">Dashboard</a>
-                <a href="#">Chat</a>
-                <a href="#">Call Logs</a>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t p-4">
+            <div class="mb-4 pb-4 border-b border-gray-100">
+                <span class="inline-block bg-[#d9534f] text-white font-semibold px-2 py-1 rounded text-xs uppercase mb-2">
+                    ON DUTY - Assigned
+                </span>
+                <div class="flex items-center">
+                    <img class="h-8 w-8 rounded-full object-cover mr-2" src="{% static 'emergency/profile_image.jpg' %}" alt="User Avatar" />
+                    <span class="font-medium text-sm">Julian Andales</span>
+                </div>
+            </div>
+            <nav class="space-y-2">
+                <a href="#" class="block py-2 text-red-600 font-bold bg-red-50 rounded px-2">Dashboard</a>
+                <a href="#" class="block py-2 text-gray-600 hover:bg-gray-50 rounded px-2">Chat</a>
+                <a href="#" class="block py-2 text-gray-600 hover:bg-gray-50 rounded px-2">Call Logs</a>
             </nav>
-            <div class="user-info">
-                <span class="status-tag">ON DUTY - Assigned</span>
-                <span>Julian Andales</span>
-                <img src="{% static 'emergency/profile_image.jpg' %}" alt="User Profile" class="profile-pic">
-            </div>
-        </header>
+        </div>
+    </header>
 
-        <main class="content-area">
-            <div class="left-column">
-                <div class="card event-details-card">
-                    <div class="detail-row">
-                        <span class="label primary-label">EMERGENCY EVENT:</span>
-                        <span class="value primary-value">MEDICAL ASSISTANCE</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="label">SEVERITY:</span>
-                        <span class="value high-severity">HIGH</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="label">LOCATION:</span>
-                        <span class="value">CAIGIT, CEBU CITY</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="label">CITIZEN:</span>
-                        <span class="value">KYLE PLANDO</span>
-                    </div>
-                    <div class="detail-row phone-row">
-                        <span class="value phone-number">0931-112-3490</span>
-                    </div>
-                    <div class="detail-row description-row">
-                        <span class="label">DESCRIPTION:</span>
-                        <p class="value description-text">Patient experiencing severe chest pain and shortness of breath. History of cardiac issues. Needs immediate transport.</p>
-                    </div>
+    <!-- MAIN CONTENT -->
+    <main class="flex-grow container mx-auto max-w-[1400px] p-5 flex flex-col lg:flex-row gap-5 animate-fadeIn">
+
+        <!-- Left Column -->
+        <div class="flex flex-col flex-1 w-full">
+
+            <!-- Event Details Card -->
+            <div class="bg-gradient-to-r from-white/80 to-[#d9534f]/10 p-[30px] rounded-[10px] shadow-md">
+
+                <!-- Row 1 -->
+                <div class="flex items-baseline mb-[15px]">
+                    <span class="w-[200px] shrink-0 font-bold text-[#d9534f] text-base uppercase">Emergency Event:</span>
+                    <span class="flex-1 font-bold text-[#333] text-base uppercase">Medical Assistance</span>
                 </div>
 
-                <div class="action-buttons-container">
+                <!-- Row 2 -->
+                <div class="flex items-baseline mb-[15px]">
+                    <span class="w-[200px] shrink-0 font-semibold text-[#d9534f] text-sm uppercase">Severity:</span>
+                    <span class="flex-1 font-bold text-[#d9534f] text-base uppercase">High</span>
+                </div>
 
-                    <div class="action-buttons-top responder-top-row">
-                        <button class="action-button secondary-btn resolved-btn">RESOLVED</button>
-                        <button class="action-button secondary-btn acknowledge-btn">ACKNOWLEDGE</button>
-                        <button class="action-button secondary-btn on-scene-btn">ON SCENE</button>
-                    </div>
+                <!-- Row 3 -->
+                <div class="flex items-baseline mb-[15px]">
+                    <span class="w-[200px] shrink-0 font-semibold text-[#d9534f] text-sm uppercase">Location:</span>
+                    <span class="flex-1 font-bold text-[#333] text-base uppercase">Caigit, Cebu City</span>
+                </div>
 
-                    <div class="action-buttons-bottom responder-bottom-row">
-                        <button class="action-button secondary-btn medical-records-btn">MEDICAL RECORDS</button>
-                        <button class="action-button secondary-btn call-btn">CALL</button>
-                        <button class="action-button secondary-btn chat-btn">CHAT</button>
-                    </div>
+                <!-- Row 4 -->
+                <div class="flex items-baseline mb-[15px]">
+                    <span class="w-[200px] shrink-0 font-semibold text-[#d9534f] text-sm uppercase">Citizen:</span>
+                    <span class="flex-1 font-bold text-[#333] text-base uppercase">Kyle Plando</span>
+                </div>
+
+                <!-- Phone Row -->
+                <div class="ml-[200px] -mt-[10px] mb-[25px]">
+                    <span class="text-[#5cb85c] text-sm underline cursor-pointer hover:text-[#4cae4c]">0931-112-3490</span>
+                </div>
+
+                <!-- Description Row -->
+                <div class="flex items-baseline">
+                    <span class="w-[200px] shrink-0 font-semibold text-[#d9534f] text-sm uppercase self-start">Description:</span>
+                    <p class="flex-1 font-normal text-[#555] text-[15px] leading-relaxed">
+                        Patient experiencing severe chest pain and shortness of breath. History of cardiac issues. Needs immediate transport.
+                    </p>
                 </div>
             </div>
 
-            <div class="right-panel">
-                <div class="map-card">
-                    <img src="{% static 'emergency/map_image.png' %}" alt="Emergency Location Map" class="map-image">
-                    <div class="map-overlay">Emergency Locations</div>
+            <!-- Action Buttons Container -->
+            <div class="w-full mt-5 flex flex-col items-end gap-4 pr-[30px] lg:pr-0">
+
+                <!-- Top Row: Status Actions -->
+                <div class="flex flex-wrap justify-end gap-[15px]">
+                    <button class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base">
+                        Resolved
+                    </button>
+                    <button class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base">
+                        Acknowledge
+                    </button>
+                    <button class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base">
+                        On Scene
+                    </button>
+                </div>
+
+                <!-- Bottom Row: Communication Actions -->
+                <div class="flex flex-wrap justify-end gap-[15px]">
+                    <button class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base">
+                        Medical Records
+                    </button>
+                    <button class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base">
+                        Call
+                    </button>
+                    <button class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base">
+                        Chat
+                    </button>
                 </div>
             </div>
-        </main>
-    </div>
+        </div>
+
+        <!-- Right Panel (Map) -->
+        <div class="flex-none w-full lg:w-[55%] flex flex-col h-[400px] lg:h-auto">
+            <div class="relative rounded-[10px] overflow-hidden shadow-md flex-1">
+                <img src="{% static 'emergency/map_image.png' %}" alt="Emergency Location Map" class="w-full h-full object-cover bg-gray-300" />
+                <div class="absolute top-5 right-5 bg-[#d9534f] text-white px-4 py-2 rounded shadow-md font-bold text-lg">
+                    Emergency Locations
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Mobile Menu Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            if (mobileMenuButton) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+        });
+    </script>
 </body>
 </html>

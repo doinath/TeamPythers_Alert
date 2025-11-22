@@ -221,7 +221,7 @@ td:nth-last-child(2) {
 /* FIX 2: Action Button Styling - Gradients & Fixed Width */
 .action-btn {
     /* Fixed width for uniform sizing */
-    width: 110px; 
+    width: 110px;
     padding: 8px 0;
     border: none;
     border-radius: 5px;
@@ -248,12 +248,12 @@ td:nth-last-child(2) {
 .action-btn:hover {
     opacity: 1;
     /* Darken Green on hover */
-    background: linear-gradient(to right, #307A45, #1d4b2c); 
+    background: linear-gradient(to right, #307A45, #1d4b2c);
 }
 
 .view-btn:hover {
     /* Darken Blue on hover */
-    background: linear-gradient(to right, #151D8D, #0f145c); 
+    background: linear-gradient(to right, #151D8D, #0f145c);
 }
 
 /* Last row has no bottom border (Retained) */

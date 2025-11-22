@@ -26,7 +26,7 @@ INSTALLED_APPS = [
     'communication',
     'verification',
     'emergency',
-    'system',
+    'system_log',
 ]
 
 MIDDLEWARE = [
@@ -103,7 +103,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'account' / 'assets',
     BASE_DIR / "communication" / "com_assets",
-    BASE_DIR / "verification" / "assets"
+    BASE_DIR / 'verification' / "assets"
 ]
 
 STATIC_URL = 'static/'

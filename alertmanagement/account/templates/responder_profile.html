@@ -29,11 +29,9 @@
 </head>
 <body class="bg-gray-100 font-sans">
 
-    <!-- Header -->
     <header class="bg-white shadow-md sticky top-0 z-50">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <!-- Logo and Nav -->
                 <div class="flex items-center space-x-8">
                     <div class="flex items-center space-x-2">
                         <img src="{% static 'images/logo.png' %}" alt="ALERT Logo" class="h-10 w-auto object-contain" />
@@ -63,7 +61,6 @@
                 </div>
             </div>
         </div>
-        <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
             <nav class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <a href="./authority_dashboard.html" class="block px-3 py-2 rounded-md text-base font-medium bg-red-50 text-red-700">Dashboard</a>
@@ -132,7 +129,11 @@
                             </div>
                         </address>
                     </div>
-                </div>
+
+                    <button id="logout-btn" class="w-full py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75">
+                        Log Out
+                    </button>
+                    </div>
                 <div class="lg:col-span-2 space-y-6">
                     <div class="bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2 mb-4">Responder Information</h3>
@@ -156,7 +157,7 @@
                                 <dd class="text-sm text-gray-900 col-span-2" data-editable-container>
                                     <p class="data-view"><span class="font-bold text-green-600">On Duty</span></p>
                                     <select class="hidden data-edit w-full border rounded-md p-1">
-                                        <option selected>On Duty</option>
+                                        <option>On Duty</option>
                                         <option>Off Duty</option>
                                         <option>Assigned</option>
                                     </select>
@@ -186,7 +187,7 @@
                                 <dd class="text-sm text-gray-900 col-span-2" data-editable-container>
                                     <p class="data-view">Female</p>
                                     <select class="hidden data-edit w-full border rounded-md p-1">
-                                        <option selected>Female</option>
+                                        <option>Female</option>
                                         <option>Male</option>
                                         <option>Other</option>
                                     </select>
@@ -195,7 +196,6 @@
                         </dl>
                     </div>
 
-                    <!-- Medical Information Card -->
                     <div class="bg-white rounded-lg shadow-md p-6">
                          <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-4">
                             <h3 class="text-xl font-bold text-gray-800">Medical Information</h3>
@@ -216,7 +216,6 @@
                         </div>
                     </div>
 
-                    <!-- Emergency Contact Card -->
                     <div class="bg-white rounded-lg shadow-md p-6">
                         <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-4">
                             <h3 class="text-xl font-bold text-gray-800">Emergency Contact</h3>
@@ -239,7 +238,6 @@
                         </ul>
                     </div>
 
-                    <!-- Government IDs Card -->
                     <div class="bg-white rounded-lg shadow-md p-6">
                          <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-4">
                             <h3 class="text-xl font-bold text-gray-800">Government IDs</h3>
@@ -270,7 +268,6 @@
         </div>
     </main>
 
-    <!-- Templates for adding new items -->
     <template id="medical-template">
         <div class="py-2 border-b border-gray-100 last:border-b-0 editable-list-item">
             <button class="remove-item-btn float-right text-red-500 hover:text-red-700 text-2xl font-bold">&times;</button>
@@ -326,7 +323,6 @@
         </li>
     </template>
 
-    <!-- ID Modal -->
     <div id="id-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-lg shadow-xl max-w-lg w-full relative animate-fadeIn">
             <button id="close-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-3xl font-bold">&times;</button>
@@ -341,6 +337,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         const editProfileBtn = document.getElementById('edit-profile-btn');
         const saveProfileBtn = document.getElementById('save-profile-btn');
+        const logoutBtn = document.getElementById('logout-btn'); // Get the Log Out button
         const addItemBtns = document.querySelectorAll('.add-item-btn');
         const idModal = document.getElementById('id-modal');
         const closeModalBtn = document.getElementById('close-modal-btn');
@@ -358,6 +355,11 @@
             // Toggle button visibility
             editProfileBtn.classList.toggle('hidden');
             saveProfileBtn.classList.toggle('hidden');
+
+            // 🆕 Toggle Log Out button visibility: Hide in edit mode, show otherwise
+            if (logoutBtn) {
+                logoutBtn.classList.toggle('hidden', isEditMode);
+            }
 
             // Toggle "Add" and "Remove" buttons
             document.querySelectorAll('.add-item-btn, .remove-item-btn').forEach(btn => {
@@ -380,22 +382,23 @@
                     // On save, update view from edit
                     if (!isEditMode) {
                        if (['TEXTAREA', 'SELECT'].includes(editEl.tagName)) {
-                            // For SELECT, find the selected option's text if possible
-                            if (editEl.tagName === 'SELECT' && editEl.options[editEl.selectedIndex]) {
-                                (viewEl.querySelector('span') || viewEl).textContent = editEl.options[editEl.selectedIndex].text;
-                            } else {
-                               (viewEl.querySelector('span') || viewEl).innerText = editEl.value;
-                            }
+                            // For SELECT, find the selected option's text or default to value
+                            const selectedText = editEl.tagName === 'SELECT' && editEl.options[editEl.selectedIndex] ? editEl.options[editEl.selectedIndex].text : editEl.value;
+
+                            // Handle duty status span update if necessary
+                            let viewContent = viewEl.querySelector('span') || viewEl;
+                            viewContent.textContent = selectedText;
+
                        } else if (editEl.type === 'date') {
-                            const date = new Date(editEl.value);
-                            // Format date for display M/D/YYYY
-                            (viewEl.querySelector('span') || viewEl).textContent = date.toLocaleDateString();
+                            const date = new Date(editEl.value + 'T00:00:00');
+                            viewEl.textContent = date.toLocaleDateString();
                        }
                        else {
-                            (viewEl.querySelector('span') || viewEl).textContent = editEl.value;
+                            viewEl.textContent = editEl.value;
                        }
                     } else {
                         // On edit, update edit from view
+                        // If there's an inner span (like for Duty Status), use its text
                         const valueSource = viewEl.querySelector('span') || viewEl;
                         if(editEl.type === 'date'){
                             try {
@@ -404,11 +407,22 @@
                                 editEl.value = '';
                             }
                         } else {
-                            editEl.value = valueSource.textContent.trim();
+                            // For SELECT, match the option value to the view text
+                            if (editEl.tagName === 'SELECT') {
+                                editEl.value = valueSource.textContent.trim();
+                            } else {
+                                editEl.value = valueSource.textContent.trim();
+                            }
                         }
                     }
                 }
             });
+
+            // Update button text
+            editProfileBtn.textContent = isEditMode ? 'Cancel' : 'Edit Profile';
+            if (!isEditMode) { // When saving, change text back
+                 editProfileBtn.textContent = 'Edit Profile';
+            }
         };
 
         if (editProfileBtn) editProfileBtn.addEventListener('click', toggleEditMode);

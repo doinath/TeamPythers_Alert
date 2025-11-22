@@ -127,11 +127,10 @@
                         </address>
                     </div>
 
-                    <button class="w-full py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75">
+                    <button id="logout-btn" class="w-full py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75">
                         Log Out
                     </button>
-
-                </div>
+                    </div>
                 <div class="lg:col-span-2 space-y-6">
                     <div class="bg-white rounded-lg shadow-md p-6">
                          <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-4">
@@ -302,6 +301,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         const editProfileBtn = document.getElementById('edit-profile-btn');
         const saveProfileBtn = document.getElementById('save-profile-btn');
+        const logoutBtn = document.getElementById('logout-btn'); // Get the new button
         const addItemBtns = document.querySelectorAll('.add-item-btn');
         const idModal = document.getElementById('id-modal');
         const closeModalBtn = document.getElementById('close-modal-btn');
@@ -327,6 +327,11 @@
             // Toggle button visibility
             editProfileBtn.classList.toggle('hidden');
             saveProfileBtn.classList.toggle('hidden');
+
+            // 🆕 Toggle Log Out button visibility: Hide in edit mode, show otherwise
+            if (logoutBtn) {
+                logoutBtn.classList.toggle('hidden', isEditMode);
+            }
 
             // Toggle "Add" and "Remove" buttons
             document.querySelectorAll('.add-item-btn, .remove-item-btn').forEach(btn => {

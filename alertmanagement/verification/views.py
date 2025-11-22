@@ -5,12 +5,12 @@ from django.views import View
 
 class GovernmentDocument(View):
     def get(self, request):
-        return render(request, "Government.html")
+        return render(request, "government_document.html")
 
 class SubmittedDocument(View):
     def get(self, request):
-        return render(request, "Submitted.html")
+        return render(request, "submitted_document.html")
 
 class RoleVerification(View):
     def get(self, request):
-        return render(request, "RoleVerification.html")
+        return render(request, "role_verification.html")

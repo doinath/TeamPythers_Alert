@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,7 +7,7 @@
     <title>Role Verification</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="../assets/role_verification.css">
+    <link rel="stylesheet" href="{% static 'role_verification.css' %}">
 </head>
 
 <body>
@@ -13,7 +15,7 @@
     <header class="top-header">
         <div class="header-left-group">
             <div class="alert-logo">
-                <img src="../assets/imgs/alert_logo.jpg" alt="ALERT Logo">
+                <img src="{% static 'imgs/alert_logo.jpg' %}" alt="ALERT Logo">
             </div>
             
             <ul class="nav-tabs">
@@ -25,7 +27,8 @@
 
         <div class="user-profile">
             <span class="user-name">Shervin</span>
-            <img src="../assets/imgs/shervin_pfp.jpg" alt="Shervin's Profile" class="profile-pic">
+            <img src="{% static 'imgs/shervin_pfp.jpg' %}" alt="Shervin's Profile" class="profile-pic">
+<!--            <img src="../assets/imgs/shervin_pfp.jpg" alt="Shervin's Profile" class="profile-pic">-->
             <i class="fas fa-ellipsis-v"></i>
         </div>
     </header>

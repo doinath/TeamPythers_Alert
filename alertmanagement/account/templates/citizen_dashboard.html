@@ -46,148 +46,100 @@
     <div id="app" class="flex flex-col min-h-screen">
 
         <!-- Header -->
-<header class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <!-- Logo and Nav -->
-                <div class="flex items-center space-x-12 -ml-4">
-                    <div class="flex items-center space-x-2">
-                        <img src="{% static 'images/com_logo.png' %}" alt="ALERT Logo" class="h-10 w-auto object-contain" />
-                        <!-- <span class="text-xl font-bold text-red-600">ALERT</span> -->
+        <header class="bg-white shadow-sm sticky top-0 z-50">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <!-- Logo and Nav -->
+                    <div class="flex items-center space-x-12 -ml-4">
+                        <div class="flex items-center space-x-2">
+                            <!-- Logo Image -->
+                            <img src="{% static 'images/com_logo.png' %}" alt="ALERT Logo" class="h-10 w-auto object-contain" />
+                        </div>
+                        <nav class="hidden md:flex items-center space-x-12">
+                            <a href="{% url 'account:citizen_dashboard' %}" class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Dashboard</a>
+                            <a href="{% url 'communication:messages' %}" class="text-gray-500 hover:text-red-600 transition-colors">Chat</a>
+                            <a href="{% url 'communication:call_logs' %}" class="text-gray-500 hover:text-red-600 transition-colors">Call Logs</a>
+                        </nav>
                     </div>
-                    <nav class="hidden md:flex items-center space-x-12">
-                        <a href="{% url 'account:citizen_dashboard' %}" class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Dashboard</a>
-                        <a href="{% url 'communication:messages' %}"class="text-gray-500 hover:text-red-600 transition-colors"> Chat</a>
-                        <a href="{% url 'communication:call_logs' %}" class="text-gray-500 hover:text-red-600 transition-colors">Call Logs</a>
-                    </nav>
+
+                    <!-- User Profile -->
+                    <div class="flex items-center space-x-10">
+                        <div class="hidden md:flex items-center space-x-4">
+                            <!-- User Name -->
+                            {% if request.user.is_authenticated %}
+                                <span class="text-gray-800 font-medium text-sm mr-3">
+                                    {{ request.user.first_name }} {{ request.user.last_name }}
+                                </span>
+                            {% else %}
+                                <span class="text-gray-800 font-medium text-sm mr-3">
+                                    John Doe
+                                </span>
+                            {% endif %}
+
+                            <!-- Clickable Profile Picture with Role-Based URL -->
+                            {% if request.user.role == 'citizen' %}
+                                <a href="{% url 'citizen_profile' %}" class="group">
+                            {% elif request.user.role == 'responder' %}
+                                <a href="{% url 'responder_profile' %}" class="group">
+                            {% elif request.user.role == 'authority' %}
+                                <a href="{% url 'authority_profile' %}" class="group">
+                            {% else %}
+                                <a href="#" class="group">
+                            {% endif %}
+                                    {% if request.user.profile_picture %}
+                                        <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
+                                             src="{{ request.user.profile_picture.url }}"
+                                             alt="User Avatar" />
+                                    {% else %}
+                                        <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
+                                             src="https://i.pravatar.cc/40?u={{ request.user.username }}"
+                                             alt="User Avatar" />
+                                    {% endif %}
+                                </a>
+                        </div>
+
+                        <!-- Mobile Menu Button -->
+                        <div class="md:hidden flex items-center">
+                            <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-800 focus:outline-none">
+                                <svg id="menu-open-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"
+                                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
+                                <svg id="menu-close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden"
+                                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
                 </div>
+            </div>
 
-                <!-- User Profile -->
-                <div class="flex items-center space-x-10">
-                    <div class="hidden md:flex items-center space-x-4">
-
-                        <!-- User Name -->
-                        {% if request.user.is_authenticated %}
-                            <span class="text-gray-800 font-medium text-sm mr-3">
-                                {{ request.user.first_name }} {{ request.user.last_name }}
-                            </span>
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden bg-white border-t absolute w-full z-30 shadow-lg top-16 left-0">
+                <nav class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                    <!-- Corrected URL Syntax -->
+                    <a href="{% url 'account:citizen_dashboard' %}" class="block px-3 py-2 rounded-md text-base font-medium bg-red-50 text-red-700">Dashboard</a>
+                    <a href="{% url 'communication:messages' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Chat</a>
+                    <a href="{% url 'communication:call_logs' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Call logs</a>
+                </nav>
+                <div class="pt-4 pb-3 border-t border-gray-200">
+                    <div class="flex items-center px-5">
+                        {% if request.user.profile_picture %}
+                            <img class="h-10 w-10 rounded-full object-cover" src="{{ request.user.profile_picture.url }}" alt="User Avatar" />
                         {% else %}
-                            <span class="text-gray-800 font-medium text-sm mr-3">
-                                John Doe
-                            </span>
+                            <img class="h-10 w-10 rounded-full object-cover" src="https://i.pravatar.cc/100?u={{ request.user.username }}" alt="User Avatar" />
                         {% endif %}
-
-                        <!-- Clickable Profile Picture with Role-Based URL + Hover -->
-                        {% if request.user.role == 'citizen' %}
-                            <a href="{% url 'citizen_profile' %}" class="group">
-                                {% if request.user.profile_picture %}
-                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
-                                         src="{{ request.user.profile_picture.url }}"
-                                         alt="User Avatar" />
-                                {% else %}
-                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
-                                         src="https://i.pravatar.cc/40?u={{ request.user.username }}"
-                                         alt="User Avatar" />
-                                {% endif %}
-                            </a>
-                        {% elif request.user.role == 'responder' %}
-                            <a href="{% url 'responder_profile' %}" class="group">
-                                {% if request.user.profile_picture %}
-                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
-                                         src="{{ request.user.profile_picture.url }}"
-                                         alt="User Avatar" />
-                                {% else %}
-                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
-                                         src="https://i.pravatar.cc/40?u={{ request.user.username }}"
-                                         alt="User Avatar" />
-                                {% endif %}
-                            </a>
-                        {% elif request.user.role == 'authority' %}
-                            <a href="{% url 'authority_profile' %}" class="group">
-                                {% if request.user.profile_picture %}
-                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
-                                         src="{{ request.user.profile_picture.url }}"
-                                         alt="User Avatar" />
-                                {% else %}
-                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
-                                         src="https://i.pravatar.cc/40?u={{ request.user.username }}"
-                                         alt="User Avatar" />
-                                {% endif %}
-                            </a>
-                        {% else %}
-                            <a href="#" class="group">
-                                {% if request.user.profile_picture %}
-                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
-                                         src="{{ request.user.profile_picture.url }}"
-                                         alt="User Avatar" />
-                                {% else %}
-                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
-                                         src="https://i.pravatar.cc/40?u={{ request.user.username }}"
-                                         alt="User Avatar" />
-                                {% endif %}
-                            </a>
-                        {% endif %}
-                    </div>
-
-                    <!-- Mobile Menu Button -->
-                    <div class="md:hidden flex items-center">
-                        <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-800 focus:outline-none">
-                            <svg id="menu-open-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"
-                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
-                            <svg id="menu-close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden"
-                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
+                        <div class="ml-3">
+                            <div class="text-base font-medium text-gray-800">{{ request.user.first_name }} {{ request.user.last_name }}</div>
+                            <div class="text-sm font-medium text-gray-500">{{ request.user.email }}</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
-            <nav class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="{% url '" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Dashboard</a>
-                <a href="{% url 'communication:messages' %}" class="block px-3 py-2 rounded-md text-base font-medium bg-red-50 text-red-700">Chat</a>
-                <a href="{% url 'communication:call_logs' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Call logs</a>
-            </nav>
-            <div class="pt-4 pb-3 border-t border-gray-200">
-                <div class="flex items-center px-5">
-                    {% if request.user.profile_picture %}
-                        <img class="h-10 w-10 rounded-full object-cover" src="{{ request.user.profile_picture.url }}" alt="User Avatar" />
-                    {% else %}
-                        <img class="h-10 w-10 rounded-full object-cover" src="https://i.pravatar.cc/100?u={{ request.user.username }}" alt="User Avatar" />
-                    {% endif %}
-                    <div class="ml-3">
-                        <div class="text-base font-medium text-gray-800">{{ request.user.first_name }} {{ request.user.last_name }}</div>
-                        <div class="text-sm font-medium text-gray-500">{{ request.user.email }}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
-
-        <!-- Mobile Menu (Hidden by default) -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-t absolute w-full z-30 shadow-lg top-16">
-            <nav class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium bg-red-50 text-red-700">Dashboard</a>
-                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Chat</a>
-                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Call logs</a>
-            </nav>
-            <div class="pt-4 pb-3 border-t border-gray-200">
-                <div class="flex items-center px-5">
-                    <img class="h-10 w-10 rounded-full object-cover" src="https://i.pravatar.cc/150?u=bessie" alt="User" />
-                    <div class="ml-3">
-                        <div class="text-base font-medium text-gray-800">Bessie Cooper</div>
-                        <div class="text-sm font-medium text-gray-500">bessie.cooper@example.com</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </header>
 
         <!-- Main Content -->
         <main class="flex-grow container mx-auto p-4 md:p-6 lg:p-8">
@@ -256,27 +208,27 @@
                         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
                             <!-- Fire -->
                             <button onclick="openEmergencyModal('Fire')" class="flex flex-col items-center justify-center p-6 text-white bg-gradient-to-br from-orange-500 via-red-600 to-rose-700 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300 h-30">
-                                <img src="{% static 'images/fire_icon.png' %}" width="48" height="48" alt="icon">
+                                <img src="{% static 'images/fire_icon.png' %}" width="48" height="48" alt="icon" class="mb-2">
                                 <span class="font-semibold text-sm md:text-base">Fire</span>
                             </button>
                             <!-- Flood -->
                             <button onclick="openEmergencyModal('Flood')" class="flex flex-col items-center justify-center p-6 text-white bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300 h-30">
-                                <img src="{% static 'images/flood_icon.png' %}" width="48" height="48" alt="icon">
+                                <img src="{% static 'images/flood_icon.png' %}" width="48" height="48" alt="icon" class="mb-2">
                                 <span class="font-semibold text-sm md:text-base">Flood</span>
                             </button>
                             <!-- Accident -->
                             <button onclick="openEmergencyModal('Accident')" class="flex flex-col items-center justify-center p-6 text-white bg-gradient-to-br from-rose-400 via-rose-500 to-red-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300 h-30">
-                                <img src="{% static 'images/accidents_icon.png' %}" width="48" height="48" alt="icon">
+                                <img src="{% static 'images/accidents_icon.png' %}" width="48" height="48" alt="icon" class="mb-2">
                                 <span class="font-semibold text-sm md:text-base">Accident</span>
                             </button>
                             <!-- Crime -->
                             <button onclick="openEmergencyModal('Crime')" class="flex flex-col items-center justify-center p-6 text-white bg-gradient-to-br from-slate-500 via-indigo-600 to-purple-700 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300 h-30">
-                                <img src="{% static 'images/crime_icon.png' %}" width="48" height="48" alt="icon">
+                                <img src="{% static 'images/crime_icon.png' %}" width="48" height="48" alt="icon" class="mb-2">
                                 <span class="font-semibold text-sm md:text-base">Crime</span>
                             </button>
                             <!-- Earthquake -->
                             <button onclick="openEmergencyModal('Earthquake')" class="flex flex-col items-center justify-center p-6 text-white bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300 h-30">
-                                <img src="{% static 'images/earthquake_icon.png' %}" width="48" height="48" alt="icon">
+                                <img src="{% static 'images/earthquake_icon.png' %}" width="48" height="48" alt="icon" class="mb-2">
                                 <span class="font-semibold text-sm md:text-base">Earthquake</span>
                             </button>
                         </div>
@@ -368,7 +320,13 @@
                     <img class="h-24 w-24 rounded-full object-cover ring-4 ring-red-200" src="https://i.pravatar.cc/150?img=68" alt="Caller" />
                     <span class="absolute bottom-0 right-0 p-2 bg-green-500 rounded-full border-2 border-white"></span>
                 </div>
-                <p class="text-xl font-bold text-gray-900">Nate Navaja</p>
+                <p class="text-xl font-bold text-gray-900">
+                    {% if request.user.is_authenticated %}
+                        {{ request.user.first_name }} {{ request.user.last_name }}
+                    {% else %}
+                        John Doe
+                    {% endif %}
+                </p>
             </div>
 
             <div class="mt-6">
@@ -634,12 +592,26 @@
         let sosInterval;
         let emergencyInterval;
 
-        // --- Mobile Menu ---
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        // --- Mobile Menu Logic ---
+        const mobileMenuBtn = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
+        const menuOpenIcon = document.getElementById('menu-open-icon');
+        const menuCloseIcon = document.getElementById('menu-close-icon');
 
         mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
+            const isHidden = mobileMenu.classList.contains('hidden');
+
+            if (isHidden) {
+                // Show Menu
+                mobileMenu.classList.remove('hidden');
+                menuOpenIcon.classList.add('hidden');
+                menuCloseIcon.classList.remove('hidden');
+            } else {
+                // Hide Menu
+                mobileMenu.classList.add('hidden');
+                menuOpenIcon.classList.remove('hidden');
+                menuCloseIcon.classList.add('hidden');
+            }
         });
 
         // --- Modal Utils ---
@@ -679,7 +651,7 @@
                                 lon: position.coords.longitude
                             };
 
-                            // Update Iframe
+                            // Update Iframe for OpenStreetMap
                             const bbox = 0.005;
                             iframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${currentLocation.lon - bbox},${currentLocation.lat - bbox},${currentLocation.lon + bbox},${currentLocation.lat + bbox}&layer=mapnik&marker=${currentLocation.lat},${currentLocation.lon}`;
 
@@ -694,7 +666,7 @@
                             setTimeout(() => toast.classList.add('hidden'), 3000);
                         },
                         (err) => {
-                            alert('Failed to retrieve location.');
+                            alert('Failed to retrieve location. Please check browser permissions.');
                             pinBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> Pin My Current Location';
                         }
                     );
@@ -728,7 +700,7 @@
                 if (timeLeft <= 0) {
                     clearInterval(sosInterval);
                     closeModal('sos-modal');
-                    openReportModal('SOS');
+                    openReportModal('SOS Emergency Alert');
                 }
             }, 1000);
         });
@@ -765,6 +737,7 @@
 
             showModal('emergency-modal');
 
+            // Timer countdown
             let timeLeft = 60;
             timerText.innerText = `Cancel (${timeLeft})`;
 
@@ -796,7 +769,7 @@
                         openReportModal(type);
                     };
                 }
-            }, 1000);
+            }, 1000); // 1-second interval
 
             document.getElementById('emergency-cancel-btn').onclick = () => {
                 clearInterval(emergencyInterval);

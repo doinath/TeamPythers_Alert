@@ -7,25 +7,11 @@
     <title>Assignment List - ALERT</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fadeIn {
-            animation: fadeIn 0.5s ease-out forwards;
-        }
-        /* Custom Scrollbar for table if needed */
-        .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-        }
+        body { font-family: 'Inter', sans-serif; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fadeIn { animation: fadeIn 0.5s ease-out forwards; }
     </style>
 </head>
 <body class="bg-gray-100 font-sans text-gray-800">
@@ -43,41 +29,16 @@
                         <a href="#" class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Call Logs</a>
                     </nav>
                 </div>
-
                 <div class="flex items-center space-x-4">
                     <div class="hidden md:flex items-center space-x-4">
-                        <span class="text-gray-800 font-medium text-sm mr-2">Julian Andales</span>
+                        <span class="text-gray-800 font-medium text-sm mr-2">
+                            {% if user.is_authenticated %}
+                                {{ user.first_name }} {{ user.last_name }}
+                            {% else %}
+                                Julian Andales
+                            {% endif %}
+                        </span>
                         <img class="h-8 w-8 rounded-full object-cover border border-gray-200" src="{% static 'emergency/profile_image.jpg' %}" alt="User Avatar" />
-                        <button class="text-gray-400 hover:text-gray-600">
-                            <i class="fas fa-ellipsis-v"></i>
-                        </button>
-                    </div>
-                    <div class="md:hidden flex items-center">
-                        <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-800 focus:outline-none">
-                            <svg id="menu-open-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
-                            <svg id="menu-close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
-            <nav class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Dashboard</a>
-                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Chat</a>
-                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium bg-red-50 text-red-700">Call Logs</a>
-            </nav>
-            <div class="pt-4 pb-3 border-t border-gray-200">
-                <div class="flex items-center px-5">
-                    <img class="h-10 w-10 rounded-full object-cover" src="{% static 'emergency/profile_image.jpg' %}" alt="User Avatar" />
-                    <div class="ml-3">
-                        <div class="text-base font-medium text-gray-800">Bessie Cooper</div>
-                        <div class="text-sm font-medium text-gray-500">Operator</div>
                     </div>
                 </div>
             </div>
@@ -86,19 +47,15 @@
 
     <main class="container mx-auto p-4 sm:p-6 lg:p-8 animate-fadeIn">
 
-        <div class="bg-white rounded-lg shadow-sm p-4 mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex space-x-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0">
-                <button class="px-4 py-2 text-sm font-semibold text-gray-800 bg-gray-100 rounded-md border-b-2 border-red-600">All</button>
-                <button class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-md transition-colors">Pending</button>
-                <button class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-md transition-colors">On the way</button>
-                <button class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-md transition-colors">In location</button>
-            </div>
+        <h2 class="text-2xl font-bold text-gray-600 mb-6">My Assigned Events</h2>
 
-            <div class="relative w-full md:w-64">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                    <i class="fas fa-search"></i>
-                </span>
-                <input type="text" placeholder="Search..." class="w-full py-2 pl-10 pr-4 text-sm text-gray-700 bg-white border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent shadow-sm">
+        <div class="bg-white rounded-lg shadow-sm p-4 mb-6 flex flex-col lg:flex-row justify-between items-center gap-4">
+            <div class="flex space-x-2 overflow-x-auto w-full lg:w-auto pb-2 lg:pb-0">
+                <button class="px-4 py-2 text-sm font-semibold text-gray-800 bg-gray-100 rounded-md border-b-2 border-red-600 whitespace-nowrap">All</button>
+                <button class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-md transition-colors whitespace-nowrap">Pending</button>
+            </div>
+            <div class="relative w-full lg:w-64">
+                <input type="text" placeholder="Search" class="w-full py-2 pl-10 pr-4 text-sm text-gray-700 bg-white border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500 shadow-sm">
             </div>
         </div>
 
@@ -107,144 +64,91 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Emergency</th>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Sender</th>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Time And Date</th>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Location</th>
-                            <th scope="col" class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Severity Level</th>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Emergency</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Sender</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Time Assigned</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Location</th>
+                            <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Event Status</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Assignment Status</th>
+                            <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Action</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center font-semibold text-gray-800">
-                                    <div class="w-8 text-center mr-2"><i class="fas fa-fire text-red-600 text-lg"></i></div>
-                                    Fire
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Monga, Bernadette P.</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">11:30 31/10/25</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Iwayan, Talisay City</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <span class="inline-block px-3 py-1 text-xs font-bold text-white rounded shadow-sm w-24 bg-gradient-to-r from-[#BF0000] to-[#490000]">
-                                    Very High
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-500">Pending</td>
-                        </tr>
+                        {% if assignments %}
+                            {% for assignment in assignments %}
+                            {% with event=assignment.emergency_event %}
+                            <tr class="hover:bg-gray-50 transition-colors cursor-pointer" onclick="window.location.href='{% url 'EmergencyEvent:event_details_responder' event.eventID %}'">
 
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center font-semibold text-gray-800">
-                                    <div class="w-8 text-center mr-2"><i class="fas fa-house-damage text-orange-400 text-lg"></i></div>
-                                    Earthquake
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Bai, Micheal C.</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">11:27 31/10/25</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Tabunok, Talisay City</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <span class="inline-block px-3 py-1 text-xs font-bold text-white rounded shadow-sm w-24 bg-gradient-to-r from-[#58E07F] to-[#307A45]">
-                                    Low
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600">Assigned</td>
-                        </tr>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center font-semibold text-gray-800 gap-3">
+                                        <div class="w-5 text-center">
+                                            {% if event.category|lower == 'fire' %} <i class="fas fa-fire text-[#d9534f] text-lg"></i>
+                                            {% elif event.category|lower == 'medical' %} <i class="fas fa-car-crash text-[#e76f51] text-lg"></i>
+                                            {% else %} <i class="fas fa-exclamation-circle text-gray-600 text-lg"></i> {% endif %}
+                                        </div>
+                                        {{ event.category|title }}
+                                    </div>
+                                </td>
 
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center font-semibold text-gray-800">
-                                    <div class="w-8 text-center mr-2"><i class="fas fa-water text-blue-400 text-lg"></i></div>
-                                    Flood
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Tan, Rambo</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">11:20 31/10/25</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Mohon, Talisay City</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <span class="inline-block px-3 py-1 text-xs font-bold text-white rounded shadow-sm w-24 bg-gradient-to-r from-[#58E07F] to-[#307A45]">
-                                    Low
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-blue-600">On the way</td>
-                        </tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                    {{ event.userID.user_id.last_name }}, {{ event.userID.user_id.first_name }}
+                                </td>
 
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center font-semibold text-gray-800">
-                                    <div class="w-8 text-center mr-2"><i class="fas fa-user-injured text-orange-600 text-lg"></i></div>
-                                    Accident
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Angcastillo, Natan Jedd N.</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">11:11 31/10/25</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Tabunok, Talisay City</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <span class="inline-block px-3 py-1 text-xs font-bold text-white rounded shadow-sm w-24 bg-gradient-to-r from-[#FFE812] to-[#A89905]">
-                                    Moderate
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-blue-600">On the way</td>
-                        </tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                    {{ assignment.assigned_at|date:"H:i d/m" }}
+                                </td>
 
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center font-semibold text-gray-800">
-                                    <div class="w-8 text-center mr-2"><i class="fas fa-user-secret text-amber-800 text-lg"></i></div>
-                                    Crime
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Paldo, Kylie N.</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">10:55 31/10/25</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Cansojong, Talisay City</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <span class="inline-block px-3 py-1 text-xs font-bold text-white rounded shadow-sm w-24 bg-gradient-to-r from-[#F7CA6A] to-[#A37304]">
-                                    High
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-purple-600">In location</td>
-                        </tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                    {{ event.gps_location }}
+                                </td>
 
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center font-semibold text-gray-800">
-                                    <div class="w-8 text-center mr-2"><i class="fas fa-poo-storm text-gray-600 text-lg"></i></div>
-                                    Storm
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Bodyanha, Sherry Lyn C.</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">09:30 31/10/25</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Dumlog, Talisay City</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <span class="inline-block px-3 py-1 text-xs font-bold text-white rounded shadow-sm w-24 bg-gradient-to-r from-[#F7CA6A] to-[#A37304]">
-                                    High
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-purple-600">In location</td>
-                        </tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-center">
+                                    {% with severity=event.severity_level|stringformat:"s" %}
+                                        {% if severity == '3' or severity == 'high' or event.status|lower == 'on the way' or event.status|lower == 'on scene'%}
+                                            <span class="inline-block px-3 py-1 text-xs font-bold text-white rounded bg-gradient-to-r from-[#F7CA6A] to-[#A37304]">{{ event.status|upper }}</span>
+                                        {% elif event.status|lower == 'reported' or event.status|lower == 'pending' %}
+                                            <span class="inline-block px-3 py-1 text-xs font-bold text-white rounded bg-gradient-to-r from-[#3C97FF] to-[#151D8D]">{{ event.status|upper }}</span>
+                                        {% else %}
+                                            <span class="inline-block px-3 py-1 text-xs font-bold text-white rounded bg-gradient-to-r from-[#58E07F] to-[#307A45]">{{ event.status|upper }}</span>
+                                        {% endif %}
+                                    {% endwith %}
+                                </td>
 
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-blue-600">
+                                    {% if assignment.status|lower == 'active' %}
+                                        <span class="text-blue-600">{{ assignment.status|upper }}</span>
+                                    {% elif assignment.status|lower == 'completed' %}
+                                        <span class="text-green-600">{{ assignment.status|upper }}</span>
+                                    {% else %}
+                                        <span class="text-red-600">{{ assignment.status|upper }}</span>
+                                    {% endif %}
+                                </td>
+
+                                <td class="px-6 py-4 whitespace-nowrap text-center">
+                                    {% if event.status|lower == 'completed' or event.status|lower == 'resolved' or assignment.status|lower == 'completed' %}
+                                        <a href="{% url 'EmergencyEvent:event_details_responder' event.eventID %}" class="px-4 py-2 text-xs font-bold text-white uppercase rounded shadow bg-gradient-to-r from-[#3C97FF] to-[#151D8D]">
+                                            View Report
+                                        </a>
+                                    {% elif assignment.status|lower == 'cancelled' %}
+                                        <span class="px-4 py-2 text-xs font-bold text-gray-500 uppercase rounded bg-gray-200">
+                                            Cancelled
+                                        </span>
+                                    {% else %}
+                                        <a href="{% url 'EmergencyEvent:event_details_responder' event.eventID %}" class="px-4 py-2 text-xs font-bold text-white uppercase rounded shadow bg-gradient-to-r from-[#d9534f] to-[#c9302c]">
+                                            Manage
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endwith %}
+                            {% endfor %}
+                        {% else %}
+                            <tr><td colspan="7" class="px-6 py-10 text-center text-gray-500">No assigned events.</td></tr>
+                        {% endif %}
                     </tbody>
                 </table>
             </div>
         </div>
     </main>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-            const openIcon = document.getElementById('menu-open-icon');
-            const closeIcon = document.getElementById('menu-close-icon');
-
-            if (mobileMenuButton) {
-                mobileMenuButton.addEventListener('click', () => {
-                    mobileMenu.classList.toggle('hidden');
-                    openIcon.classList.toggle('hidden');
-                    closeIcon.classList.toggle('hidden');
-                });
-            }
-        });
-    </script>
 </body>
 </html>

@@ -16,11 +16,15 @@ urlpatterns = [
     path("message/receive/", views.ReceiveMessageView.as_view(), name="receive_message"),
     path("call/receive/", views.ReceiveCallView.as_view(), name="receive_call"),
 
-    #Actual Htmls
+    # Actual Htmls
     path("viewlist/", views.AssignmentListView.as_view(), name="assignment_list"),
-    path("details-authority",views.EventDetailsAuthorityView.as_view(), name="event_details_authority"),
-    path("details-responder/", views.EventDetailsResponderView.as_view(), name="event_details_responder"),
     path("event-list/", views.EventListView.as_view(), name="event_list"),
     path("report-incident/", views.CreateReportView.as_view(), name="report_form"),
     path("responder-availability/", views.ResponderAvailabilityView.as_view(), name="responder_availability"),
+    path("details-authority/<int:event_id>/", views.EventDetailsAuthorityView.as_view(),
+         name="event_details_authority"),
+    path("details-responder/<int:event_id>/", views.EventDetailsResponderView.as_view(),
+         name="event_details_responder"),
+    path("details-authority/", views.EventDetailsAuthorityView.as_view(), name="event_details_authority_default"),
+    path("details-responder/", views.EventDetailsResponderView.as_view(), name="event_details_responder_default"),
 ]

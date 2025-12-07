@@ -113,7 +113,6 @@ class MedicalCondition(models.Model):
     condition_name = models.CharField(max_length=100)
     notes = models.TextField()
 
-    # GOOD: User FK is correct
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):

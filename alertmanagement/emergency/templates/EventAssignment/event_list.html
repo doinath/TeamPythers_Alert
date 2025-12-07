@@ -5,13 +5,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Event List - ALERT</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Inter Font (Consistent with previous files) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
@@ -25,11 +20,9 @@
 </head>
 <body class="bg-gray-100 font-sans text-gray-800">
 
-    <!-- HEADER -->
     <header class="bg-white shadow-sm sticky top-0 z-50">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <!-- Left Side -->
                 <div class="flex items-center space-x-8">
                     <div class="flex items-center space-x-2">
                         <img src="{% static 'emergency/logo.jpg' %}" alt="ALERT Logo" class="h-10 w-auto object-contain" />
@@ -40,16 +33,20 @@
                         <a href="#" class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Call Logs</a>
                     </nav>
                 </div>
-                <!-- Right Side -->
                 <div class="flex items-center space-x-4">
                     <div class="hidden md:flex items-center space-x-4">
-                        <span class="text-gray-800 font-medium text-sm mr-2">Julian Andales</span>
+                        <span class="text-gray-800 font-medium text-sm mr-2">
+                            {% if user.is_authenticated %}
+                                {{ user.first_name }} {{ user.last_name }}
+                            {% else %}
+                                Julian Andales
+                            {% endif %}
+                        </span>
                         <img class="h-8 w-8 rounded-full object-cover border border-gray-200" src="{% static 'emergency/profile_image.jpg' %}" alt="User Avatar" />
                         <button class="text-gray-400 hover:text-gray-600">
                             <i class="fas fa-ellipsis-v"></i>
                         </button>
                     </div>
-                    <!-- Mobile Menu Button -->
                     <div class="md:hidden flex items-center">
                         <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-800 focus:outline-none">
                             <i class="fas fa-bars text-xl"></i>
@@ -59,7 +56,6 @@
             </div>
         </div>
 
-        <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden bg-white border-t p-4">
             <nav class="space-y-2">
                 <a href="#" class="block py-2 text-gray-600 hover:bg-gray-50 rounded px-2">Dashboard</a>
@@ -69,12 +65,9 @@
         </div>
     </header>
 
-    <!-- MAIN CONTENT -->
     <main class="container mx-auto p-4 sm:p-6 lg:p-8 animate-fadeIn">
 
-        <!-- Filter Bar -->
         <div class="bg-white rounded-lg shadow-sm p-4 mb-6 flex flex-col lg:flex-row justify-between items-center gap-4">
-            <!-- Tabs -->
             <div class="flex space-x-2 overflow-x-auto w-full lg:w-auto pb-2 lg:pb-0">
                 <button class="px-4 py-2 text-sm font-semibold text-gray-800 bg-gray-100 rounded-md border-b-2 border-red-600 whitespace-nowrap">All</button>
                 <button class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-md transition-colors whitespace-nowrap">Pending</button>
@@ -83,7 +76,6 @@
                 <button class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-md transition-colors whitespace-nowrap">Cancelled</button>
             </div>
 
-            <!-- Search -->
             <div class="relative w-full lg:w-64">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                     <i class="fas fa-search"></i>
@@ -92,7 +84,6 @@
             </div>
         </div>
 
-        <!-- Table Container -->
         <div class="bg-white rounded-lg shadow-md overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
@@ -109,155 +100,102 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
 
-                        <!-- Row 1: Fire (Very High - Pending) -->
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center font-semibold text-gray-800 gap-3">
-                                    <div class="w-5 text-center"><i class="fas fa-fire text-[#d9534f] text-lg"></i></div>
-                                    Fire
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Dela Cruz, Juan Y.</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">14:10 31/10/25</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Iwayan, Talisay City</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <!-- Very High Gradient -->
-                                <span class="inline-block px-3 py-1.5 text-xs font-bold text-white rounded shadow-sm min-w-[80px] text-center bg-gradient-to-r from-[#BF0000] to-[#490000]">
-                                    Very High
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-600">Pending</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <!-- Assign Btn (Green Gradient) -->
-                                <button class="w-[110px] py-2 text-xs font-bold text-white uppercase rounded shadow-md transition-opacity hover:opacity-90 bg-gradient-to-r from-[#58E07F] to-[#307A45]">
-                                    Assign
-                                </button>
-                            </td>
-                        </tr>
+                        {% if events %}
+                            {% for event in events %}
 
-                        <!-- Row 2: Earthquake (Low - Assigned) -->
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center font-semibold text-gray-800 gap-3">
-                                    <div class="w-5 text-center"><i class="fas fa-house-damage text-[#f0ad4e] text-lg"></i></div>
-                                    Earthquake
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Doe, Jane D.</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">14:07 31/10/25</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Tabunok, Talisay City</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <!-- Low Gradient -->
-                                <span class="inline-block px-3 py-1.5 text-xs font-bold text-white rounded shadow-sm min-w-[80px] text-center bg-gradient-to-r from-[#58E07F] to-[#307A45]">
-                                    Low
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-blue-600">Assigned</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <!-- View Btn (Blue Gradient) -->
-                                <button class="w-[110px] py-2 text-xs font-bold text-white uppercase rounded shadow-md transition-opacity hover:opacity-90 bg-gradient-to-r from-[#3C97FF] to-[#151D8D]">
-                                    View Report
-                                </button>
-                            </td>
-                        </tr>
+                            <tr class="hover:bg-gray-50 transition-colors cursor-pointer"
+                                onclick="window.location.href='{% url 'EmergencyEvent:event_details_authority' event.eventID %}'">
 
-                        <!-- Row 3: Flood (Low - Resolved) -->
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center font-semibold text-gray-800 gap-3">
-                                    <div class="w-5 text-center"><i class="fas fa-water text-[#5bc0de] text-lg"></i></div>
-                                    Flood
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Tan, Rambo</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">12:21 31/10/25</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Mohon, Talisay City</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <span class="inline-block px-3 py-1.5 text-xs font-bold text-white rounded shadow-sm min-w-[80px] text-center bg-gradient-to-r from-[#58E07F] to-[#307A45]">
-                                    Low
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600">Resolved</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <button class="w-[110px] py-2 text-xs font-bold text-white uppercase rounded shadow-md transition-opacity hover:opacity-90 bg-gradient-to-r from-[#3C97FF] to-[#151D8D]">
-                                    View Report
-                                </button>
-                            </td>
-                        </tr>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center font-semibold text-gray-800 gap-3">
+                                        <div class="w-5 text-center">
+                                            {% if event.category|lower == 'fire' %}
+                                                <i class="fas fa-fire text-[#d9534f] text-lg"></i>
+                                            {% elif event.category|lower == 'flood' %}
+                                                <i class="fas fa-water text-[#5bc0de] text-lg"></i>
+                                            {% elif event.category|lower == 'earthquake' %}
+                                                <i class="fas fa-house-damage text-[#f0ad4e] text-lg"></i>
+                                            {% elif event.category|lower == 'accident' or event.category|lower == 'medical' %}
+                                                <i class="fas fa-car-crash text-[#e76f51] text-lg"></i>
+                                            {% elif event.category|lower == 'crime' %}
+                                                <i class="fas fa-user-secret text-[#8d5b4c] text-lg"></i>
+                                            {% elif event.category|lower == 'storm' %}
+                                                <i class="fas fa-poo-storm text-[#777] text-lg"></i>
+                                            {% else %}
+                                                <i class="fas fa-exclamation-circle text-gray-600 text-lg"></i>
+                                            {% endif %}
+                                        </div>
+                                        {{ event.category|title }}
+                                    </div>
+                                </td>
 
-                        <!-- Row 4: Accident (Moderate - Resolved) -->
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center font-semibold text-gray-800 gap-3">
-                                    <div class="w-5 text-center"><i class="fas fa-car-crash text-[#e76f51] text-lg"></i></div>
-                                    Accident
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Angcastillo, Natan Jedd N.</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">11:11 31/10/25</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Tabunok, Talisay City</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <!-- Moderate Gradient -->
-                                <span class="inline-block px-3 py-1.5 text-xs font-bold text-white rounded shadow-sm min-w-[80px] text-center bg-gradient-to-r from-[#FFE812] to-[#A89905]">
-                                    Moderate
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600">Resolved</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <button class="w-[110px] py-2 text-xs font-bold text-white uppercase rounded shadow-md transition-opacity hover:opacity-90 bg-gradient-to-r from-[#3C97FF] to-[#151D8D]">
-                                    View Report
-                                </button>
-                            </td>
-                        </tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                    {{ event.userID.user_id.last_name }}, {{ event.userID.user_id.first_name }}
+                                </td>
 
-                        <!-- Row 5: Crime (High - Resolved) -->
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center font-semibold text-gray-800 gap-3">
-                                    <div class="w-5 text-center"><i class="fas fa-user-secret text-[#8d5b4c] text-lg"></i></div>
-                                    Crime
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Paldo, Kylie N.</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">14:44 30/10/25</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Cansojong, Talisay City</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <!-- High Gradient -->
-                                <span class="inline-block px-3 py-1.5 text-xs font-bold text-white rounded shadow-sm min-w-[80px] text-center bg-gradient-to-r from-[#F7CA6A] to-[#A37304]">
-                                    High
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600">Resolved</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <button class="w-[110px] py-2 text-xs font-bold text-white uppercase rounded shadow-md transition-opacity hover:opacity-90 bg-gradient-to-r from-[#3C97FF] to-[#151D8D]">
-                                    View Report
-                                </button>
-                            </td>
-                        </tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                    {{ event.created_at|date:"H:i d/m/y" }}
+                                </td>
 
-                        <!-- Row 6: Storm (High - Cancelled) -->
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center font-semibold text-gray-800 gap-3">
-                                    <div class="w-5 text-center"><i class="fas fa-poo-storm text-[#777] text-lg"></i></div>
-                                    Storm
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Bodyanha, Sherry Lyn C.</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">11:55 30/10/25</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Dumlog, Talisay City</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <span class="inline-block px-3 py-1.5 text-xs font-bold text-white rounded shadow-sm min-w-[80px] text-center bg-gradient-to-r from-[#F7CA6A] to-[#A37304]">
-                                    High
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-500">Cancelled</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <button class="w-[110px] py-2 text-xs font-bold text-white uppercase rounded shadow-md transition-opacity hover:opacity-90 bg-gradient-to-r from-[#3C97FF] to-[#151D8D]">
-                                    View Report
-                                </button>
-                            </td>
-                        </tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                    {{ event.gps_location }}
+                                </td>
+
+                                <td class="px-6 py-4 whitespace-nowrap text-center">
+                                    {% with severity=event.severity_level|stringformat:"s" %}
+                                        {% if severity == '4' or severity == 'critical' %}
+                                            <span class="inline-block px-3 py-1.5 text-xs font-bold text-white rounded shadow-sm min-w-[80px] text-center bg-gradient-to-r from-[#BF0000] to-[#490000]">
+                                                Critical
+                                            </span>
+                                        {% elif severity == '3' or severity == 'high' %}
+                                            <span class="inline-block px-3 py-1.5 text-xs font-bold text-white rounded shadow-sm min-w-[80px] text-center bg-gradient-to-r from-[#F7CA6A] to-[#A37304]">
+                                                High
+                                            </span>
+                                        {% elif severity == '2' or severity == 'medium' %}
+                                            <span class="inline-block px-3 py-1.5 text-xs font-bold text-white rounded shadow-sm min-w-[80px] text-center bg-gradient-to-r from-[#FFE812] to-[#A89905]">
+                                                Medium
+                                            </span>
+                                        {% else %}
+                                            <span class="inline-block px-3 py-1.5 text-xs font-bold text-white rounded shadow-sm min-w-[80px] text-center bg-gradient-to-r from-[#58E07F] to-[#307A45]">
+                                                Low
+                                            </span>
+                                        {% endif %}
+                                    {% endwith %}
+                                </td>
+
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold
+                                    {% if event.status|lower == 'resolved' or event.status|lower == 'closed' %}text-green-600
+                                    {% elif event.status|lower == 'in_progress' %}text-blue-600
+                                    {% elif event.status|lower == 'cancelled' %}text-gray-500
+                                    {% else %}text-gray-600{% endif %}">
+                                    {{ event.get_status_display|upper }}
+                                </td>
+
+                                <td class="px-6 py-4 whitespace-nowrap text-center">
+                                    {% if event.status|lower == 'reported' or event.status|lower == 'pending' %}
+                                        <a href="{% url 'EmergencyEvent:responder_availability' %}?event_id={{ event.eventID }}"
+                                           class="inline-block w-[110px] py-2 text-xs font-bold text-white uppercase rounded shadow-md transition-opacity hover:opacity-90 bg-gradient-to-r from-[#58E07F] to-[#307A45] text-center"
+                                           onclick="event.stopPropagation();">
+                                            Assign
+                                        </a>
+                                    {% else %}
+                                        <button class="w-[110px] py-2 text-xs font-bold text-white uppercase rounded shadow-md transition-opacity hover:opacity-90 bg-gradient-to-r from-[#3C97FF] to-[#151D8D]"
+                                                onclick="event.stopPropagation(); window.location.href='{% url 'EmergencyEvent:event_details_authority' event.eventID %}'">
+                                            View Report
+                                        </button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                        {% else %}
+                            <tr>
+                                <td colspan="7" class="px-6 py-10 text-center text-gray-500">
+                                    <i class="fas fa-inbox text-4xl mb-3 text-gray-300"></i>
+                                    <p>No emergency events found.</p>
+                                </td>
+                            </tr>
+                        {% endif %}
 
                     </tbody>
                 </table>
@@ -265,7 +203,6 @@
         </div>
     </main>
 
-    <!-- Mobile Menu Script -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const mobileMenuButton = document.getElementById('mobile-menu-button');

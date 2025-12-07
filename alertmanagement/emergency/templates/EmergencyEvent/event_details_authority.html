@@ -4,12 +4,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Event Details - ALERT</title>
-    <!-- Tailwind CSS -->
+    <title>Event Details (Authority) - ALERT</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Inter Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -25,11 +22,9 @@
 </head>
 <body class="bg-[#f0f2f5] font-sans text-[#333] min-h-screen flex flex-col">
 
-    <!-- HEADER -->
     <header class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="w-full px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <!-- Left Side -->
                 <div class="flex items-center space-x-8">
                     <div class="flex items-center space-x-2">
                         <img src="{% static 'emergency/logo.jpg' %}" alt="ALERT Logo" class="h-10 w-auto object-contain" />
@@ -40,13 +35,20 @@
                         <a href="#" class="text-gray-500 hover:text-red-600 transition-colors font-medium">Call Logs</a>
                     </nav>
                 </div>
-                <!-- Right Side -->
                 <div class="flex items-center space-x-4">
                     <div class="hidden md:flex items-center space-x-4">
-                        <span class="text-gray-800 font-medium text-sm mr-2">Julian Andales</span>
+                        <span class="bg-[#d9534f] text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2">
+                            AUTHORITY - ADMIN
+                        </span>
+                        <span class="text-gray-800 font-medium text-sm mr-2">
+                            {% if user.is_authenticated %}
+                                {{ user.first_name }} {{ user.last_name }}
+                            {% else %}
+                                Julian Andales
+                            {% endif %}
+                        </span>
                         <img class="h-8 w-8 rounded-full object-cover border border-gray-200" src="{% static 'emergency/profile_image.jpg' %}" alt="User Avatar" />
                     </div>
-                    <!-- Mobile Menu Button -->
                     <div class="md:hidden flex items-center">
                         <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-800 focus:outline-none">
                             <i class="fas fa-bars text-xl"></i>
@@ -55,8 +57,22 @@
                 </div>
             </div>
         </div>
-        <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden bg-white border-t p-4">
+            <div class="mb-4 pb-4 border-b border-gray-100">
+                <span class="inline-block bg-[#d9534f] text-white font-semibold px-2 py-1 rounded text-xs uppercase mb-2">
+                    AUTHORITY - ADMIN
+                </span>
+                <div class="flex items-center">
+                    <img class="h-8 w-8 rounded-full object-cover mr-2" src="{% static 'emergency/profile_image.jpg' %}" alt="User Avatar" />
+                    <span class="font-medium text-sm">
+                        {% if user.is_authenticated %}
+                            {{ user.first_name }} {{ user.last_name }}
+                        {% else %}
+                            Julian Andales
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
             <nav class="space-y-2">
                 <a href="#" class="block py-2 text-red-600 font-bold bg-red-50 rounded px-2">Dashboard</a>
                 <a href="#" class="block py-2 text-gray-600 hover:bg-gray-50 rounded px-2">Chat</a>
@@ -65,66 +81,99 @@
         </div>
     </header>
 
-    <!-- MAIN CONTENT -->
-    <!-- Max-width 1400px to match your .container class -->
-    <main class="flex-grow container mx-auto max-w-[1400px] p-5 flex flex-col lg:flex-row gap-5 animate-fadeIn">
+    <main class="flex-grow w-full p-5 lg:p-6 flex flex-col lg:flex-row gap-5 animate-fadeIn">
 
-        <!-- Left Column -->
         <div class="flex flex-col flex-1 w-full">
 
-            <!-- Event Details Card -->
-            <!-- Linear gradient applied via arbitrary values to match your CSS -->
             <div class="bg-gradient-to-r from-white/80 to-[#d9534f]/10 p-[30px] rounded-[10px] shadow-md">
 
-                <!-- Row 1 -->
                 <div class="flex items-baseline mb-[15px]">
                     <span class="w-[200px] shrink-0 font-bold text-[#d9534f] text-base uppercase">Emergency Event:</span>
-                    <span class="flex-1 font-bold text-[#333] text-base uppercase">Medical Assistance</span>
+                    <span class="flex-1 font-bold text-[#333] text-base uppercase">
+                        {% if event %}
+                            {{ event.get_category_display }}
+                        {% else %}
+                            Medical Assistance
+                        {% endif %}
+                    </span>
                 </div>
 
-                <!-- Row 2 -->
                 <div class="flex items-baseline mb-[15px]">
                     <span class="w-[200px] shrink-0 font-semibold text-[#d9534f] text-sm uppercase">Severity:</span>
-                    <span class="flex-1 font-bold text-[#d9534f] text-base uppercase">High</span>
+                    <span class="flex-1 font-bold text-[#d9534f] text-base uppercase">
+                        {% if event %}
+                            {% with severity=event.severity_level|stringformat:"s" %}
+                                {% if severity == '1' or severity == 'low' %}Low
+                                {% elif severity == '2' or severity == 'medium' %}Medium
+                                {% elif severity == '3' or severity == 'high' %}High
+                                {% elif severity == '4' or severity == 'critical' %}Critical
+                                {% else %}{{ event.get_severity_level_display }}{% endif %}
+                            {% endwith %}
+                        {% else %}
+                            High
+                        {% endif %}
+                    </span>
                 </div>
 
-                <!-- Row 3 -->
                 <div class="flex items-baseline mb-[15px]">
                     <span class="w-[200px] shrink-0 font-semibold text-[#d9534f] text-sm uppercase">Location:</span>
-                    <span class="flex-1 font-bold text-[#333] text-base uppercase">Caigit, Cebu City</span>
+                    <span class="flex-1 font-bold text-[#333] text-base uppercase" id="location-text">
+                        {% if event %}
+                            {{ event.gps_location }}
+                        {% else %}
+                            Caigit, Cebu City
+                        {% endif %}
+                    </span>
                 </div>
 
-                <!-- Row 4 -->
                 <div class="flex items-baseline mb-[15px]">
                     <span class="w-[200px] shrink-0 font-semibold text-[#d9534f] text-sm uppercase">Reporter:</span>
-                    <span class="flex-1 font-bold text-[#333] text-base uppercase">Kyle Plando</span>
+                    <span class="flex-1 font-bold text-[#333] text-base uppercase">
+                        {% if event %}
+                            {{ event.userID.user_id.first_name }} {{ event.userID.user_id.last_name }}
+                        {% else %}
+                            Kyle Plando
+                        {% endif %}
+                    </span>
                 </div>
 
-                <!-- Phone Row (Simulating the margin offsets from original CSS) -->
                 <div class="ml-[200px] -mt-[10px] mb-[25px]">
-                    <span class="text-[#5cb85c] text-sm underline cursor-pointer hover:text-[#4cae4c]">0931-112-3490</span>
+                    <span class="text-[#5cb85c] text-sm underline cursor-pointer hover:text-[#4cae4c]">
+                        {% if event %}
+                            {{ event.userID.user_id.contact_numbers.first.contact_info|default:"0931-112-3490" }}
+                        {% else %}
+                            0931-112-3490
+                        {% endif %}
+                    </span>
                 </div>
 
-                <!-- Description Row -->
                 <div class="flex items-baseline">
                     <span class="w-[200px] shrink-0 font-semibold text-[#d9534f] text-sm uppercase self-start">Description:</span>
                     <p class="flex-1 font-normal text-[#555] text-[15px] leading-relaxed">
-                        Patient experiencing severe chest pain and shortness of breath. History of cardiac issues. Needs immediate transport.
+                        {% if event %}
+                            {{ event.description|linebreaksbr }}
+                        {% else %}
+                            Patient experiencing severe chest pain and shortness of breath. History of cardiac issues. Needs immediate transport.
+                        {% endif %}
                     </p>
                 </div>
             </div>
 
-            <!-- Action Buttons Container -->
             <div class="w-full mt-5 flex flex-col items-end gap-4 pr-[30px] lg:pr-0">
 
-                <!-- Top: Assign -->
                 <div class="flex justify-end">
-                    <button class="w-[150px] py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] hover:-translate-y-px transition-all duration-300 text-base">
-                        Assign
-                    </button>
+                    {% if event.status == 'completed' or event.status == 'resolved' or event.status == 'closed' %}
+                        <button disabled class="w-[150px] py-3 bg-gray-400 text-white font-semibold rounded shadow-sm uppercase cursor-not-allowed text-base flex items-center justify-center">
+                            Resolved
+                        </button>
+                    {% else %}
+                        <a href="{% url 'EmergencyEvent:responder_availability' %}?event_id={{ event.eventID }}"
+                           class="w-[150px] py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] hover:-translate-y-px transition-all duration-300 text-base flex items-center justify-center">
+                            Assign
+                        </a>
+                    {% endif %}
                 </div>
 
-                <!-- Bottom: Secondary Actions -->
                 <div class="flex flex-wrap justify-end gap-[15px]">
                     <button class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base">
                         Medical Records
@@ -139,12 +188,22 @@
             </div>
         </div>
 
-        <!-- Right Panel (Map) -->
-        <!-- Flex-none with width 55% on large screens, full width on mobile -->
         <div class="flex-none w-full lg:w-[55%] flex flex-col h-[400px] lg:h-auto">
-            <div class="relative rounded-[10px] overflow-hidden shadow-md flex-1">
-                <img src="{% static 'emergency/map_image.png' %}" alt="Emergency Location Map" class="w-full h-full object-cover bg-gray-300" />
-                <div class="absolute top-5 right-5 bg-[#d9534f] text-white px-4 py-2 rounded shadow-md font-bold text-lg">
+            <div class="relative rounded-[10px] overflow-hidden shadow-md flex-1 bg-gray-200 group">
+
+                <div id="map-loading" class="absolute inset-0 flex items-center justify-center bg-gray-100 z-10 transition-opacity duration-300">
+                    <div class="flex flex-col items-center">
+                        <svg class="animate-spin h-8 w-8 text-[#d9534f] mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span class="text-[#d9534f] font-bold text-sm">Locating...</span>
+                    </div>
+                </div>
+
+                <iframe id="map-iframe" class="w-full h-full border-0" src="" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+                <div class="absolute top-5 right-5 bg-[#d9534f] text-white px-4 py-2 rounded shadow-md font-bold text-lg z-20">
                     Emergency Locations
                 </div>
             </div>
@@ -152,7 +211,6 @@
 
     </main>
 
-    <!-- Mobile Menu Script -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const mobileMenuButton = document.getElementById('mobile-menu-button');
@@ -162,6 +220,49 @@
                 mobileMenuButton.addEventListener('click', () => {
                     mobileMenu.classList.toggle('hidden');
                 });
+            }
+
+            // --- MAP LOGIC ---
+            const dbLocation = "{% if event and event.gps_location %}{{ event.gps_location }}{% endif %}";
+            const locationTextEl = document.getElementById('location-text');
+            const loadingEl = document.getElementById('map-loading');
+            const iframe = document.getElementById('map-iframe');
+
+            function loadMap(lat, lon) {
+                const bboxOffset = 0.005;
+                iframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - bboxOffset},${lat - bboxOffset},${lon + bboxOffset},${lat + bboxOffset}&layer=mapnik&marker=${lat},${lon}`;
+
+                iframe.onload = () => {
+                    loadingEl.style.opacity = '0';
+                    setTimeout(() => {
+                        loadingEl.style.display = 'none';
+                    }, 300);
+                };
+            }
+
+            if (dbLocation && dbLocation.trim() !== "") {
+                const parts = dbLocation.split(',');
+                if (parts.length === 2) {
+                    loadMap(parseFloat(parts[0]), parseFloat(parts[1]));
+                } else {
+                    loadMap(10.3157, 123.8854);
+                }
+            } else {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const lat = position.coords.latitude;
+                            const lon = position.coords.longitude;
+                            if(locationTextEl) locationTextEl.innerText = `Current Dev Loc: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+                            loadMap(lat, lon);
+                        },
+                        (error) => {
+                            loadMap(10.3157, 123.8854);
+                        }
+                    );
+                } else {
+                    alert("Geolocation is not supported by this browser.");
+                }
             }
         });
     </script>

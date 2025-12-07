@@ -71,7 +71,6 @@ class Citizen(models.Model):
     def __str__(self):
         return f"Citizen: {self.user_id.first_name} {self.user_id.last_name}"
 
-
 # -----------------------------------------------------------
 #   RESPONDER (SUBTYPE OF CITIZEN)
 # -----------------------------------------------------------

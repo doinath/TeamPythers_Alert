@@ -112,20 +112,46 @@
                             Responder
                         </span>
                     </div>
+
+                    <!-- UPDATED ADDRESS SECTION (Grid Layout like Citizen Profile) -->
                     <div class="bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2 mb-4">Address</h3>
-                        <address class="text-sm not-italic text-gray-700 space-y-1">
+
+                        <address class="not-italic text-gray-700 grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                            <!-- Street -->
                             <div data-editable-container>
-                                <p class="data-view">456 Oak Ave, Hipodromo</p>
-                                <input type="text" value="456 Oak Ave, Hipodromo" class="hidden data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 text-sm"/>
+                                <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Street</label>
+                                <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">Street:</span> 456 Oak Ave</p>
+                                <input type="text" value="456 Oak Ave" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"/>
                             </div>
-                             <div data-editable-container>
-                                <p class="data-view">Mandaue City, Cebu</p>
-                                <input type="text" value="Mandaue City, Cebu" class="hidden data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 text-sm"/>
+
+                            <!-- Barangay -->
+                            <div data-editable-container>
+                                <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Barangay</label>
+                                <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">Barangay:</span> Hipodromo</p>
+                                <input type="text" value="Hipodromo" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"/>
                             </div>
-                             <div data-editable-container>
-                                <p class="data-view">6014</p>
-                                <input type="text" value="6014" class="hidden data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 text-sm"/>
+
+                            <!-- City -->
+                            <div data-editable-container>
+                                <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">City</label>
+                                <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">City:</span> Mandaue City</p>
+                                <input type="text" value="Mandaue City" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"/>
+                            </div>
+
+                            <!-- Province -->
+                            <div data-editable-container>
+                                <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Province</label>
+                                <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">Province:</span> Cebu</p>
+                                <input type="text" value="Cebu" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"/>
+                            </div>
+
+                            <!-- Zip Code -->
+                            <div data-editable-container class="md:col-span-2">
+                                <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Zip Code</label>
+                                <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">Zip Code:</span> 6014</p>
+                                <input type="text" value="6014" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"/>
                             </div>
                         </address>
                     </div>
@@ -337,7 +363,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         const editProfileBtn = document.getElementById('edit-profile-btn');
         const saveProfileBtn = document.getElementById('save-profile-btn');
-        const logoutBtn = document.getElementById('logout-btn'); // Get the Log Out button
+        const logoutBtn = document.getElementById('logout-btn');
         const addItemBtns = document.querySelectorAll('.add-item-btn');
         const idModal = document.getElementById('id-modal');
         const closeModalBtn = document.getElementById('close-modal-btn');
@@ -356,7 +382,6 @@
             editProfileBtn.classList.toggle('hidden');
             saveProfileBtn.classList.toggle('hidden');
 
-            // 🆕 Toggle Log Out button visibility: Hide in edit mode, show otherwise
             if (logoutBtn) {
                 logoutBtn.classList.toggle('hidden', isEditMode);
             }
@@ -371,47 +396,46 @@
                 el.classList.toggle('hidden', isEditMode);
             });
 
-            // Toggle editable fields
+            // Toggle editable fields (Labels, Inputs, Textareas, Selects)
             document.querySelectorAll('[data-editable-container]').forEach(container => {
-                const viewEl = container.querySelector('.data-view');
-                const editEl = container.querySelector('.data-edit');
-                if (viewEl && editEl) {
-                    viewEl.classList.toggle('hidden', isEditMode);
-                    editEl.classList.toggle('hidden', !isEditMode);
+                const viewEls = container.querySelectorAll('.data-view');
+                const editEls = container.querySelectorAll('.data-edit');
 
-                    // On save, update view from edit
-                    if (!isEditMode) {
-                       if (['TEXTAREA', 'SELECT'].includes(editEl.tagName)) {
-                            // For SELECT, find the selected option's text or default to value
-                            const selectedText = editEl.tagName === 'SELECT' && editEl.options[editEl.selectedIndex] ? editEl.options[editEl.selectedIndex].text : editEl.value;
+                // Toggle visibility
+                viewEls.forEach(el => el.classList.toggle('hidden', isEditMode));
+                editEls.forEach(el => el.classList.toggle('hidden', !isEditMode));
 
-                            // Handle duty status span update if necessary
-                            let viewContent = viewEl.querySelector('span') || viewEl;
-                            viewContent.textContent = selectedText;
+                // Save Logic: Update text view with new input value
+                if (!isEditMode) {
+                    const inputEl = container.querySelector('input, textarea, select');
+                    // Find the main text container
+                    const textDisplay = container.querySelector('.data-view:not(span)');
 
-                       } else if (editEl.type === 'date') {
-                            const date = new Date(editEl.value + 'T00:00:00');
-                            viewEl.textContent = date.toLocaleDateString();
-                       }
-                       else {
-                            viewEl.textContent = editEl.value;
-                       }
-                    } else {
-                        // On edit, update edit from view
-                        // If there's an inner span (like for Duty Status), use its text
-                        const valueSource = viewEl.querySelector('span') || viewEl;
-                        if(editEl.type === 'date'){
-                            try {
-                                editEl.value = new Date(valueSource.textContent.trim()).toISOString().split('T')[0];
-                            } catch (e) {
-                                editEl.value = '';
-                            }
+                    if (inputEl && textDisplay) {
+                        const mobileLabel = textDisplay.querySelector('span'); // Check for mobile label inside
+
+                        let newValue = inputEl.value;
+
+                        // Specific formatting for Date or Select
+                        if (inputEl.type === 'date') {
+                             const date = new Date(inputEl.value);
+                             if(!isNaN(date)) newValue = date.toISOString().split('T')[0];
+                        } else if (inputEl.tagName === 'SELECT') {
+                             newValue = inputEl.options[inputEl.selectedIndex].text;
+                        }
+
+                        if (mobileLabel) {
+                            // Reconstruct: Mobile Label + Space + New Value
+                            textDisplay.innerHTML = '';
+                            textDisplay.appendChild(mobileLabel);
+                            textDisplay.append(` ${newValue}`);
                         } else {
-                            // For SELECT, match the option value to the view text
-                            if (editEl.tagName === 'SELECT') {
-                                editEl.value = valueSource.textContent.trim();
+                            // Special check for inner SPAN (like Duty Status color)
+                            const innerSpan = textDisplay.querySelector('span');
+                            if(innerSpan) {
+                                innerSpan.textContent = newValue;
                             } else {
-                                editEl.value = valueSource.textContent.trim();
+                                textDisplay.textContent = newValue;
                             }
                         }
                     }
@@ -425,8 +449,8 @@
             }
         };
 
-        if (editProfileBtn) editProfileBtn.addEventListener('click', toggleEditMode);
-        if (saveProfileBtn) saveProfileBtn.addEventListener('click', toggleEditMode);
+        editProfileBtn.addEventListener('click', toggleEditMode);
+        saveProfileBtn.addEventListener('click', toggleEditMode);
 
         // --- Add Item Functionality ---
         addItemBtns.forEach(btn => {

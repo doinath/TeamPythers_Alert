@@ -7,7 +7,8 @@ from datetime import date
 #   USER (BASE ENTITY)
 # -----------------------------------------------------------
 class User(models.Model):
-    account = models.OneToOneField(AuthUser, on_delete=models.CASCADE, related_name='custom_profile', null=True, blank=True)
+    account = models.OneToOneField(AuthUser, on_delete=models.CASCADE, related_name='custom_profile', null=True,
+                                   blank=True)
 
     type_gender = (('M', 'Male'), ('F', 'Female'))
 
@@ -36,8 +37,8 @@ class User(models.Model):
             return None
         today = date.today()
         return (
-            today.year - self.date_of_birth.year
-            - ((today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day))
+                today.year - self.date_of_birth.year
+                - ((today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day))
         )
 
     def __str__(self):
@@ -50,9 +51,12 @@ class User(models.Model):
 class ContactInfo(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='contact_numbers')
     contact_info = models.CharField(max_length=15)
+    relationship = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.user_id} - {self.contact_info}"
+        # Updated string representation to show relationship
+        return f"{self.user_id} - {self.contact_info} ({self.relationship})"
+
 
 class Email(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='secondary_emails')
@@ -71,11 +75,11 @@ class Citizen(models.Model):
     def __str__(self):
         return f"Citizen: {self.user_id.first_name} {self.user_id.last_name}"
 
+
 # -----------------------------------------------------------
 #   RESPONDER (SUBTYPE OF CITIZEN)
 # -----------------------------------------------------------
 class Responder(models.Model):
-
     role_type = (
         ('Medical', 'Medical Responders'),
         ('Fire', 'Fire Responders'),

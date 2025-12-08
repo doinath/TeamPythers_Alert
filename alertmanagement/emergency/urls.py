@@ -21,6 +21,12 @@ urlpatterns = [
     path("event-list/", views.EventListView.as_view(), name="event_list"),
     path("report-incident/", views.CreateReportView.as_view(), name="report_form"),
     path("responder-availability/", views.ResponderAvailabilityView.as_view(), name="responder_availability"),
+
+    # NEW PATH FOR MEDICAL RECORD
+    path("medical-record/", views.MedicalRecordView.as_view(), name="medical_records"),
+path("medical-record/<int:event_id>/", views.MedicalRecordView.as_view(), name="medical_records"),
+
+    # Details URLs
     path("details-authority/<int:event_id>/", views.EventDetailsAuthorityView.as_view(),
          name="event_details_authority"),
     path("details-responder/<int:event_id>/", views.EventDetailsResponderView.as_view(),

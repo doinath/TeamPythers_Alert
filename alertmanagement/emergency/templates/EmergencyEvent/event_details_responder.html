@@ -191,17 +191,20 @@
                     </button>
                 </form>
 
-                <div class="flex flex-wrap justify-end gap-[15px]">
-                    <button class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base">
-                        Medical Records
-                    </button>
-                    <button class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base">
-                        Call
-                    </button>
-                    <button class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base">
-                        Chat
-                    </button>
-                </div>
+<div class="flex flex-wrap justify-end gap-[15px]">
+
+    <a href="{% url 'EmergencyEvent:medical_record' event.eventID %}"
+       class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base text-center">
+        Medical Records
+    </a>
+
+    <button class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base">
+        Call
+    </button>
+    <button class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base">
+        Chat
+    </button>
+</div>
             </div>
         </div>
 

@@ -1,0 +1,230 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medical Record - {{ user_profile.first_name }} {{ user_profile.last_name }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-8">
+                    <div class="flex items-center space-x-2">
+                        <img src="{% static 'images/logo.png' %}" alt="ALERT Logo" class="h-10 w-auto object-contain" />
+                    </div>
+                    <nav class="hidden md:flex items-center space-x-6">
+                        <a href="./authority_dashboard.html" class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Dashboard</a>
+                        <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">Chat</a>
+                        <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">Call Logs</a>
+                    </nav>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <div class="hidden md:flex items-center space-x-4">
+                        <span class="text-gray-800 font-medium text-sm mr-3">
+                            {% if user.is_authenticated %}
+                                {{ user.first_name }} {{ user.last_name }}
+                            {% else %}
+                                Kyle Plando
+                            {% endif %}
+                        </span>
+                        <img class="h-8 w-8 rounded-full object-cover" src="https://i.pravatar.cc/40?u=kyleplando" alt="User Avatar" />
+                    </div>
+                    <div class="md:hidden flex items-center">
+                        <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-800 focus:outline-none">
+                            <svg id="menu-open-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                            <svg id="menu-close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <nav class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="./authority_dashboard.html" class="block px-3 py-2 rounded-md text-base font-medium bg-red-50 text-red-700">Dashboard</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Chat</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Call Logs</a>
+            </nav>
+            <div class="pt-4 pb-3 border-t border-gray-200">
+                <div class="flex items-center px-5">
+                    <img class="h-10 w-10 rounded-full object-cover" src="https://i.pravatar.cc/150?u=kyleplando" alt="User Avatar" />
+                    <div class="ml-3">
+                        <div class="text-base font-medium text-gray-800">
+                            {% if user.is_authenticated %}
+                                {{ user.first_name }} {{ user.last_name }}
+                            {% else %}
+                                Kyle Plando
+                            {% endif %}
+                        </div>
+                        <div class="text-sm font-medium text-gray-500">kyle.plando@example.com</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <div class="space-y-8 animate-fadeIn">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                        <img class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-red-200" src="https://i.pravatar.cc/150?u={{ user_profile.user_id }}" alt="Profile" />
+
+                        <div data-editable-container>
+                             <h2 class="text-2xl font-bold text-gray-800 data-view">
+                                 {{ user_profile.first_name }} {{ user_profile.last_name }}
+                             </h2>
+                        </div>
+
+                        <div data-editable-container>
+                            <p class="text-sm text-gray-500 mt-1 data-view">
+                                {{ user_profile.account.email|default:"No email registered" }}
+                            </p>
+                       </div>
+
+                        <div data-editable-container>
+                            <p class="text-sm text-gray-500 data-view">
+                                {% if contact_numbers %}
+                                    {{ contact_numbers.first.contact_info }}
+                                {% else %}
+                                    No contact info
+                                {% endif %}
+                            </p>
+                        </div>
+
+                        <span class="mt-4 inline-block bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">
+                            Citizen
+                        </span>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2 mb-4">Address</h3>
+                        <address class="text-sm not-italic text-gray-700 space-y-1">
+                            <div data-editable-container>
+                                <p class="data-view">{{ user_profile.street|default:"-" }}</p>
+                            </div>
+                             <div data-editable-container>
+                                <p class="data-view">{{ user_profile.city|default:"-" }}, {{ user_profile.province|default:"" }}</p>
+                            </div>
+                             <div data-editable-container>
+                                <p class="data-view">{{ user_profile.zip_code|default:"" }}</p>
+                            </div>
+                        </address>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 space-y-6">
+
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                         <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-4">
+                            <h3 class="text-xl font-bold text-gray-800">Medical Information</h3>
+                        </div>
+                        <div id="medical-list">
+                            {% if medical_conditions %}
+                                {% for condition in medical_conditions %}
+                                <div class="py-2 border-b border-gray-100 last:border-b-0">
+                                    <div data-editable-container>
+                                        <h4 class="font-semibold text-gray-800 data-view">{{ condition.condition_name }}</h4>
+                                    </div>
+                                    <div data-editable-container>
+                                        <p class="text-sm text-gray-600 data-view">{{ condition.notes }}</p>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-gray-500 italic p-4">No known medical conditions on file.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-4">
+                            <h3 class="text-xl font-bold text-gray-800">Contact Numbers</h3>
+                        </div>
+                        <ul class="divide-y divide-gray-100" id="emergency-contact-list">
+                            {% if contact_numbers %}
+                                {% for contact in contact_numbers %}
+                                <li class="py-3 flex justify-between items-center">
+                                    <div class="flex-grow">
+                                         <div data-editable-container>
+                                            <p class="font-semibold text-gray-800 data-view">Registered Contact</p>
+                                        </div>
+                                        <div data-editable-container>
+                                            <p class="text-sm text-gray-500 data-view">{{ contact.contact_info }}</p>
+                                        </div>
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            {% else %}
+                                <li class="py-3 text-gray-500 italic">No contact numbers available.</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                         <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-4">
+                            <h3 class="text-xl font-bold text-gray-800">Government IDs</h3>
+                        </div>
+                        <ul class="divide-y divide-gray-100" id="gov-id-list">
+                            <li class="py-3 flex justify-between items-center">
+                                <div class="flex-grow pr-4">
+                                    <div data-editable-container>
+                                        <p class="font-semibold text-gray-800 data-view">System ID</p>
+                                    </div>
+                                    <div data-editable-container>
+                                        <p class="text-sm text-gray-500 data-view">USR-{{ user_profile.user_id }}</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                     <span class="text-xs font-medium bg-green-100 text-green-800 px-2 py-0.5 rounded-full view-state">Verified</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const openIcon = document.getElementById('menu-open-icon');
+        const closeIcon = document.getElementById('menu-close-icon');
+
+        if (mobileMenuButton) {
+             mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                openIcon.classList.toggle('hidden');
+                closeIcon.classList.toggle('hidden');
+            });
+        }
+    });
+    </script>
+</body>
+</html>

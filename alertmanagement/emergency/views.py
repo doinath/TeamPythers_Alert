@@ -5,9 +5,8 @@ from django.contrib.auth.models import User as DjangoAuthUser
 from django.db.models import Q
 
 # Import your models
-from account.models import User as AccountUser, Citizen, Responder
-from .models import EmergencyEvent, EventAssignment
-
+from account.models import User as AccountUser, Citizen, Responder, ContactInfo
+from .models import EmergencyEvent, EventAssignment, MedicalCondition
 
 # --- VIEW CLASSES ---
 
@@ -83,6 +82,7 @@ class AssignmentListView(View):
         elif request.user.is_authenticated:
             try:
                 # Standard retrieval for logged-in user
+                # NOTE: This assumes a deeply nested relationship from Django User -> AccountUser -> Citizen -> Responder
                 responder_profile = request.user.custom_profile.citizen_profile.responder_profile
             except AttributeError:
                 messages.error(request, "User is authenticated but does not have a Responder profile.")
@@ -106,6 +106,38 @@ class AssignmentListView(View):
         return render(request, self.template_name, context)
 
 
+# --- VIEW FOR MEDICAL RECORD ---
+
+class MedicalRecordView(View):
+    template_name = "EmergencyEvent/medical_records.html"
+
+    def get(self, request, event_id):
+        # 1. Get the Event
+        event = get_object_or_404(EmergencyEvent, pk=event_id)
+
+        # 2. Get the Citizen (The Victim/Reporter)
+        citizen = event.userID
+        user_profile = citizen.user_id
+
+        # 3. Fetch Related Data
+        medical_conditions = MedicalCondition.objects.filter(user_id=user_profile)
+
+        # Fetch Contact Numbers
+        contact_numbers = ContactInfo.objects.filter(user_id=user_profile)
+
+        # Fetch Email (Optional, assuming relationship exists)
+        # emails = user_profile.secondary_emails.all()
+
+        context = {
+            'event': event,
+            'citizen': citizen,
+            'user_profile': user_profile,
+            'medical_conditions': medical_conditions,
+            'contact_numbers': contact_numbers,
+        }
+        return render(request, self.template_name, context)
+
+
 # --- DETAILS VIEWS ---
 
 class EventDetailsResponderView(View):
@@ -113,27 +145,19 @@ class EventDetailsResponderView(View):
 
     def get(self, request, event_id=None):
         event = None
-
-        # FIX: The original code always queried the first event if event_id was None,
-        # which would often happen if the URL config was slightly off or during dev testing.
-        # This makes sure we only try to fetch if we have a valid ID.
         if event_id:
             event = get_object_or_404(EmergencyEvent, pk=event_id)
         else:
-            # If no ID is provided, it's better to show an error or redirect,
-            # or strictly rely on the ID being present in a proper URL configuration.
-            # Keeping the old logic for now, but flagging it:
             event = EmergencyEvent.objects.order_by('-created_at').first()
             if not event:
                 messages.error(request, "No events found in the database.")
-                return redirect('EmergencyEvent:event_list')  # Redirect if no events exist
+                return redirect('EmergencyEvent:event_list')
 
         context = {'event': event}
         return render(request, self.template_name, context)
 
     def post(self, request, event_id=None):
         if not event_id:
-            # If POST happens without an event_id, redirect to the list view.
             return redirect('EmergencyEvent:event_list')
 
         event = get_object_or_404(EmergencyEvent, pk=event_id)
@@ -144,7 +168,6 @@ class EventDetailsResponderView(View):
 
         # --- STATUS LOGIC ---
 
-        # 1. Acknowledge -> ON THE WAY
         if action == 'acknowledge':
             if current_status in ['reported', 'pending', 'in_progress']:
                 event.status = 'on the way'
@@ -153,7 +176,6 @@ class EventDetailsResponderView(View):
             else:
                 messages.warning(request, f"Cannot acknowledge: Event is '{current_status}'.")
 
-        # 2. On Scene -> ON SCENE
         elif action == 'on_scene':
             if current_status in ['reported', 'pending', 'in_progress', 'on the way', 'on_the_way']:
                 event.status = 'on scene'
@@ -162,7 +184,6 @@ class EventDetailsResponderView(View):
             else:
                 messages.warning(request, f"Cannot update to On Scene: Event is '{current_status}'.")
 
-        # 3. Resolved -> COMPLETED
         elif action == 'resolved':
             if current_status not in ['completed', 'resolved', 'closed']:
                 event.status = 'completed'

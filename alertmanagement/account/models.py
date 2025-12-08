@@ -125,3 +125,12 @@ class Authority(models.Model):
     def __str__(self):
         user = self.citizen.user_id
         return f"Authority: {user.first_name} {user.last_name}"
+
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.CharField(max_length=255)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Message for {self.user.first_name} {self.user.last_name}"

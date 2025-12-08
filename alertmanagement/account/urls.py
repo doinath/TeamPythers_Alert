@@ -12,5 +12,10 @@ urlpatterns = [
     path('authority_dashboard/', views.AuthorityDashboardView.as_view(), name='authority_dashboard'),
     path('citizen_profile/', views.CitizenProfileView.as_view(), name='citizen_profile'),
     path('responder_profile/', views.ResponderProfileView.as_view(), name='responder_profile'),
-    path('authority_profile/', views.AuthorityProfileView.as_view(), name='authority_profile')
+    path('authority_profile/', views.AuthorityProfileView.as_view(), name='authority_profile'),
+
+    # --- URLs for Applications ---
+    path('apply/responder/', views.ApplyResponderView.as_view(), name='apply_responder'),
+    path('apply/authority/', views.ApplyAuthorityView.as_view(), name='apply_authority'),
+    # ---------------------------------
 ]

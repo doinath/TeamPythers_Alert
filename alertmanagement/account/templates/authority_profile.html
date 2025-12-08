@@ -43,7 +43,6 @@
                 <div class="flex items-center space-x-4">
                     <div class="hidden md:flex items-center space-x-4">
                         <span class="text-gray-700 font-medium">Bessie Cooper</span>
-                        <!-- ID Added: nav-profile-image -->
                         <img id="nav-profile-image" class="h-10 w-10 rounded-full object-cover" src="https://picsum.photos/id/237/100/100" alt="User Avatar" />
                     </div>
                     <div class="md:hidden flex items-center">
@@ -67,11 +66,10 @@
             </nav>
             <div class="pt-4 pb-3 border-t border-gray-200">
                 <div class="flex items-center px-5">
-                    <!-- ID Added: mobile-profile-image -->
                     <img id="mobile-profile-image" class="h-10 w-10 rounded-full object-cover" src="https://picsum.photos/id/237/100/100" alt="User Avatar" />
                     <div class="ml-3">
                         <div class="text-base font-medium text-gray-800">Bessie Cooper</div>
-                        <div class="text-sm font-medium text-gray-500">bessie.cooper@example.com</div>
+                        <div class="text-sm font-medium text-gray-500">bessie.cooper@authority.gov</div>
                     </div>
                 </div>
             </div>
@@ -80,19 +78,19 @@
 
     <main class="container mx-auto p-4 sm:p-6 lg:p-8">
         <div class="space-y-8 animate-fadeIn">
-            <div class="flex justify-between items-center">
-                <h1 class="text-3xl font-bold text-gray-900">Authority Profile</h1>
-                <div class="flex justify-end space-x-2">
-                     <button id="edit-profile-btn" class="px-6 py-2 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-75 transition-colors bg-red-700 hover:bg-red-800 focus:ring-red-500">
-                        Edit Profile
-                    </button>
-                    <button id="save-profile-btn" class="hidden px-6 py-2 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-75 transition-colors bg-blue-600 hover:bg-blue-700 focus:ring-blue-500">
-                        Save Profile
-                    </button>
-                </div>
+            <div class="flex justify-end space-x-2">
+                 <button id="edit-profile-btn" class="px-6 py-2 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-75 transition-colors bg-red-700 hover:bg-red-800 focus:ring-red-500">
+                    Edit Profile
+                </button>
+                <button id="save-profile-btn" class="hidden px-6 py-2 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-75 transition-colors bg-blue-600 hover:bg-blue-700 focus:ring-blue-500">
+                    Save Profile
+                </button>
             </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- LEFT COLUMN -->
                 <div class="lg:col-span-1 space-y-6">
+                    <!-- Profile Header -->
                     <div class="bg-white p-6 rounded-lg shadow-md text-center">
 
                         <!-- PROFILE IMAGE CONTAINER WITH POPUP -->
@@ -107,7 +105,7 @@
                                 </svg>
                             </div>
 
-                            <!-- Popup Menu (Hidden by default) -->
+                            <!-- Popup Menu -->
                             <div id="profile-popup-menu" class="hidden absolute top-full left-1/2 transform -translate-x-1/2 z-20 w-48 bg-gray-800 rounded-lg shadow-xl overflow-hidden text-left mt-2 border border-gray-700">
                                 <button id="btn-see-pic" class="w-full px-4 py-3 text-sm text-gray-200 hover:bg-gray-700 flex items-center transition-colors">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -123,23 +121,28 @@
                                     Choose profile picture
                                 </button>
                             </div>
-
-                            <!-- Hidden File Input -->
                             <input type="file" id="profile-file-input" accept="image/*" class="hidden" />
                         </div>
 
-                        <div data-editable-container>
-                             <h2 class="text-2xl font-bold text-gray-800 data-view">Bessie Cooper</h2>
-                             <input type="text" value="Bessie Cooper" class="hidden data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 text-center text-2xl font-bold"/>
+                        <!-- Name -->
+                        <div class="mt-2">
+                             <h2 class="text-2xl font-bold text-gray-800">Bessie Cooper</h2>
                         </div>
-                       <div data-editable-container>
-                            <p class="text-sm text-gray-500 mt-1 data-view">bessie.cooper@authority.gov</p>
-                            <input type="email" value="bessie.cooper@authority.gov" class="hidden data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 text-center text-sm"/>
+
+                        <!-- Email -->
+                       <div data-editable-container class="mt-2 text-left">
+                            <p class="text-sm text-gray-500 mt-1 data-view text-center">bessie.cooper@authority.gov</p>
+                            <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Email Address</label>
+                            <input type="email" value="bessie.cooper@authority.gov" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-sm"/>
                        </div>
-                        <div data-editable-container>
-                            <p class="text-sm text-gray-500 data-view">0917-555-0000</p>
-                             <input type="tel" value="0917-555-0000" class="hidden data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 text-center text-sm"/>
+
+                       <!-- Phone -->
+                        <div data-editable-container class="mt-2 text-left">
+                            <p class="text-sm text-gray-500 data-view text-center">0917-555-0000</p>
+                            <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Phone Number</label>
+                             <input type="tel" value="09175550000" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '');" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-sm"/>
                         </div>
+
                         <span class="mt-4 inline-block bg-yellow-100 text-yellow-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">
                             Authority
                         </span>
@@ -153,31 +156,31 @@
                             <div data-editable-container>
                                 <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Street</label>
                                 <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">Street:</span> 789 Gov. M. Cuenco Ave</p>
-                                <input type="text" value="789 Gov. M. Cuenco Ave" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all"/>
+                                <input type="text" value="789 Gov. M. Cuenco Ave" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"/>
                             </div>
                             <!-- Barangay -->
                             <div data-editable-container>
                                 <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Barangay</label>
                                 <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">Barangay:</span> Apas</p>
-                                <input type="text" value="Apas" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all"/>
+                                <input type="text" value="Apas" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"/>
                             </div>
                             <!-- City -->
                             <div data-editable-container>
                                 <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">City</label>
                                 <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">City:</span> Cebu City</p>
-                                <input type="text" value="Cebu City" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all"/>
+                                <input type="text" value="Cebu City" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"/>
                             </div>
                             <!-- Province -->
                             <div data-editable-container>
                                 <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Province</label>
                                 <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">Province:</span> Cebu</p>
-                                <input type="text" value="Cebu" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all"/>
+                                <input type="text" value="Cebu" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"/>
                             </div>
                             <!-- Zip Code -->
                             <div data-editable-container class="md:col-span-2">
                                 <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Zip Code</label>
                                 <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">Zip Code:</span> 6000</p>
-                                <input type="text" value="6000" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all"/>
+                                <input type="text" value="6000" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"/>
                             </div>
                         </address>
                     </div>
@@ -185,8 +188,12 @@
                     <button id="logout-btn" class="w-full py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75">
                         Log Out
                     </button>
-                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN -->
                 <div class="lg:col-span-2 space-y-6">
+
+                    <!-- AUTHORITY INFORMATION (Preserved Fields, Updated Structure for Edit/Validation) -->
                     <div class="bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2 mb-4">Authority Information</h3>
                         <dl>
@@ -194,47 +201,56 @@
                                 <dt class="text-sm font-medium text-gray-500">Department</dt>
                                 <dd class="text-sm text-gray-900 col-span-2" data-editable-container>
                                     <p class="data-view">Cebu City Command Center</p>
-                                    <input type="text" value="Cebu City Command Center" class="hidden data-edit w-full border rounded-md p-1">
+                                    <input type="text" value="Cebu City Command Center" class="hidden data-edit w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500" required>
                                 </dd>
                             </div>
                             <div class="grid grid-cols-3 gap-4 py-3 border-b border-gray-100 last:border-b-0">
                                 <dt class="text-sm font-medium text-gray-500">Jurisdiction</dt>
                                 <dd class="text-sm text-gray-900 col-span-2" data-editable-container>
                                     <p class="data-view">Cebu City</p>
-                                    <input type="text" value="Cebu City" class="hidden data-edit w-full border rounded-md p-1">
+                                    <input type="text" value="Cebu City" class="hidden data-edit w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500" required>
                                 </dd>
                             </div>
                             <div class="grid grid-cols-3 gap-4 py-3 border-b border-gray-100 last:border-b-0">
                                 <dt class="text-sm font-medium text-gray-500">Rank / Title</dt>
                                 <dd class="text-sm text-gray-900 col-span-2" data-editable-container>
                                     <p class="data-view">Senior Dispatch Officer</p>
-                                    <input type="text" value="Senior Dispatch Officer" class="hidden data-edit w-full border rounded-md p-1">
+                                    <input type="text" value="Senior Dispatch Officer" class="hidden data-edit w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500" required>
                                 </dd>
                             </div>
                             <div class="grid grid-cols-3 gap-4 py-3 border-b border-gray-100 last:border-b-0">
                                 <dt class="text-sm font-medium text-gray-500">Joined Date</dt>
                                  <dd class="text-sm text-gray-900 col-span-2" data-editable-container>
-                                    <p class="data-view">3/20/2019</p>
-                                    <input type="date" value="2019-03-20" class="hidden data-edit w-full border rounded-md p-1">
+                                    <p class="data-view">2019-03-20</p>
+                                    <input type="date" value="2019-03-20" class="hidden data-edit w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500" required>
                                 </dd>
                             </div>
                         </dl>
                     </div>
-                     <div class="bg-white rounded-lg shadow-md p-6">
+
+                    <!-- PERSONAL DETAILS SECTION -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2 mb-4">Personal Details</h3>
                         <dl>
                              <div class="grid grid-cols-3 gap-4 py-3 border-b border-gray-100 last:border-b-0">
                                 <dt class="text-sm font-medium text-gray-500">Date of Birth</dt>
                                 <dd class="text-sm text-gray-900 col-span-2" data-editable-container>
-                                    <p class="data-view">1985-04-10</p>
-                                    <input type="date" value="1985-04-10" class="hidden data-edit w-full border rounded-md p-1">
+                                    <p class="data-view" id="view-dob">1985-04-10</p>
+                                    <input type="date" id="input-dob" value="1985-04-10" class="hidden data-edit w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500" required>
+                                </dd>
+                            </div>
+                            <!-- AGE (Derived) -->
+                            <div class="grid grid-cols-3 gap-4 py-3 border-b border-gray-100 last:border-b-0">
+                                <dt class="text-sm font-medium text-gray-500">Age</dt>
+                                <dd class="text-sm text-gray-900 col-span-2">
+                                    <p id="display-age">39</p>
                                 </dd>
                             </div>
                             <div class="grid grid-cols-3 gap-4 py-3 border-b border-gray-100 last:border-b-0">
                                 <dt class="text-sm font-medium text-gray-500">Gender</dt>
                                 <dd class="text-sm text-gray-900 col-span-2" data-editable-container>
                                     <p class="data-view">Female</p>
-                                    <select class="hidden data-edit w-full border rounded-md p-1">
+                                    <select class="hidden data-edit w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500" required>
                                         <option selected>Female</option>
                                         <option>Male</option>
                                         <option>Other</option>
@@ -244,48 +260,59 @@
                         </dl>
                     </div>
 
+                    <!-- Medical -->
                     <div class="bg-white rounded-lg shadow-md p-6">
                          <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-4">
                             <h3 class="text-xl font-bold text-gray-800">Medical Information</h3>
                              <button class="add-item-btn hidden px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600" data-target-list="#medical-list" data-template-id="medical-template">Add</button>
                         </div>
                         <div id="medical-list">
-                            <div class="py-2 border-b border-gray-100 last:border-b-0 editable-list-item">
-                                <button class="remove-item-btn hidden float-right text-red-500 hover:text-red-700 text-2xl font-bold">&times;</button>
-                                <div data-editable-container>
-                                    <h4 class="font-semibold text-gray-800 data-view">Hypertension</h4>
-                                    <input type="text" value="Hypertension" class="hidden data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm font-semibold"/>
-                                </div>
-                                <div data-editable-container>
-                                    <p class="text-sm text-gray-600 data-view">Managed with medication.</p>
-                                    <textarea class="hidden data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-sm">Managed with medication.</textarea>
+                            <div class="py-4 border-b border-gray-100 last:border-b-0 editable-list-item relative">
+                                <button class="remove-item-btn hidden absolute top-0 right-0 text-red-500 hover:text-red-700 text-2xl font-bold">&times;</button>
+                                <div class="space-y-3">
+                                    <div data-editable-container>
+                                        <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Condition</label>
+                                        <h4 class="font-semibold text-gray-800 data-view">Hypertension</h4>
+                                        <input type="text" value="Hypertension" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all font-semibold" required/>
+                                    </div>
+                                    <div data-editable-container>
+                                        <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Notes (Severity, Symptoms, Medicine)</label>
+                                        <p class="text-sm text-gray-600 data-view">Managed with medication.</p>
+                                        <textarea class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-sm" required>Managed with medication.</textarea>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Emergency Contact -->
                     <div class="bg-white rounded-lg shadow-md p-6">
                         <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-4">
                             <h3 class="text-xl font-bold text-gray-800">Emergency Contact</h3>
                             <button class="add-item-btn hidden px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600" data-target-list="#emergency-contact-list" data-template-id="emergency-contact-template">Add Contact</button>
                         </div>
                         <ul class="divide-y divide-gray-100" id="emergency-contact-list">
-                            <li class="py-3 flex justify-between items-center editable-list-item">
-                                <div class="flex-grow">
+                            <li class="py-4 editable-list-item relative">
+                                <button class="remove-item-btn hidden absolute top-0 right-0 text-red-500 hover:text-red-700 text-2xl font-bold">&times;</button>
+                                <div class="flex-grow space-y-3">
+                                    <!-- Relationship -->
                                      <div data-editable-container>
+                                        <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Relationship</label>
                                         <p class="font-semibold text-gray-800 data-view">Husband</p>
-                                        <input type="text" value="Husband" placeholder="Relationship" class="hidden data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm font-semibold"/>
+                                        <input type="text" value="Husband" placeholder="Relationship" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all font-semibold" required/>
                                     </div>
+                                    <!-- Phone Number -->
                                     <div data-editable-container>
+                                        <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Phone Number</label>
                                         <p class="text-sm text-gray-500 data-view">0917-555-0001</p>
-                                        <input type="tel" value="0917-555-0001" placeholder="Phone Number" class="hidden data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-sm"/>
+                                        <input type="tel" value="09175550001" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '');" placeholder="09XXXXXXXXX" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-sm" required/>
                                     </div>
                                 </div>
-                                <button class="remove-item-btn hidden ml-4 text-red-500 hover:text-red-700 text-2xl font-bold">&times;</button>
                             </li>
                         </ul>
                     </div>
 
+                    <!-- Government IDs -->
                     <div class="bg-white rounded-lg shadow-md p-6">
                          <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-4">
                             <h3 class="text-xl font-bold text-gray-800">Government IDs</h3>
@@ -293,19 +320,19 @@
                         </div>
                         <ul class="divide-y divide-gray-100" id="gov-id-list">
                             <li class="py-3 flex justify-between items-center editable-list-item">
-                                <div class="flex-grow pr-4">
-                                    <div data-editable-container>
-                                        <p class="font-semibold text-gray-800 data-view">Civil Service ID</p>
-                                        <input type="text" value="Civil Service ID" class="hidden data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm font-semibold"/>
+                                <div class="flex-grow pr-4 space-y-1">
+                                    <div>
+                                        <p class="text-xs text-gray-500 font-bold mb-1 hidden data-edit">ID Type</p>
+                                        <p class="font-semibold text-gray-800">Civil Service ID</p>
                                     </div>
-                                    <div data-editable-container>
-                                        <p class="text-sm text-gray-500 data-view">CS-987654</p>
-                                        <input type="text" value="CS-987654" class="hidden data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-sm"/>
+                                    <div>
+                                        <p class="text-xs text-gray-500 font-bold mb-1 hidden data-edit">ID Number</p>
+                                        <p class="text-sm text-gray-500">CS-987654</p>
                                     </div>
                                 </div>
                                 <div class="flex items-center space-x-4">
                                      <span class="text-xs font-medium bg-green-100 text-green-800 px-2 py-0.5 rounded-full view-state">Verified</span>
-                                     <button class="view-id-btn px-3 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 view-state">View ID</button>
+                                     <button class="view-id-btn px-3 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 view-state" data-image-src="https://i.imgur.com/g3010p9.jpeg">View ID</button>
                                      <button class="remove-item-btn hidden text-red-500 hover:text-red-700 text-2xl font-bold">&times;</button>
                                 </div>
                             </li>
@@ -316,57 +343,83 @@
         </div>
     </main>
 
+    <!-- Templates -->
     <template id="medical-template">
-        <div class="py-2 border-b border-gray-100 last:border-b-0 editable-list-item">
-            <button class="remove-item-btn float-right text-red-500 hover:text-red-700 text-2xl font-bold">&times;</button>
-            <div data-editable-container>
-                <h4 class="font-semibold text-gray-800 hidden data-view">New Medical Item</h4>
-                <input type="text" value="New Medical Item" class="data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm font-semibold"/>
-            </div>
-            <div data-editable-container>
-                <p class="text-sm text-gray-600 hidden data-view">Description</p>
-                <textarea class="data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-sm">Description</textarea>
+        <div class="py-4 border-b border-gray-100 last:border-b-0 editable-list-item relative">
+            <button class="remove-item-btn float-right text-red-500 hover:text-red-700 text-2xl font-bold absolute top-0 right-0">&times;</button>
+            <div class="space-y-3">
+                <div data-editable-container>
+                    <label class="text-xs text-gray-500 mb-1 font-bold data-edit">Condition</label>
+                    <h4 class="font-semibold text-gray-800 hidden data-view"></h4>
+                    <input type="text" value="" placeholder="Condition Name" class="data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all font-semibold" required/>
+                </div>
+                <div data-editable-container>
+                    <label class="text-xs text-gray-500 mb-1 font-bold data-edit">Notes (Severity, Symptoms, Medicine)</label>
+                    <p class="text-sm text-gray-600 hidden data-view"></p>
+                    <textarea class="data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-sm" required></textarea>
+                </div>
             </div>
         </div>
     </template>
 
     <template id="emergency-contact-template">
-        <li class="py-3 flex justify-between items-center editable-list-item">
-            <div class="flex-grow">
+        <li class="py-4 editable-list-item relative">
+            <button class="remove-item-btn ml-4 text-red-500 hover:text-red-700 text-2xl font-bold absolute top-0 right-0">&times;</button>
+            <div class="flex-grow space-y-3">
                 <div data-editable-container>
-                    <p class="font-semibold text-gray-800 hidden data-view">Relationship</p>
-                    <input type="text" value="" placeholder="Relationship" class="data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm font-semibold"/>
+                    <label class="text-xs text-gray-500 mb-1 font-bold data-edit">Relationship</label>
+                    <p class="font-semibold text-gray-800 hidden data-view"></p>
+                    <input type="text" value="" placeholder="Relationship" class="data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all font-semibold" required/>
                 </div>
                 <div data-editable-container>
-                    <p class="text-sm text-gray-500 hidden data-view">Phone Number</p>
-                    <input type="tel" value="" placeholder="Phone Number" class="data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-sm"/>
+                    <label class="text-xs text-gray-500 mb-1 font-bold data-edit">Phone Number</label>
+                    <p class="text-sm text-gray-500 hidden data-view"></p>
+                    <input type="tel" value="" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '');" placeholder="09XXXXXXXXX" class="data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-sm" required/>
                 </div>
             </div>
-            <button class="remove-item-btn ml-4 text-red-500 hover:text-red-700 text-2xl font-bold">&times;</button>
         </li>
     </template>
 
+    <!-- UPDATED GOV ID TEMPLATE WITH DROPDOWN & PENDING STATUS -->
     <template id="gov-id-template">
-        <li class="py-3 flex justify-between items-center editable-list-item">
-            <div class="flex-grow pr-4">
+        <li class="py-4 flex justify-between items-start editable-list-item border-b border-gray-100 last:border-b-0">
+            <div class="flex-grow pr-4 space-y-3">
+                <!-- ID Type (Dropdown) -->
                 <div data-editable-container>
-                    <p class="font-semibold text-gray-800 hidden data-view">New ID Type</p>
-                    <input type="text" value="New ID Type" class="data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm font-semibold"/>
+                    <label class="text-xs text-gray-500 mb-1 font-bold block data-edit">ID Type</label>
+                    <p class="font-semibold text-gray-800 hidden data-view"></p>
+                    <select class="data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all font-semibold" required>
+                        <option value="" disabled selected>Select ID Type</option>
+                        <option value="National ID">National ID</option>
+                        <option value="Passport">Passport</option>
+                        <option value="Driver's License">Driver's License</option>
+                        <option value="Civil Service ID">Civil Service ID</option>
+                        <option value="Other">Other</option>
+                    </select>
                 </div>
+
+                <!-- ID Number (Input) -->
                 <div data-editable-container>
-                    <p class="text-sm text-gray-500 hidden data-view">ID Number</p>
-                    <input type="text" value="ID Number" class="data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-sm"/>
+                    <label class="text-xs text-gray-500 mb-1 font-bold block data-edit">ID Number</label>
+                    <p class="text-sm text-gray-500 hidden data-view"></p>
+                    <input type="text" placeholder="ID Number" class="data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-sm" required/>
                 </div>
             </div>
+
             <div class="flex items-center space-x-4">
-                <div class="flex flex-col items-end">
-                    <label class="px-3 py-1 text-sm bg-purple-500 text-white rounded-md hover:bg-purple-600 cursor-pointer">
+                <!-- VIEW MODE: Pending Status & View Button (Hidden initially, shown on save) -->
+                <span class="text-xs font-medium bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full hidden view-state">Pending</span>
+                <button class="view-id-btn px-3 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 hidden view-state">View ID</button>
+                <button class="remove-item-btn text-red-500 hover:text-red-700 text-2xl font-bold leading-none">&times;</button>
+
+                <!-- EDIT MODE: Upload Button (Visible initially, hidden on save) -->
+                <div class="flex flex-col items-end data-edit">
+                    <label class="px-3 py-1 text-sm bg-purple-500 text-white rounded-md hover:bg-purple-600 cursor-pointer text-center whitespace-nowrap transition-colors border border-transparent">
                         Upload ID
-                        <input type="file" class="hidden file-upload-btn"/>
+                        <input type="file" class="hidden file-upload-btn" accept="image/*"/>
                     </label>
-                    <span class="text-xs text-gray-500 file-name-display w-24 truncate text-right"></span>
+                    <span class="text-xs text-gray-500 file-name-display w-24 truncate text-right mt-1"></span>
                 </div>
-                <button class="remove-item-btn text-red-500 hover:text-red-700 text-2xl font-bold">&times;</button>
             </div>
         </li>
     </template>
@@ -405,9 +458,38 @@
         const btnSeePic = document.getElementById('btn-see-pic');
         const fileInput = document.getElementById('profile-file-input');
 
+        // --- Date of Birth and Age Logic ---
+        const inputDob = document.getElementById('input-dob');
+        const displayAge = document.getElementById('display-age');
+
+        const calculateAge = (dob) => {
+            const birthDate = new Date(dob);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        };
+
+        const updateAgeDisplay = () => {
+            if (inputDob && inputDob.value && displayAge) {
+                const age = calculateAge(inputDob.value);
+                displayAge.textContent = isNaN(age) ? 'N/A' : age;
+            }
+        };
+
+        // Initialize age on load
+        updateAgeDisplay();
+
+        // Update age when input changes
+        if (inputDob) {
+            inputDob.addEventListener('change', updateAgeDisplay);
+        }
+
         let isEditMode = false;
 
-        // Mobile Menu Toggle
         if (mobileMenuButton) {
              mobileMenuButton.addEventListener('click', () => {
                 mobileMenu.classList.toggle('hidden');
@@ -415,6 +497,87 @@
                 closeIcon.classList.toggle('hidden');
             });
         }
+
+        // --- Validation Logic ---
+        const validateRequiredFields = () => {
+            let isValid = true;
+
+            // 1. Validate Inputs, Textareas, and Selects (Empty Checks & Format)
+            const visibleInputs = document.querySelectorAll('input.data-edit:not(.hidden), textarea.data-edit:not(.hidden), select.data-edit:not(.hidden)');
+
+            visibleInputs.forEach(input => {
+                const val = input.value.trim();
+
+                // Clear previous error states
+                input.classList.remove('border-red-500', 'ring-2', 'ring-red-500', 'focus:ring-red-500');
+
+                // A. Empty Check
+                if (!val) {
+                    input.classList.add('border-red-500', 'ring-2', 'ring-red-500', 'focus:ring-red-500');
+                    isValid = false;
+                }
+                // B. Phone Number Specific Validation
+                else if (input.type === 'tel') {
+                    if (!val.startsWith('09') || val.length !== 11 || !/^\d+$/.test(val)) {
+                         input.classList.add('border-red-500', 'ring-2', 'ring-red-500', 'focus:ring-red-500');
+                         isValid = false;
+                    }
+                }
+                // C. Email Validation (UPDATED)
+                else if (input.type === 'email') {
+                    // Basic email regex pattern
+                    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailPattern.test(val)) {
+                         input.classList.add('border-red-500', 'ring-2', 'ring-red-500', 'focus:ring-red-500');
+                         isValid = false;
+                    }
+                }
+            });
+
+            // 2. Validate File Uploads for NEW IDs (inside gov-id-list)
+            const newIdFileInputs = document.querySelectorAll('#gov-id-list .file-upload-btn');
+
+            newIdFileInputs.forEach(fileInput => {
+                // Check if this input is visible (part of edit mode)
+                const container = fileInput.closest('.data-edit');
+                if (container && !container.classList.contains('hidden')) {
+                    const label = fileInput.closest('label');
+
+                    // Reset label style
+                    label.classList.remove('bg-red-500', 'text-white', 'border-red-600', 'ring-2', 'ring-red-500');
+                    label.classList.add('bg-purple-500', 'text-white');
+
+                    // Check if file is selected
+                    if (fileInput.files.length === 0) {
+                        // Error Style for the button
+                        label.classList.remove('bg-purple-500');
+                        label.classList.add('bg-red-500', 'border-red-600', 'ring-2', 'ring-red-500');
+                        isValid = false;
+                    }
+                }
+            });
+
+            return isValid;
+        };
+
+        // --- Remove Error Styling on Interaction ---
+        document.body.addEventListener('input', (e) => {
+            if (e.target.classList.contains('border-red-500')) {
+                 e.target.classList.remove('border-red-500', 'ring-2', 'ring-red-500', 'focus:ring-red-500');
+            }
+        });
+
+        // --- Remove Error Styling on File Change ---
+        document.body.addEventListener('change', (e) => {
+             if (e.target.classList.contains('file-upload-btn')) {
+                 const label = e.target.closest('label');
+                 if(label && label.classList.contains('bg-red-500')) {
+                     label.classList.remove('bg-red-500', 'border-red-600', 'ring-2', 'ring-red-500');
+                     label.classList.add('bg-purple-500');
+                 }
+             }
+        });
+
 
         // --- Main Edit/Save Toggle ---
         const toggleEditMode = () => {
@@ -424,55 +587,41 @@
             editProfileBtn.classList.toggle('hidden');
             saveProfileBtn.classList.toggle('hidden');
 
-            if (logoutBtn) {
-                logoutBtn.classList.toggle('hidden', isEditMode);
-            }
+            if (logoutBtn) logoutBtn.classList.toggle('hidden', isEditMode);
 
             // Toggle Camera Icon logic
             if (cameraIcon) cameraIcon.classList.toggle('hidden', !isEditMode);
             // Hide popup if closing edit mode
             if (!isEditMode && popupMenu) popupMenu.classList.add('hidden');
 
-            // Toggle "Add" and "Remove" buttons
+            // Toggle Add/Remove buttons
             document.querySelectorAll('.add-item-btn, .remove-item-btn').forEach(btn => {
                 btn.classList.toggle('hidden', !isEditMode);
             });
 
-            // Toggle view-state elements like "Verified" badge and "View ID" button
+            // Toggle view-state elements (Pending badges, View ID buttons, etc)
             document.querySelectorAll('.view-state').forEach(el => {
                 el.classList.toggle('hidden', isEditMode);
             });
 
-            // Toggle editable fields
-            document.querySelectorAll('[data-editable-container]').forEach(container => {
+            // Toggle editable fields (Inputs AND Labels now)
+            document.querySelectorAll('[data-editable-container], .editable-list-item').forEach(container => {
                 const viewEls = container.querySelectorAll('.data-view');
                 const editEls = container.querySelectorAll('.data-edit');
 
-                // Toggle visibility
                 viewEls.forEach(el => el.classList.toggle('hidden', isEditMode));
                 editEls.forEach(el => el.classList.toggle('hidden', !isEditMode));
 
-                // Save Logic: Update text view with new input value
                 if (!isEditMode) {
+                    // Update Text Display when saving
                     const inputEl = container.querySelector('input, textarea, select');
-                    // Find the main text container
                     const textDisplay = container.querySelector('.data-view:not(span)');
 
                     if (inputEl && textDisplay) {
-                        const mobileLabel = textDisplay.querySelector('span'); // Check for mobile label inside
-
+                        const mobileLabel = textDisplay.querySelector('span');
                         let newValue = inputEl.value;
 
-                        // Specific formatting for Date or Select
-                        if (inputEl.type === 'date') {
-                             const date = new Date(inputEl.value + 'T00:00:00'); // Ensure date is parsed in local time
-                             if(!isNaN(date)) newValue = date.toISOString().split('T')[0];
-                        } else if (inputEl.tagName === 'SELECT') {
-                             newValue = inputEl.options[inputEl.selectedIndex].text;
-                        }
-
                         if (mobileLabel) {
-                            // Reconstruct: Mobile Label + Space + New Value
                             textDisplay.innerHTML = '';
                             textDisplay.appendChild(mobileLabel);
                             textDisplay.append(` ${newValue}`);
@@ -483,19 +632,31 @@
                 }
             });
 
-            // Update button text
             editProfileBtn.textContent = isEditMode ? 'Cancel' : 'Edit Profile';
-            if (!isEditMode) { // When saving, change text back
-                 editProfileBtn.textContent = 'Edit Profile';
-            }
+            if (!isEditMode) editProfileBtn.textContent = 'Edit Profile';
         };
 
-        if (editProfileBtn) editProfileBtn.addEventListener('click', toggleEditMode);
-        if (saveProfileBtn) saveProfileBtn.addEventListener('click', toggleEditMode);
+        // Edit button simply enters edit mode
+        editProfileBtn.addEventListener('click', toggleEditMode);
+
+        // Save button triggers validation first
+        saveProfileBtn.addEventListener('click', () => {
+            if (validateRequiredFields()) {
+                toggleEditMode();
+            } else {
+                // Find the first invalid element
+                const firstError = document.querySelector('.border-red-500, .bg-red-500');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if (firstError.tagName === 'INPUT' || firstError.tagName === 'TEXTAREA' || firstError.tagName === 'SELECT') {
+                        firstError.focus();
+                    }
+                }
+            }
+        });
 
         // --- PROFILE PICTURE LOGIC ---
 
-        // 1. Toggle Popup on Camera Icon Click
         if (cameraIcon) {
             cameraIcon.addEventListener('click', (e) => {
                 if (isEditMode) {
@@ -505,7 +666,6 @@
             });
         }
 
-        // 2. Handle "Choose Profile Picture"
         if (btnChoosePic) {
             btnChoosePic.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -514,27 +674,22 @@
             });
         }
 
-        // 3. Handle File Selection and Update Images
         if (fileInput) {
             fileInput.addEventListener('change', function() {
                 const file = this.files[0];
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = function(e) {
-                        const newSrc = e.target.result;
-                        // Update Main Image
-                        if(mainProfileImage) mainProfileImage.src = newSrc;
-                        // Update Navbar Image
-                        if(navProfileImage) navProfileImage.src = newSrc;
-                        // Update Mobile Menu Image
-                        if(mobileProfileImage) mobileProfileImage.src = newSrc;
+                        const newImageSrc = e.target.result;
+                        if(mainProfileImage) mainProfileImage.src = newImageSrc;
+                        if(navProfileImage) navProfileImage.src = newImageSrc;
+                        if(mobileProfileImage) mobileProfileImage.src = newImageSrc;
                     }
                     reader.readAsDataURL(file);
                 }
             });
         }
 
-        // 4. Handle "See Profile Picture"
         if (btnSeePic) {
             btnSeePic.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -550,7 +705,6 @@
             });
         }
 
-        // 5. Close Popup when clicking outside
         document.addEventListener('click', (e) => {
             if (popupMenu && !popupMenu.classList.contains('hidden')) {
                 if (!popupMenu.contains(e.target) && e.target !== cameraIcon) {
@@ -569,9 +723,14 @@
 
                 if (targetList && template) {
                     const clone = template.content.cloneNode(true);
-                    // Ensure new items are immediately in edit mode state
+
+                    // For the newly added items, show edit inputs immediately
                     clone.querySelectorAll('.data-view').forEach(el => el.classList.add('hidden'));
                     clone.querySelectorAll('.data-edit').forEach(el => el.classList.remove('hidden'));
+
+                    // Specific logic for GOV ID Template (Ensure Pending status is hidden in Edit Mode)
+                    clone.querySelectorAll('.view-state').forEach(el => el.classList.add('hidden'));
+
                     clone.querySelector('.remove-item-btn')?.classList.remove('hidden');
 
                     targetList.appendChild(clone);
@@ -579,52 +738,67 @@
             });
         });
 
-        // --- Remove Item Functionality (using event delegation) ---
+        // --- Remove Item Functionality ---
         document.addEventListener('click', (e) => {
             if (e.target && e.target.classList.contains('remove-item-btn')) {
                 e.target.closest('.editable-list-item').remove();
             }
         });
 
-        // --- File Upload Display (Generic for IDs) ---
+        // --- File Upload & Preview Logic (For Gov IDs) ---
         document.addEventListener('change', e => {
             if (e.target && e.target.classList.contains('file-upload-btn')) {
                 const file = e.target.files[0];
-                const fileNameDisplay = e.target.closest('li').querySelector('.file-name-display');
-                if (file && fileNameDisplay) {
-                    fileNameDisplay.textContent = file.name;
+                const row = e.target.closest('li, .editable-list-item');
+                const fileNameDisplay = row.querySelector('.file-name-display');
+
+                if (file) {
+                    // Update filename text
+                    if(fileNameDisplay) fileNameDisplay.textContent = file.name;
+
+                    // Read file for Preview (View ID Button)
+                    const reader = new FileReader();
+                    reader.onload = function(ev) {
+                        const viewBtn = row.querySelector('.view-id-btn');
+                        if (viewBtn) {
+                            viewBtn.setAttribute('data-image-src', ev.target.result);
+                        }
+                    };
+                    reader.readAsDataURL(file);
                 }
             }
         });
 
         // --- Modal Functionality ---
-        const openModal = () => idModal.classList.remove('hidden');
         const closeModal = () => idModal.classList.add('hidden');
 
         document.addEventListener('click', e => {
             if (e.target && e.target.classList.contains('view-id-btn')) {
                 const modalTitle = idModal.querySelector('h3');
                 const modalImg = idModal.querySelector('img');
+
+                // Get the image source (either from upload preview or default)
+                const imgSrc = e.target.getAttribute('data-image-src');
+
                 if (modalTitle) modalTitle.textContent = "Uploaded Government ID";
-                // Placeholder ID image
-                if (modalImg) modalImg.src = "https://i.imgur.com/g3010p9.jpeg";
-                openModal();
+                if (modalImg && imgSrc) modalImg.src = imgSrc;
+
+                idModal.classList.remove('hidden');
             }
         });
 
-        if(closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+        closeModalBtn.addEventListener('click', closeModal);
 
-        if(idModal) idModal.addEventListener('click', (e) => {
-            if (e.target === idModal) { // Click on the background overlay
-                closeModal();
-            }
+        idModal.addEventListener('click', (e) => {
+            if (e.target === idModal) closeModal();
         });
 
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && idModal && !idModal.classList.contains('hidden')) {
+            if (e.key === 'Escape' && !idModal.classList.contains('hidden')) {
                 closeModal();
             }
         });
+
     });
     </script>
 </body>

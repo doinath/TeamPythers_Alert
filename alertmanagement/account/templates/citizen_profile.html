@@ -43,8 +43,8 @@
 
                 <div class="flex items-center space-x-4">
                     <div class="hidden md:flex items-center space-x-4">
-                        <span class="text-gray-800 font-medium text-sm mr-3">Kyle Plando</span>
-                        <img id="nav-profile-image" class="h-8 w-8 rounded-full object-cover" src="https://i.pravatar.cc/40?u=kyleplando" alt="User Avatar" />
+                        <span class="text-gray-800 font-medium text-sm mr-3">{{ user.first_name }} {{ user.last_name }}</span>
+                        <img id="nav-profile-image" class="h-8 w-8 rounded-full object-cover" src="https://i.pravatar.cc/40?u={{ user.first_name }}" alt="User Avatar" />
                     </div>
                     <div class="md:hidden flex items-center">
                         <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-800 focus:outline-none">
@@ -68,10 +68,10 @@
             </nav>
             <div class="pt-4 pb-3 border-t border-gray-200">
                 <div class="flex items-center px-5">
-                    <img id="mobile-profile-image" class="h-10 w-10 rounded-full object-cover" src="https://i.pravatar.cc/150?u=kyleplando" alt="User Avatar" />
+                    <img id="mobile-profile-image" class="h-10 w-10 rounded-full object-cover" src="https://i.pravatar.cc/150?u={{ user.first_name }}" alt="User Avatar" />
                     <div class="ml-3">
-                        <div class="text-base font-medium text-gray-800">Kyle Plando</div>
-                        <div class="text-sm font-medium text-gray-500">kyle.plando@example.com</div>
+                        <div class="text-base font-medium text-gray-800">{{ user.first_name }} {{ user.last_name }}</div>
+                        <div class="text-sm font-medium text-gray-500">{{ user.email_address }}</div>
                     </div>
                 </div>
             </div>
@@ -79,224 +79,284 @@
     </header>
 
     <main class="container mx-auto p-4 sm:p-6 lg:p-8">
-        <div class="space-y-8 animate-fadeIn">
-            <div class="flex justify-end space-x-2">
-                 <button id="edit-profile-btn" class="px-6 py-2 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-75 transition-colors bg-red-700 hover:bg-red-800 focus:ring-red-500">
-                    Edit Profile
-                </button>
-                <button id="save-profile-btn" class="hidden px-6 py-2 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-75 transition-colors bg-blue-600 hover:bg-blue-700 focus:ring-blue-500">
-                    Save Profile
-                </button>
-            </div>
+        <!-- FORM START -->
+        <form method="POST" enctype="multipart/form-data" id="profile-form">
+            {% csrf_token %}
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-                <!-- LEFT COLUMN -->
-                <div class="lg:col-span-1 space-y-6">
-
-                    <!-- Profile Header -->
-                    <div class="bg-white p-6 rounded-lg shadow-md text-center">
-
-                        <!-- PROFILE IMAGE SECTION -->
-                        <div class="relative inline-block group">
-                            <img id="main-profile-image" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-red-200 object-cover" src="https://i.pravatar.cc/150?u=kyleplando" alt="Citizen Profile" />
-
-                            <!-- Camera Icon (Visible only in Edit Mode) -->
-                            <div id="profile-camera-icon" class="hidden absolute bottom-4 right-0 bg-gray-200 hover:bg-gray-300 p-2 rounded-full cursor-pointer transition-colors border-2 border-white shadow-md">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                            </div>
-
-                            <!-- Popup Menu -->
-                            <div id="profile-popup-menu" class="hidden absolute top-full left-1/2 transform -translate-x-1/2 z-20 w-48 bg-gray-800 rounded-lg shadow-xl overflow-hidden text-left mt-2 border border-gray-700">
-                                <button id="btn-see-pic" class="w-full px-4 py-3 text-sm text-gray-200 hover:bg-gray-700 flex items-center transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
-                                    See profile picture
-                                </button>
-                                <button id="btn-choose-pic" class="w-full px-4 py-3 text-sm text-gray-200 hover:bg-gray-700 flex items-center transition-colors border-t border-gray-700">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
-                                    Choose profile picture
-                                </button>
-                            </div>
-                            <input type="file" id="profile-file-input" accept="image/*" class="hidden" />
-                        </div>
-
-                        <!-- Name (Non-Editable) -->
-                        <div class="mt-2">
-                             <h2 class="text-2xl font-bold text-gray-800">Kyle Plando</h2>
-                        </div>
-
-                        <!-- Email (Editable Address Style) -->
-                        <div data-editable-container class="mt-2 text-left">
-                            <p class="text-sm text-gray-500 mt-1 data-view text-center">kyle.plando@example.com</p>
-                            <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Email Address</label>
-                            <input type="email" value="kyle.plando@example.com" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-sm"/>
-                       </div>
-
-                        <!-- Phone (Editable Address Style) -->
-                        <div data-editable-container class="mt-2 text-left">
-                            <p class="text-sm text-gray-500 data-view text-center">0931-112-3490</p>
-                            <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Phone Number</label>
-                             <input type="tel" value="0931-112-3490" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-sm"/>
-                        </div>
-
-                        <span class="mt-4 inline-block bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">
-                            Citizen
-                        </span>
+            <div class="space-y-8 animate-fadeIn">
+                <!-- Messages -->
+                {% if messages %}
+                <div class="mb-4">
+                    {% for message in messages %}
+                    <!-- Added id="alert-message" class logic relies on role="alert" -->
+                    <div class="p-4 mb-2 text-sm text-white {% if message.tags == 'error' %}bg-red-500{% else %}bg-green-500{% endif %} rounded-lg" role="alert">
+                        {{ message }}
                     </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
 
-                    <!-- ADDRESS SECTION -->
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                        <h3 class="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2 mb-4">Address</h3>
-                        <address class="not-italic text-gray-700 grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <!-- Street -->
-                            <div data-editable-container>
-                                <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Street</label>
-                                <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">Street:</span> 123 Main St</p>
-                                <input type="text" value="123 Main St" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"/>
-                            </div>
-                            <!-- Barangay -->
-                            <div data-editable-container>
-                                <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Barangay</label>
-                                <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">Barangay:</span> Caigit</p>
-                                <input type="text" value="Caigit" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"/>
-                            </div>
-                            <!-- City -->
-                            <div data-editable-container>
-                                <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">City</label>
-                                <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">City:</span> Cebu City</p>
-                                <input type="text" value="Cebu City" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"/>
-                            </div>
-                            <!-- Province -->
-                            <div data-editable-container>
-                                <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Province</label>
-                                <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">Province:</span> Cebu</p>
-                                <input type="text" value="Cebu" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"/>
-                            </div>
-                            <!-- Zip Code -->
-                            <div data-editable-container class="md:col-span-2">
-                                <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Zip Code</label>
-                                <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">Zip Code:</span> 6000</p>
-                                <input type="text" value="6000" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"/>
-                            </div>
-                        </address>
-                    </div>
-
-                    <button id="logout-btn" class="w-full py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75">
-                        Log Out
+                <div class="flex justify-end space-x-2">
+                     <button type="button" id="edit-profile-btn" class="px-6 py-2 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-75 transition-colors bg-red-700 hover:bg-red-800 focus:ring-red-500">
+                        Edit Profile
+                    </button>
+                    <!-- Type button triggering submit via JS -->
+                    <button type="button" id="save-profile-btn" class="hidden px-6 py-2 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-75 transition-colors bg-blue-600 hover:bg-blue-700 focus:ring-blue-500">
+                        Save Profile
                     </button>
                 </div>
 
-                <!-- RIGHT COLUMN -->
-                <div class="lg:col-span-2 space-y-6">
-                    <!-- Medical -->
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                         <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-4">
-                            <h3 class="text-xl font-bold text-gray-800">Medical Information</h3>
-                             <button class="add-item-btn hidden px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600" data-target-list="#medical-list" data-template-id="medical-template">Add</button>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                    <!-- LEFT COLUMN -->
+                    <div class="lg:col-span-1 space-y-6">
+
+                        <!-- Profile Header -->
+                        <div class="bg-white p-6 rounded-lg shadow-md text-center">
+
+                            <!-- PROFILE IMAGE SECTION -->
+                            <div class="relative inline-block group">
+                                <img id="main-profile-image" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-red-200 object-cover" src="https://i.pravatar.cc/150?u={{ user.first_name }}" alt="Citizen Profile" />
+
+                                <!-- Camera Icon -->
+                                <div id="profile-camera-icon" class="hidden absolute bottom-4 right-0 bg-gray-200 hover:bg-gray-300 p-2 rounded-full cursor-pointer transition-colors border-2 border-white shadow-md">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                </div>
+
+                                <!-- Popup Menu -->
+                                <div id="profile-popup-menu" class="hidden absolute top-full left-1/2 transform -translate-x-1/2 z-20 w-48 bg-gray-800 rounded-lg shadow-xl overflow-hidden text-left mt-2 border border-gray-700">
+                                    <button type="button" id="btn-see-pic" class="w-full px-4 py-3 text-sm text-gray-200 hover:bg-gray-700 flex items-center transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                        See profile picture
+                                    </button>
+                                    <button type="button" id="btn-choose-pic" class="w-full px-4 py-3 text-sm text-gray-200 hover:bg-gray-700 flex items-center transition-colors border-t border-gray-700">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        Choose profile picture
+                                    </button>
+                                </div>
+                                <input type="file" id="profile-file-input" accept="image/*" class="hidden" />
+                            </div>
+
+                            <!-- Name (Non-Editable) -->
+                            <div class="mt-2">
+                                 <h2 class="text-2xl font-bold text-gray-800">{{ user.first_name }} {{ user.last_name }}</h2>
+                            </div>
+
+                            <!-- Email -->
+                            <div data-editable-container class="mt-2 text-left">
+                                <p class="text-sm text-gray-500 mt-1 data-view text-center">{{ user.email_address|default:"N/A" }}</p>
+                                <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Email Address</label>
+                                <input type="email" name="email_address" value="{{ user.email_address|default:'' }}" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-sm"/>
+                           </div>
+
+                            <!-- Phone -->
+                            <div data-editable-container class="mt-2 text-left">
+                                <p class="text-sm text-gray-500 data-view text-center">{{ user.phone_number|default:"N/A" }}</p>
+                                <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Phone Number</label>
+                                 <input type="tel" name="phone_number" value="{{ user.phone_number|default:'' }}" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '');" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-sm"/>
+                            </div>
+
+                            <span class="mt-4 inline-block bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">
+                                Citizen
+                            </span>
                         </div>
-                        <div id="medical-list">
-                            <!-- Existing Medical Item -->
-                            <div class="py-4 border-b border-gray-100 last:border-b-0 editable-list-item relative">
-                                <button class="remove-item-btn hidden absolute top-0 right-0 text-red-500 hover:text-red-700 text-2xl font-bold">&times;</button>
-                                <div class="space-y-3">
-                                    <!-- Condition Name -->
-                                    <div data-editable-container>
-                                        <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Condition</label>
-                                        <h4 class="font-semibold text-gray-800 data-view">Cardiac Issues</h4>
-                                        <input type="text" value="Cardiac Issues" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all font-semibold"/>
-                                    </div>
-                                    <!-- Notes -->
-                                    <div data-editable-container>
-                                        <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Notes (Severity, Symptoms, Medicine)</label>
-                                        <p class="text-sm text-gray-600 data-view">History of cardiac issues, experiences chest pain and shortness of breath.</p>
-                                        <textarea class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-sm">History of cardiac issues, experiences chest pain and shortness of breath.</textarea>
+
+                        <!-- ADDRESS SECTION -->
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h3 class="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2 mb-4">Address</h3>
+                            <address class="not-italic text-gray-700 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Street -->
+                                <div data-editable-container>
+                                    <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Street</label>
+                                    <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">Street:</span> {{ user.street|default:"N/A" }}</p>
+                                    <input type="text" name="street" value="{{ user.street|default:'' }}" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"/>
+                                </div>
+                                <!-- Barangay (Municipality in model) -->
+                                <div data-editable-container>
+                                    <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Barangay</label>
+                                    <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">Barangay:</span> {{ user.municipality|default:"N/A" }}</p>
+                                    <input type="text" name="municipality" value="{{ user.municipality|default:'' }}" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"/>
+                                </div>
+                                <!-- City -->
+                                <div data-editable-container>
+                                    <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">City</label>
+                                    <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">City:</span> {{ user.city|default:"N/A" }}</p>
+                                    <input type="text" name="city" value="{{ user.city|default:'' }}" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"/>
+                                </div>
+                                <!-- Province -->
+                                <div data-editable-container>
+                                    <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Province</label>
+                                    <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">Province:</span> {{ user.province|default:"N/A" }}</p>
+                                    <input type="text" name="province" value="{{ user.province|default:'' }}" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"/>
+                                </div>
+                                <!-- Zip Code -->
+                                <div data-editable-container class="md:col-span-2">
+                                    <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Zip Code</label>
+                                    <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">Zip Code:</span> {{ user.zip_code|default:"N/A" }}</p>
+                                    <input type="text" name="zip_code" value="{{ user.zip_code|default:'' }}" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"/>
+                                </div>
+                            </address>
+                        </div>
+
+                        <button id="logout-btn" class="w-full py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75">
+                            Log Out
+                        </button>
+                    </div>
+
+                    <!-- RIGHT COLUMN -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <!-- PERSONAL DETAILS SECTION -->
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h3 class="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2 mb-4">Personal Details</h3>
+                            <dl>
+                                 <div class="grid grid-cols-3 gap-4 py-3 border-b border-gray-100 last:border-b-0">
+                                    <dt class="text-sm font-medium text-gray-500">Date of Birth</dt>
+                                    <dd class="text-sm text-gray-900 col-span-2" data-editable-container>
+                                        <p class="data-view" id="view-dob">{{ user.date_of_birth|date:"Y-m-d"|default:"N/A" }}</p>
+                                        <input type="date" name="date_of_birth" id="input-dob" value="{{ user.date_of_birth|date:'Y-m-d' }}" class="hidden data-edit w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm" required>
+                                    </dd>
+                                </div>
+                                <!-- AGE (Derived) -->
+                                <div class="grid grid-cols-3 gap-4 py-3 border-b border-gray-100 last:border-b-0">
+                                    <dt class="text-sm font-medium text-gray-500">Age</dt>
+                                    <dd class="text-sm text-gray-900 col-span-2">
+                                        <p id="display-age">{{ user.age|default:"N/A" }}</p>
+                                    </dd>
+                                </div>
+                                <div class="grid grid-cols-3 gap-4 py-3 border-b border-gray-100 last:border-b-0">
+                                    <dt class="text-sm font-medium text-gray-500">Gender</dt>
+                                    <dd class="text-sm text-gray-900 col-span-2" data-editable-container>
+                                        <p class="data-view">{{ user.get_gender_display|default:"N/A" }}</p>
+                                        <select name="gender" class="hidden data-edit w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm" required>
+                                            <option value="M" {% if user.gender == 'M' %}selected{% endif %}>Male</option>
+                                            <option value="F" {% if user.gender == 'F' %}selected{% endif %}>Female</option>
+                                        </select>
+                                    </dd>
+                                </div>
+                            </dl>
+                        </div>
+
+                        <!-- Medical -->
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                             <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-4">
+                                <h3 class="text-xl font-bold text-gray-800">Medical Information</h3>
+                                 <button type="button" class="add-item-btn hidden px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600" data-target-list="#medical-list" data-template-id="medical-template">Add</button>
+                            </div>
+                            <div id="medical-list">
+                                {% for condition in medical_conditions %}
+                                <div class="py-4 border-b border-gray-100 last:border-b-0 editable-list-item relative">
+                                    <button type="button" class="remove-item-btn hidden absolute top-0 right-0 text-red-500 hover:text-red-700 text-2xl font-bold">&times;</button>
+                                    <div class="space-y-3">
+                                        <div data-editable-container>
+                                            <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Condition</label>
+                                            <h4 class="font-semibold text-gray-800 data-view">{{ condition.condition_name }}</h4>
+                                            <input type="text" name="medical_condition" value="{{ condition.condition_name }}" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all font-semibold" required/>
+                                        </div>
+                                        <div data-editable-container>
+                                            <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Notes (Severity, Symptoms, Medicine)</label>
+                                            <p class="text-sm text-gray-600 data-view">{{ condition.notes }}</p>
+                                            <textarea name="medical_notes" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-sm" required>{{ condition.notes }}</textarea>
+                                        </div>
                                     </div>
                                 </div>
+                                {% endfor %}
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Emergency Contact -->
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                        <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-4">
-                            <h3 class="text-xl font-bold text-gray-800">Emergency Contact</h3>
-                            <button class="add-item-btn hidden px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600" data-target-list="#emergency-contact-list" data-template-id="emergency-contact-template">Add Contact</button>
+                        <!-- Emergency Contact -->
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-4">
+                                <h3 class="text-xl font-bold text-gray-800">Emergency Contact</h3>
+                                <button type="button" class="add-item-btn hidden px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600" data-target-list="#emergency-contact-list" data-template-id="emergency-contact-template">Add Contact</button>
+                            </div>
+                            <ul class="divide-y divide-gray-100" id="emergency-contact-list">
+                                {% for contact in contacts %}
+                                <li class="py-4 editable-list-item relative">
+                                    <button type="button" class="remove-item-btn hidden absolute top-0 right-0 text-red-500 hover:text-red-700 text-2xl font-bold">&times;</button>
+                                    <div class="flex-grow space-y-3">
+                                         <div data-editable-container>
+                                            <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Relationship</label>
+                                            <p class="font-semibold text-gray-800 data-view">{{ contact.relationship }}</p>
+                                            <input type="text" name="contact_relationship" value="{{ contact.relationship }}" placeholder="Relationship" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all font-semibold" required/>
+                                        </div>
+                                        <div data-editable-container>
+                                            <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Phone Number</label>
+                                            <p class="text-sm text-gray-500 data-view">{{ contact.contact_info }}</p>
+                                            <input type="tel" name="contact_number" value="{{ contact.contact_info }}" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '');" placeholder="09XXXXXXXXX" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-sm" required/>
+                                        </div>
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
                         </div>
-                        <ul class="divide-y divide-gray-100" id="emergency-contact-list">
-                            <li class="py-4 editable-list-item relative">
-                                <button class="remove-item-btn hidden absolute top-0 right-0 text-red-500 hover:text-red-700 text-2xl font-bold">&times;</button>
-                                <div class="flex-grow space-y-3">
-                                    <!-- Relationship -->
-                                     <div data-editable-container>
-                                        <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Relationship</label>
-                                        <p class="font-semibold text-gray-800 data-view">Spouse</p>
-                                        <input type="text" value="Spouse" placeholder="Relationship" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all font-semibold"/>
-                                    </div>
-                                    <!-- Phone Number -->
-                                    <div data-editable-container>
-                                        <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Phone Number</label>
-                                        <p class="text-sm text-gray-500 data-view">0917-555-1234</p>
-                                        <!-- Validation: Maxlength 11, only numbers -->
-                                        <input type="tel" value="0917-555-1234" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '');" placeholder="09XXXXXXXXX" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-sm"/>
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
 
-                    <!-- Government IDs -->
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                         <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-4">
-                            <h3 class="text-xl font-bold text-gray-800">Government IDs</h3>
-                            <button class="add-item-btn hidden px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600" data-target-list="#gov-id-list" data-template-id="gov-id-template">Add ID</button>
+                        <!-- Government IDs -->
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                             <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-4">
+                                <h3 class="text-xl font-bold text-gray-800">Government IDs</h3>
+                                <button type="button" class="add-item-btn hidden px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600" data-target-list="#gov-id-list" data-template-id="gov-id-template">Add ID</button>
+                            </div>
+                            <ul class="divide-y divide-gray-100" id="gov-id-list">
+                                <!-- Existing IDs -->
+                                {% for id_doc in gov_ids %}
+                                <li class="py-3 flex justify-between items-center editable-list-item">
+                                    <div class="flex-grow pr-4 space-y-1">
+                                        <div>
+                                            <p class="text-xs text-gray-500 font-bold mb-1 hidden data-edit">ID Type</p>
+                                            <p class="font-semibold text-gray-800">{{ id_doc.id_type }}</p>
+                                        </div>
+                                        <div>
+                                             <p class="text-xs text-gray-500 font-bold mb-1 hidden data-edit">ID Number</p>
+                                            <p class="text-sm text-gray-500">{{ id_doc.id_number }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-4">
+                                         <!-- Status Badge -->
+                                         {% if id_doc.status == 'VERIFIED' %}
+                                            <span class="text-xs font-medium bg-green-100 text-green-800 px-2 py-0.5 rounded-full view-state">Verified</span>
+                                         {% elif id_doc.status == 'PENDING' %}
+                                            <span class="text-xs font-medium bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full view-state">Pending</span>
+                                         {% else %}
+                                            <span class="text-xs font-medium bg-red-100 text-red-800 px-2 py-0.5 rounded-full view-state">{{ id_doc.status }}</span>
+                                         {% endif %}
+
+                                         <!-- View Button -->
+                                         {% if id_doc.filepath %}
+                                         <button type="button" class="view-id-btn px-3 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 view-state" data-image-src="{{ id_doc.filepath.url }}">View ID</button>
+                                         {% endif %}
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
                         </div>
-                        <ul class="divide-y divide-gray-100" id="gov-id-list">
-                            <li class="py-3 flex justify-between items-center editable-list-item">
-                                <div class="flex-grow pr-4">
-                                    <div data-editable-container>
-                                        <p class="font-semibold text-gray-800 data-view">Driver's License</p>
-                                        <input type="text" value="Driver's License" class="hidden data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm font-semibold"/>
-                                    </div>
-                                    <div data-editable-container>
-                                        <p class="text-sm text-gray-500 data-view">D05-90-123456</p>
-                                        <input type="text" value="D05-90-123456" class="hidden data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-sm"/>
-                                    </div>
-                                </div>
-                                <div class="flex items-center space-x-4">
-                                     <span class="text-xs font-medium bg-green-100 text-green-800 px-2 py-0.5 rounded-full view-state">Verified</span>
-                                     <button class="view-id-btn px-3 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 view-state">View ID</button>
-                                     <button class="remove-item-btn hidden text-red-500 hover:text-red-700 text-2xl font-bold">&times;</button>
-                                </div>
-                            </li>
-                        </ul>
                     </div>
                 </div>
             </div>
-        </div>
+        </form>
     </main>
 
-    <!-- Templates -->
+    <!-- Templates for Adding NEW Items via JS -->
     <template id="medical-template">
         <div class="py-4 border-b border-gray-100 last:border-b-0 editable-list-item relative">
-            <button class="remove-item-btn float-right text-red-500 hover:text-red-700 text-2xl font-bold absolute top-0 right-0">&times;</button>
+            <button type="button" class="remove-item-btn float-right text-red-500 hover:text-red-700 text-2xl font-bold absolute top-0 right-0">&times;</button>
             <div class="space-y-3">
                 <div data-editable-container>
-                    <label class="text-xs text-gray-500 mb-1 font-bold">Condition</label>
+                    <label class="text-xs text-gray-500 mb-1 font-bold data-edit">Condition</label>
                     <h4 class="font-semibold text-gray-800 hidden data-view"></h4>
-                    <input type="text" value="" placeholder="Condition Name" class="data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all font-semibold"/>
+                    <input type="text" name="medical_condition" value="" placeholder="Condition Name" class="data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all font-semibold" required/>
                 </div>
                 <div data-editable-container>
-                    <label class="text-xs text-gray-500 mb-1 font-bold">Notes (Severity, Symptoms, Medicine)</label>
+                    <label class="text-xs text-gray-500 mb-1 font-bold data-edit">Notes (Severity, Symptoms, Medicine)</label>
                     <p class="text-sm text-gray-600 hidden data-view"></p>
-                    <textarea class="data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-sm"></textarea>
+                    <textarea name="medical_notes" class="data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-sm" required></textarea>
                 </div>
             </div>
         </div>
@@ -304,43 +364,53 @@
 
     <template id="emergency-contact-template">
         <li class="py-4 editable-list-item relative">
-            <button class="remove-item-btn ml-4 text-red-500 hover:text-red-700 text-2xl font-bold absolute top-0 right-0">&times;</button>
+            <button type="button" class="remove-item-btn ml-4 text-red-500 hover:text-red-700 text-2xl font-bold absolute top-0 right-0">&times;</button>
             <div class="flex-grow space-y-3">
                 <div data-editable-container>
-                    <label class="text-xs text-gray-500 mb-1 font-bold">Relationship</label>
+                    <label class="text-xs text-gray-500 mb-1 font-bold data-edit">Relationship</label>
                     <p class="font-semibold text-gray-800 hidden data-view"></p>
-                    <input type="text" value="" placeholder="Relationship" class="data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all font-semibold"/>
+                    <input type="text" name="contact_relationship" value="" placeholder="Relationship" class="data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all font-semibold" required/>
                 </div>
                 <div data-editable-container>
-                    <label class="text-xs text-gray-500 mb-1 font-bold">Phone Number</label>
+                    <label class="text-xs text-gray-500 mb-1 font-bold data-edit">Phone Number</label>
                     <p class="text-sm text-gray-500 hidden data-view"></p>
-                    <input type="tel" value="" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '');" placeholder="09XXXXXXXXX" class="data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-sm"/>
+                    <input type="tel" name="contact_number" value="" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '');" placeholder="09XXXXXXXXX" class="data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-sm" required/>
                 </div>
             </div>
         </li>
     </template>
 
     <template id="gov-id-template">
-        <li class="py-3 flex justify-between items-center editable-list-item">
-            <div class="flex-grow pr-4">
+        <li class="py-4 flex justify-between items-start editable-list-item border-b border-gray-100 last:border-b-0">
+            <div class="flex-grow pr-4 space-y-3">
                 <div data-editable-container>
-                    <p class="font-semibold text-gray-800 hidden data-view">New ID Type</p>
-                    <input type="text" value="New ID Type" class="data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm font-semibold"/>
+                    <label class="text-xs text-gray-500 mb-1 font-bold block data-edit">ID Type</label>
+                    <p class="font-semibold text-gray-800 hidden data-view"></p>
+                    <select name="new_id_type" class="data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all font-semibold" required>
+                        <option value="" disabled selected>Select ID Type</option>
+                        <option value="National ID">National ID</option>
+                        <option value="Passport">Passport</option>
+                        <option value="Driver's License">Driver's License</option>
+                        <option value="Other">Other</option>
+                    </select>
                 </div>
                 <div data-editable-container>
-                    <p class="text-sm text-gray-500 hidden data-view">ID Number</p>
-                    <input type="text" value="ID Number" class="data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-sm"/>
+                    <label class="text-xs text-gray-500 mb-1 font-bold block data-edit">ID Number</label>
+                    <p class="text-sm text-gray-500 hidden data-view"></p>
+                    <input type="text" name="new_id_number" placeholder="ID Number" class="data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-sm" required/>
                 </div>
             </div>
             <div class="flex items-center space-x-4">
-                <div class="flex flex-col items-end">
-                    <label class="px-3 py-1 text-sm bg-purple-500 text-white rounded-md hover:bg-purple-600 cursor-pointer">
+                <span class="text-xs font-medium bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full hidden view-state">Pending</span>
+                <button type="button" class="view-id-btn px-3 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 hidden view-state">View ID</button>
+                <button type="button" class="remove-item-btn text-red-500 hover:text-red-700 text-2xl font-bold leading-none">&times;</button>
+                <div class="flex flex-col items-end data-edit">
+                    <label class="px-3 py-1 text-sm bg-purple-500 text-white rounded-md hover:bg-purple-600 cursor-pointer text-center whitespace-nowrap transition-colors border border-transparent">
                         Upload ID
-                        <input type="file" class="hidden file-upload-btn"/>
+                        <input type="file" name="new_id_file" class="hidden file-upload-btn" accept="image/*"/>
                     </label>
-                    <span class="text-xs text-gray-500 file-name-display w-24 truncate text-right"></span>
+                    <span class="text-xs text-gray-500 file-name-display w-24 truncate text-right mt-1"></span>
                 </div>
-                <button class="remove-item-btn text-red-500 hover:text-red-700 text-2xl font-bold">&times;</button>
             </div>
         </li>
     </template>
@@ -348,7 +418,7 @@
     <!-- Modal for Viewing IDs/Profile Pic -->
     <div id="id-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-lg shadow-xl max-w-lg w-full relative animate-fadeIn">
-            <button id="close-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-3xl font-bold">&times;</button>
+            <button type="button" id="close-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-3xl font-bold">&times;</button>
             <div class="p-6">
                 <h3 class="text-xl font-bold text-gray-800 mb-4">Image Preview</h3>
                 <img src="" alt="Preview" class="w-full h-auto rounded-md"/>
@@ -356,6 +426,7 @@
         </div>
     </div>
 
+    <!-- JAVASCRIPT -->
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         const editProfileBtn = document.getElementById('edit-profile-btn');
@@ -368,6 +439,19 @@
         const mobileMenu = document.getElementById('mobile-menu');
         const openIcon = document.getElementById('menu-open-icon');
         const closeIcon = document.getElementById('menu-close-icon');
+        const profileForm = document.getElementById('profile-form');
+
+        // --- Auto Hide Messages (5 Seconds) ---
+        const alertMessages = document.querySelectorAll('[role="alert"]');
+        if (alertMessages.length > 0) {
+            setTimeout(() => {
+                alertMessages.forEach(el => {
+                    el.style.transition = "opacity 0.5s ease";
+                    el.style.opacity = "0";
+                    setTimeout(() => el.remove(), 500);
+                });
+            }, 5000);
+        }
 
         // --- Profile Image Elements ---
         const mainProfileImage = document.getElementById('main-profile-image');
@@ -379,6 +463,33 @@
         const btnSeePic = document.getElementById('btn-see-pic');
         const fileInput = document.getElementById('profile-file-input');
 
+        // --- Date of Birth and Age Logic ---
+        const inputDob = document.getElementById('input-dob');
+        const displayAge = document.getElementById('display-age');
+
+        const calculateAge = (dob) => {
+            const birthDate = new Date(dob);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        };
+
+        const updateAgeDisplay = () => {
+            if (inputDob && inputDob.value && displayAge) {
+                const age = calculateAge(inputDob.value);
+                displayAge.textContent = isNaN(age) ? 'N/A' : age;
+            }
+        };
+
+        updateAgeDisplay();
+        if (inputDob) {
+            inputDob.addEventListener('change', updateAgeDisplay);
+        }
+
         let isEditMode = false;
 
         if (mobileMenuButton) {
@@ -389,33 +500,94 @@
             });
         }
 
+        // --- Validation Logic ---
+        const validateRequiredFields = () => {
+            let isValid = true;
+
+            // 1. Validate Inputs (Text, Select, Textarea)
+            const visibleInputs = document.querySelectorAll('input.data-edit:not(.hidden), textarea.data-edit:not(.hidden), select.data-edit:not(.hidden)');
+
+            visibleInputs.forEach(input => {
+                const val = input.value.trim();
+                input.classList.remove('border-red-500', 'ring-2', 'ring-red-500', 'focus:ring-red-500');
+
+                if (!val) {
+                    input.classList.add('border-red-500', 'ring-2', 'ring-red-500', 'focus:ring-red-500');
+                    isValid = false;
+                }
+                else if (input.type === 'tel') {
+                    if (!val.startsWith('09') || val.length !== 11 || !/^\d+$/.test(val)) {
+                         input.classList.add('border-red-500', 'ring-2', 'ring-red-500', 'focus:ring-red-500');
+                         isValid = false;
+                    }
+                }
+                else if (input.type === 'email') {
+                    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailPattern.test(val)) {
+                         input.classList.add('border-red-500', 'ring-2', 'ring-red-500', 'focus:ring-red-500');
+                         isValid = false;
+                    }
+                }
+            });
+
+            // 2. Validate File Uploads for NEW IDs only
+            const newIdFileInputs = document.querySelectorAll('input[name="new_id_file"]');
+
+            newIdFileInputs.forEach(fileInput => {
+                const container = fileInput.closest('.data-edit');
+                if (container && !container.classList.contains('hidden')) {
+                    const label = fileInput.closest('label');
+                    label.classList.remove('bg-red-500', 'text-white', 'border-red-600', 'ring-2', 'ring-red-500');
+                    label.classList.add('bg-purple-500', 'text-white');
+
+                    if (fileInput.files.length === 0) {
+                        label.classList.remove('bg-purple-500');
+                        label.classList.add('bg-red-500', 'border-red-600', 'ring-2', 'ring-red-500');
+                        isValid = false;
+                    }
+                }
+            });
+
+            return isValid;
+        };
+
+        // --- Remove Error Styling on Interaction ---
+        document.body.addEventListener('input', (e) => {
+            if (e.target.classList.contains('border-red-500')) {
+                 e.target.classList.remove('border-red-500', 'ring-2', 'ring-red-500', 'focus:ring-red-500');
+            }
+        });
+
+        document.body.addEventListener('change', (e) => {
+             if (e.target.classList.contains('file-upload-btn')) {
+                 const label = e.target.closest('label');
+                 if(label && label.classList.contains('bg-red-500')) {
+                     label.classList.remove('bg-red-500', 'border-red-600', 'ring-2', 'ring-red-500');
+                     label.classList.add('bg-purple-500');
+                 }
+             }
+        });
+
         // --- Main Edit/Save Toggle ---
         const toggleEditMode = () => {
             isEditMode = !isEditMode;
 
-            // Toggle button visibility
             editProfileBtn.classList.toggle('hidden');
             saveProfileBtn.classList.toggle('hidden');
 
             if (logoutBtn) logoutBtn.classList.toggle('hidden', isEditMode);
-
-            // Toggle Camera Icon logic
             if (cameraIcon) cameraIcon.classList.toggle('hidden', !isEditMode);
-            // Hide popup if closing edit mode
             if (!isEditMode && popupMenu) popupMenu.classList.add('hidden');
 
-            // Toggle Add/Remove buttons
             document.querySelectorAll('.add-item-btn, .remove-item-btn').forEach(btn => {
                 btn.classList.toggle('hidden', !isEditMode);
             });
 
-            // Toggle view-state elements
             document.querySelectorAll('.view-state').forEach(el => {
                 el.classList.toggle('hidden', isEditMode);
             });
 
-            // Toggle editable fields
-            document.querySelectorAll('[data-editable-container]').forEach(container => {
+            document.querySelectorAll('[data-editable-container], .editable-list-item').forEach(container => {
                 const viewEls = container.querySelectorAll('.data-view');
                 const editEls = container.querySelectorAll('.data-edit');
 
@@ -423,12 +595,19 @@
                 editEls.forEach(el => el.classList.toggle('hidden', !isEditMode));
 
                 if (!isEditMode) {
-                    const inputEl = container.querySelector('input, textarea');
+                    const inputEl = container.querySelector('input, textarea, select');
                     const textDisplay = container.querySelector('.data-view:not(span)');
 
                     if (inputEl && textDisplay) {
                         const mobileLabel = textDisplay.querySelector('span');
-                        const newValue = inputEl.value;
+                        let newValue = inputEl.value;
+
+                        if (inputEl.type === 'date') {
+                             const date = new Date(inputEl.value + 'T00:00:00');
+                             if(!isNaN(date)) newValue = date.toISOString().split('T')[0];
+                        } else if (inputEl.tagName === 'SELECT') {
+                             newValue = inputEl.options[inputEl.selectedIndex].text;
+                        }
 
                         if (mobileLabel) {
                             textDisplay.innerHTML = '';
@@ -446,11 +625,24 @@
         };
 
         editProfileBtn.addEventListener('click', toggleEditMode);
-        saveProfileBtn.addEventListener('click', toggleEditMode);
+
+        saveProfileBtn.addEventListener('click', () => {
+            if (validateRequiredFields()) {
+                if (profileForm) {
+                    profileForm.submit();
+                }
+            } else {
+                const firstError = document.querySelector('.border-red-500, .bg-red-500');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if (firstError.tagName === 'INPUT' || firstError.tagName === 'TEXTAREA' || firstError.tagName === 'SELECT') {
+                        firstError.focus();
+                    }
+                }
+            }
+        });
 
         // --- PROFILE PICTURE LOGIC ---
-
-        // 1. Toggle Popup on Camera Icon Click
         if (cameraIcon) {
             cameraIcon.addEventListener('click', (e) => {
                 if (isEditMode) {
@@ -460,7 +652,6 @@
             });
         }
 
-        // 2. Handle "Choose Profile Picture"
         if (btnChoosePic) {
             btnChoosePic.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -469,7 +660,6 @@
             });
         }
 
-        // 3. Handle File Selection
         if (fileInput) {
             fileInput.addEventListener('change', function() {
                 const file = this.files[0];
@@ -486,23 +676,18 @@
             });
         }
 
-        // 4. Handle "See Profile Picture"
         if (btnSeePic) {
             btnSeePic.addEventListener('click', (e) => {
                 e.stopPropagation();
                 popupMenu.classList.add('hidden');
-
                 const modalImg = idModal.querySelector('img');
                 const modalTitle = idModal.querySelector('h3');
-
                 if (modalImg) modalImg.src = mainProfileImage.src;
                 if (modalTitle) modalTitle.textContent = "Profile Picture";
-
                 idModal.classList.remove('hidden');
             });
         }
 
-        // 5. Close Popup when clicking outside
         document.addEventListener('click', (e) => {
             if (popupMenu && !popupMenu.classList.contains('hidden')) {
                 if (!popupMenu.contains(e.target) && e.target !== cameraIcon) {
@@ -521,12 +706,10 @@
 
                 if (targetList && template) {
                     const clone = template.content.cloneNode(true);
-
-                    // For the newly added items, show edit inputs immediately
                     clone.querySelectorAll('.data-view').forEach(el => el.classList.add('hidden'));
                     clone.querySelectorAll('.data-edit').forEach(el => el.classList.remove('hidden'));
+                    clone.querySelectorAll('.view-state').forEach(el => el.classList.add('hidden'));
                     clone.querySelector('.remove-item-btn')?.classList.remove('hidden');
-
                     targetList.appendChild(clone);
                 }
             });
@@ -539,13 +722,23 @@
             }
         });
 
-        // --- File Upload Display (Generic) ---
+        // --- File Upload & Preview Logic (For Gov IDs) ---
         document.addEventListener('change', e => {
             if (e.target && e.target.classList.contains('file-upload-btn')) {
                 const file = e.target.files[0];
-                const fileNameDisplay = e.target.closest('li').querySelector('.file-name-display');
-                if (file && fileNameDisplay) {
-                    fileNameDisplay.textContent = file.name;
+                const row = e.target.closest('li, .editable-list-item');
+                const fileNameDisplay = row.querySelector('.file-name-display');
+
+                if (file) {
+                    if(fileNameDisplay) fileNameDisplay.textContent = file.name;
+                    const reader = new FileReader();
+                    reader.onload = function(ev) {
+                        const viewBtn = row.querySelector('.view-id-btn');
+                        if (viewBtn) {
+                            viewBtn.setAttribute('data-image-src', ev.target.result);
+                        }
+                    };
+                    reader.readAsDataURL(file);
                 }
             }
         });
@@ -557,25 +750,22 @@
             if (e.target && e.target.classList.contains('view-id-btn')) {
                 const modalTitle = idModal.querySelector('h3');
                 const modalImg = idModal.querySelector('img');
+                const imgSrc = e.target.getAttribute('data-image-src');
                 if (modalTitle) modalTitle.textContent = "Uploaded Government ID";
-                // In real app, get src from data attribute
-                if (modalImg) modalImg.src = "https://i.imgur.com/g3010p9.jpeg";
+                if (modalImg && imgSrc) modalImg.src = imgSrc;
                 idModal.classList.remove('hidden');
             }
         });
 
         closeModalBtn.addEventListener('click', closeModal);
-
         idModal.addEventListener('click', (e) => {
             if (e.target === idModal) closeModal();
         });
-
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && !idModal.classList.contains('hidden')) {
                 closeModal();
             }
         });
-
     });
     </script>
 </body>

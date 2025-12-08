@@ -2,13 +2,20 @@ from django.db import models
 from django.contrib.auth.models import User as AuthUser
 from datetime import date
 
-
 # -----------------------------------------------------------
 #   USER (BASE ENTITY)
 # -----------------------------------------------------------
 class User(models.Model):
-    account = models.OneToOneField(AuthUser, on_delete=models.CASCADE, related_name='custom_profile', null=True,
-                                   blank=True)
+    ROLE_CHOICES = (
+        ('citizen', 'Citizen'),
+        ('authority', 'Authority'),
+        ('responder', 'Responder'),
+    )
+
+    account = models.OneToOneField(
+        AuthUser, on_delete=models.CASCADE, related_name='custom_profile', null=True, blank=True
+    )
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='citizen')
 
     type_gender = (('M', 'Male'), ('F', 'Female'))
 
@@ -40,8 +47,8 @@ class User(models.Model):
             return None
         today = date.today()
         return (
-                today.year - self.date_of_birth.year
-                - ((today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day))
+            today.year - self.date_of_birth.year
+            - ((today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day))
         )
 
     def __str__(self):
@@ -49,7 +56,7 @@ class User(models.Model):
 
 
 # -----------------------------------------------------------
-#   ADDITIONAL INFORMATION (Secondary/Emergency Contacts)
+#   ADDITIONAL INFORMATION
 # -----------------------------------------------------------
 class ContactInfo(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='contact_numbers')
@@ -57,7 +64,6 @@ class ContactInfo(models.Model):
     relationship = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
-        # Updated string representation to show relationship
         return f"{self.user_id} - {self.contact_info} ({self.relationship})"
 
 
@@ -102,7 +108,6 @@ class Responder(models.Model):
     )
 
     citizen = models.OneToOneField(Citizen, on_delete=models.CASCADE, related_name='responder_profile')
-
     department_unit = models.CharField(max_length=50)
     role = models.CharField(max_length=15, choices=role_type)
     service_area = models.CharField(max_length=50)
@@ -117,8 +122,7 @@ class Responder(models.Model):
 #   AUTHORITY (SUBTYPE OF CITIZEN)
 # -----------------------------------------------------------
 class Authority(models.Model):
-    citizen = models.OneToOneField(Citizen, on_delete=models.CASCADE)
-
+    citizen = models.OneToOneField(Citizen, on_delete=models.CASCADE, related_name='authority_profile')
     agency_name = models.CharField(max_length=50)
     jurisdiction_area = models.CharField(max_length=50)
 
@@ -126,6 +130,10 @@ class Authority(models.Model):
         user = self.citizen.user_id
         return f"Authority: {user.first_name} {user.last_name}"
 
+
+# -----------------------------------------------------------
+#   NOTIFICATIONS
+# -----------------------------------------------------------
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     message = models.CharField(max_length=255)

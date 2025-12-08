@@ -1,22 +1,36 @@
 from django.contrib import admin
 from .models import User, Citizen, Authority, Responder, Email, ContactInfo, Notification
 
-
-# --- Custom Action ---
-@admin.action(description='Approve selected citizens as AUTHORITY')
-def make_authority(modeladmin, request, queryset):
-    # Iterate through the selected CITIZEN objects
+# -------------------------------------------------------------
+#   ADMIN ACTIONS
+# -------------------------------------------------------------
+@admin.action(description="Verify selected Citizens")
+def verify_citizens(modeladmin, request, queryset):
     for citizen in queryset:
-        # Access the related CustomUser object
-        user = citizen.user
+        auth_user = citizen.user_id.account
+        auth_user.is_active = True
+        auth_user.save()
 
-        # Update the User's role and status
-        user.role = 'authority'
-        user.is_verified = True
-        user.is_staff = True
+        Notification.objects.create(
+            user=citizen.user_id,
+            message="Your account has been verified by the Administrator."
+        )
+
+    modeladmin.message_user(request, "Selected citizens have been verified.")
+
+
+@admin.action(description="Promote selected Citizens to AUTHORITY")
+def promote_to_authority(modeladmin, request, queryset):
+    for citizen in queryset:
+        user = citizen.user_id
+
+        # Create Authority profile if not exists
+        Authority.objects.get_or_create(citizen=citizen)
+
+        # Update role for login redirect
+        user.role = "authority"
         user.save()
 
-        # Create the Notification
         Notification.objects.create(
             user=user,
             message="Congratulations! Your application for AUTHORITY has been approved."
@@ -25,29 +39,33 @@ def make_authority(modeladmin, request, queryset):
     modeladmin.message_user(request, "Selected citizens promoted to Authority and notified.")
 
 
+# -------------------------------------------------------------
+#   CITIZEN ADMIN PAGE
+# -------------------------------------------------------------
 class CitizenAdmin(admin.ModelAdmin):
-    actions = [make_authority]
-    # We use a custom method to display the username since it's in the related User model
-    list_display = ['get_username', 'get_role', 'get_status']
+    list_display = ["get_username", "get_role", "get_verified"]
+    actions = [verify_citizens, promote_to_authority]  # Superadmin cannot promote responders
 
-    @admin.display(ordering='user__username', description='Username')
+    @admin.display(description="Username")
     def get_username(self, obj):
-        return obj.user.username
+        return obj.user_id.account.username
 
-    @admin.display(ordering='user__role', description='Role')
+    @admin.display(description="Role")
     def get_role(self, obj):
-        return obj.user.role
+        return obj.user_id.role.capitalize()  # citizen, authority, responder
 
-    @admin.display(ordering='user__is_verified', description='Verified')
-    def get_status(self, obj):
-        return obj.user.is_verified
+    @admin.display(description="Verified")
+    def get_verified(self, obj):
+        return "Yes" if obj.user_id.account.is_active else "No"
 
 
-# Register models
+# -------------------------------------------------------------
+#   REGISTER MODELS
+# -------------------------------------------------------------
 admin.site.register(User)
 admin.site.register(Citizen, CitizenAdmin)
 admin.site.register(Authority)
 admin.site.register(Responder)
 admin.site.register(Email)
 admin.site.register(ContactInfo)
-# admin.site.register(Notification) # Optional
+admin.site.register(Notification)

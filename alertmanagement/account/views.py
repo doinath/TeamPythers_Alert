@@ -22,11 +22,26 @@ class IndexView(View):
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        user = authenticate(request, username=email, password=password)
+        # Authenticate using Django's built-in User
+        auth_user = authenticate(request, username=email, password=password)
 
-        if user is not None:
-            login(request, user)
-            return redirect('account:citizen_dashboard')
+        if auth_user is not None:
+            login(request, auth_user)
+
+            try:
+                # Get related custom profile
+                custom_user = auth_user.custom_profile
+            except CustomUser.DoesNotExist:
+                messages.error(request, "Custom profile not found.")
+                return render(request, "index.html")
+
+            # Redirect based on role
+            if custom_user.role == "authority":
+                return redirect("account:authority_dashboard")
+            elif custom_user.role == "responder":
+                return redirect("account:responder_dashboard")
+            else:
+                return redirect("account:citizen_dashboard")
         else:
             messages.error(request, "Invalid email or password.")
             return render(request, "index.html")

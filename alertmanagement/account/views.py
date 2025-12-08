@@ -3,9 +3,7 @@ from django.views import View
 from django.contrib import messages
 from django.db import transaction
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth import login
-
-# Import your models
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User as AuthUser
 from .models import User as CustomUser, Citizen, ContactInfo
 from emergency.models import MedicalCondition
@@ -83,37 +81,53 @@ class RegisterView(View):
 
 
 class CitizenProfileCompletionView(LoginRequiredMixin, View):
+    # Ensure unauthorized users are sent to login
+    login_url = '/'
+
     def get(self, request):
         return render(request, "citizen_profile_completion.html")
 
     def post(self, request):
         try:
             # 1. Get the currently logged-in Custom User
-            # We access the related_name 'custom_profile' defined in models.py
-            custom_user = request.user.custom_profile
+            # using the related_name='custom_profile' from your User model
+            try:
+                custom_user = request.user.custom_profile
+            except AttributeError:
+                messages.error(request, "User profile not found. Please contact support.")
+                return redirect('account:index')
 
             with transaction.atomic():
                 # ---------------------------------------------------
                 # A. UPDATE PERSONAL INFORMATION (Account Database)
                 # ---------------------------------------------------
-                custom_user.date_of_birth = request.POST.get('dob')
-                custom_user.gender = request.POST.get('gender')
+                dob = request.POST.get('dob')
 
+                # Validation: Handle empty Date of Birth to prevent DB crash
+                if dob:
+                    custom_user.date_of_birth = dob
+
+                custom_user.gender = request.POST.get('gender')
                 custom_user.street = request.POST.get('street')
-                # Mapping form 'barangay' to model 'municipality' as requested
-                custom_user.municipality = request.POST.get('barangay')
+                custom_user.municipality = request.POST.get('barangay')  # Mapping barangay input to municipality field
                 custom_user.city = request.POST.get('city')
                 custom_user.province = request.POST.get('province')
                 custom_user.zip_code = request.POST.get('zipCode')
-                custom_user.country = "Philippines"  # Default value
+                custom_user.country = "Philippines"
 
-                custom_user.save()  # This updates the 'updated_at' field automatically
+                custom_user.save()
 
                 # ---------------------------------------------------
-                # B. SAVE EMERGENCY CONTACTS (Account Database)
+                # B. SAVE EMERGENCY CONTACTS
                 # ---------------------------------------------------
-                # Get the number of contacts added from the hidden input
-                contact_count = int(request.POST.get('contact_count', 0))
+                # Safety check: Default to 0 if conversion fails
+                try:
+                    contact_count = int(request.POST.get('contact_count', 0))
+                except ValueError:
+                    contact_count = 0
+
+                # Clear existing contacts to prevent duplicates if user resubmits
+                ContactInfo.objects.filter(user_id=custom_user).delete()
 
                 for i in range(1, contact_count + 1):
                     role = request.POST.get(f'contact_role_{i}')
@@ -127,15 +141,21 @@ class CitizenProfileCompletionView(LoginRequiredMixin, View):
                         )
 
                 # ---------------------------------------------------
-                # C. SAVE MEDICAL INFORMATION (Emergency Database)
+                # C. SAVE MEDICAL INFORMATION
                 # ---------------------------------------------------
-                medical_count = int(request.POST.get('medical_count', 0))
+                try:
+                    medical_count = int(request.POST.get('medical_count', 0))
+                except ValueError:
+                    medical_count = 0
+
+                # Clear existing medical info to prevent duplicates
+                MedicalCondition.objects.filter(user_id=custom_user).delete()
 
                 for i in range(1, medical_count + 1):
                     cond_name = request.POST.get(f'condition_name_{i}')
                     cond_notes = request.POST.get(f'condition_notes_{i}')
 
-                    if cond_name:  # Notes are optional, but name is required to save
+                    if cond_name:
                         MedicalCondition.objects.create(
                             user_id=custom_user,
                             condition_name=cond_name,
@@ -143,43 +163,66 @@ class CitizenProfileCompletionView(LoginRequiredMixin, View):
                         )
 
                 # ---------------------------------------------------
-                # D. SAVE GOVERNMENT IDS (Verification Database)
+                # D. SAVE GOVERNMENT IDS
                 # ---------------------------------------------------
-                id_count = int(request.POST.get('id_count', 0))
+                try:
+                    id_count = int(request.POST.get('id_count', 0))
+                except ValueError:
+                    id_count = 0
+
+                # Note: We usually DON'T delete existing IDs on resubmit as they are records,
+                # but we simply add new ones here.
 
                 for i in range(1, id_count + 1):
                     id_type_val = request.POST.get(f'id_type_{i}')
                     id_number_val = request.POST.get(f'id_number_{i}')
-                    id_file_val = request.FILES.get(f'id_file_{i}')  # Use request.FILES
+                    id_file_val = request.FILES.get(f'id_file_{i}')  # IMPORTANT: Use request.FILES
 
                     # Handle "Other" ID type
                     if id_type_val == 'other':
                         id_type_val = request.POST.get(f'id_type_other_{i}')
 
+                    # Only save if we have the File, Type, and Number
                     if id_type_val and id_number_val and id_file_val:
                         GovernmentDocument.objects.create(
                             user_id=custom_user,
                             id_type=id_type_val,
                             id_number=id_number_val,
                             filepath=id_file_val,
-                            status='PENDING'  # Default status
+                            status='PENDING'
                         )
 
             # ---------------------------------------------------
-            # END TRANSACTION
+            # END TRANSACTION (Success)
             # ---------------------------------------------------
             messages.success(request, 'Profile completed successfully! Welcome to your Dashboard.')
             return redirect('account:citizen_dashboard')
 
         except Exception as e:
-            # If anything fails, transaction rolls back
-            print(f"Error: {e}")  # Print error to terminal for debugging
-            messages.error(request, f'An error occurred while saving your profile: {e}')
+            # If anything fails within the transaction block, DB changes roll back.
+            print(f"Server Error during Profile Completion: {e}")
+            messages.error(request, f"An error occurred: {e}")
+            # Return the user to the same page to try again
             return render(request, "citizen_profile_completion.html")
+
 
 class IndexView(View):
     def get(self, request):
         return render(request, "index.html")
+
+    def post(self, request):
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=email, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('account:citizen_dashboard')
+        else:
+            messages.error(request, "Invalid email or password.")
+            return render(request, "index.html")
+
 
 class CitizenDashboardView(View):
     def get(self, request):
@@ -196,12 +239,6 @@ from django.contrib import messages
 from django.db import transaction
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import login
-
-# Import your models
-from django.contrib.auth.models import User as AuthUser
-from .models import User as CustomUser, Citizen, ContactInfo
-from emergency.models import MedicalCondition
-from verification.models import GovernmentDocument
 
 class RegisterView(View):
     def get(self, request):
@@ -367,10 +404,6 @@ class CitizenProfileCompletionView(LoginRequiredMixin, View):
             print(f"Error: {e}")
             messages.error(request, f'An error occurred while saving your profile: {e}')
             return render(request, "citizen_profile_completion.html")
-
-class IndexView(View):
-    def get(self, request):
-        return render(request, "index.html")
 
 class CitizenDashboardView(View):
     def get(self, request):

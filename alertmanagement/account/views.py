@@ -9,6 +9,7 @@ from .models import User as CustomUser, Citizen, ContactInfo, Responder, Authori
 from emergency.models import MedicalCondition
 from verification.models import GovernmentDocument
 
+#comments
 
 # ---------------------------
 #  INDEX / LOGIN
@@ -222,7 +223,6 @@ class ResponderProfileView(LoginRequiredMixin, View):
 class AuthorityProfileView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, "authority_profile.html")
-
 
 # ---------------------------
 #  APPLY VIEWS

@@ -4,39 +4,25 @@ from .models import User, Citizen, Authority, Responder, Email, ContactInfo, Not
 # -------------------------------------------------------------
 #   ADMIN ACTIONS
 # -------------------------------------------------------------
-@admin.action(description="Verify selected Citizens")
-def verify_citizens(modeladmin, request, queryset):
-    for citizen in queryset:
-        auth_user = citizen.user_id.account
-        auth_user.is_active = True
-        auth_user.save()
 
-        Notification.objects.create(
-            user=citizen.user_id,
-            message="Your account has been verified by the Administrator."
-        )
+@admin.action(description="Verify selected Authority applications")
+def verify_authority(modeladmin, request, queryset):
+    for authority in queryset:
+        authority.is_verified = True
+        authority.save()
 
-    modeladmin.message_user(request, "Selected citizens have been verified.")
-
-
-@admin.action(description="Promote selected Citizens to AUTHORITY")
-def promote_to_authority(modeladmin, request, queryset):
-    for citizen in queryset:
-        user = citizen.user_id
-
-        # Create Authority profile if not exists
-        Authority.objects.get_or_create(citizen=citizen)
-
-        # Update role for login redirect
+        # Update the user's role so login redirects correctly
+        user = authority.citizen.user_id
         user.role = "authority"
         user.save()
 
+        # Notify the user
         Notification.objects.create(
             user=user,
-            message="Congratulations! Your application for AUTHORITY has been approved."
+            message="Your application for Authority has been verified by the Administrator."
         )
 
-    modeladmin.message_user(request, "Selected citizens promoted to Authority and notified.")
+    modeladmin.message_user(request, "Selected authority applications have been verified.")
 
 
 # -------------------------------------------------------------
@@ -44,7 +30,8 @@ def promote_to_authority(modeladmin, request, queryset):
 # -------------------------------------------------------------
 class CitizenAdmin(admin.ModelAdmin):
     list_display = ["get_username", "get_role", "get_verified"]
-    actions = [verify_citizens, promote_to_authority]  # Superadmin cannot promote responders
+    # Only allow default delete action
+    actions = ["delete_selected"]
 
     @admin.display(description="Username")
     def get_username(self, obj):
@@ -60,11 +47,27 @@ class CitizenAdmin(admin.ModelAdmin):
 
 
 # -------------------------------------------------------------
+#   AUTHORITY ADMIN PAGE
+# -------------------------------------------------------------
+class AuthorityAdmin(admin.ModelAdmin):
+    list_display = ["get_username", "get_verified"]
+    actions = [verify_authority]  # Admin can verify authority applications
+
+    @admin.display(description="Username")
+    def get_username(self, obj):
+        return obj.citizen.user_id.account.username
+
+    @admin.display(description="Verified")
+    def get_verified(self, obj):
+        return "Yes" if obj.is_verified else "No"
+
+
+# -------------------------------------------------------------
 #   REGISTER MODELS
 # -------------------------------------------------------------
 admin.site.register(User)
 admin.site.register(Citizen, CitizenAdmin)
-admin.site.register(Authority)
+admin.site.register(Authority, AuthorityAdmin)
 admin.site.register(Responder)
 admin.site.register(Email)
 admin.site.register(ContactInfo)

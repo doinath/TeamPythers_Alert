@@ -126,9 +126,13 @@ class Authority(models.Model):
     agency_name = models.CharField(max_length=50)
     jurisdiction_area = models.CharField(max_length=50)
 
+    # NEW: track verification
+    is_verified = models.BooleanField(default=False)
+
     def __str__(self):
         user = self.citizen.user_id
         return f"Authority: {user.first_name} {user.last_name}"
+
 
 
 # -----------------------------------------------------------

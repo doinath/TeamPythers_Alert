@@ -21,7 +21,6 @@
         .animate-fadeIn {
             animation: fadeIn 0.5s ease-out forwards;
         }
-        /* Helper to hide elements */
         .hidden {
             display: none;
         }
@@ -44,7 +43,8 @@
                 <div class="flex items-center space-x-4">
                     <div class="hidden md:flex items-center space-x-4">
                         <span class="text-gray-700 font-medium">Bessie Cooper</span>
-                        <img class="h-10 w-10 rounded-full object-cover" src="https://picsum.photos/id/237/100/100" alt="User Avatar" />
+                        <!-- ID Added: nav-profile-image -->
+                        <img id="nav-profile-image" class="h-10 w-10 rounded-full object-cover" src="https://picsum.photos/id/237/100/100" alt="User Avatar" />
                     </div>
                     <div class="md:hidden flex items-center">
                         <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-800 focus:outline-none">
@@ -67,7 +67,8 @@
             </nav>
             <div class="pt-4 pb-3 border-t border-gray-200">
                 <div class="flex items-center px-5">
-                    <img class="h-10 w-10 rounded-full object-cover" src="https://picsum.photos/id/237/100/100" alt="User Avatar" />
+                    <!-- ID Added: mobile-profile-image -->
+                    <img id="mobile-profile-image" class="h-10 w-10 rounded-full object-cover" src="https://picsum.photos/id/237/100/100" alt="User Avatar" />
                     <div class="ml-3">
                         <div class="text-base font-medium text-gray-800">Bessie Cooper</div>
                         <div class="text-sm font-medium text-gray-500">bessie.cooper@example.com</div>
@@ -93,7 +94,40 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div class="lg:col-span-1 space-y-6">
                     <div class="bg-white p-6 rounded-lg shadow-md text-center">
-                        <img class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-yellow-300" src="https://picsum.photos/id/237/150/150" alt="Authority Profile"/>
+
+                        <!-- PROFILE IMAGE CONTAINER WITH POPUP -->
+                        <div class="relative inline-block group">
+                            <img id="main-profile-image" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-yellow-300 object-cover" src="https://picsum.photos/id/237/150/150" alt="Authority Profile"/>
+
+                            <!-- Camera Icon (Visible only in Edit Mode) -->
+                            <div id="profile-camera-icon" class="hidden absolute bottom-4 right-0 bg-gray-200 hover:bg-gray-300 p-2 rounded-full cursor-pointer transition-colors border-2 border-white shadow-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            </div>
+
+                            <!-- Popup Menu (Hidden by default) -->
+                            <div id="profile-popup-menu" class="hidden absolute top-full left-1/2 transform -translate-x-1/2 z-20 w-48 bg-gray-800 rounded-lg shadow-xl overflow-hidden text-left mt-2 border border-gray-700">
+                                <button id="btn-see-pic" class="w-full px-4 py-3 text-sm text-gray-200 hover:bg-gray-700 flex items-center transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                    See profile picture
+                                </button>
+                                <button id="btn-choose-pic" class="w-full px-4 py-3 text-sm text-gray-200 hover:bg-gray-700 flex items-center transition-colors border-t border-gray-700">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    Choose profile picture
+                                </button>
+                            </div>
+
+                            <!-- Hidden File Input -->
+                            <input type="file" id="profile-file-input" accept="image/*" class="hidden" />
+                        </div>
+
                         <div data-editable-container>
                              <h2 class="text-2xl font-bold text-gray-800 data-view">Bessie Cooper</h2>
                              <input type="text" value="Bessie Cooper" class="hidden data-edit mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 text-center text-2xl font-bold"/>
@@ -111,40 +145,34 @@
                         </span>
                     </div>
 
-                    <!-- UPDATED ADDRESS SECTION (Grid Layout) -->
+                    <!-- ADDRESS SECTION -->
                     <div class="bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2 mb-4">Address</h3>
-
                         <address class="not-italic text-gray-700 grid grid-cols-1 md:grid-cols-2 gap-4">
-
                             <!-- Street -->
                             <div data-editable-container>
                                 <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Street</label>
                                 <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">Street:</span> 789 Gov. M. Cuenco Ave</p>
                                 <input type="text" value="789 Gov. M. Cuenco Ave" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all"/>
                             </div>
-
                             <!-- Barangay -->
                             <div data-editable-container>
                                 <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Barangay</label>
                                 <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">Barangay:</span> Apas</p>
                                 <input type="text" value="Apas" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all"/>
                             </div>
-
                             <!-- City -->
                             <div data-editable-container>
                                 <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">City</label>
                                 <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">City:</span> Cebu City</p>
                                 <input type="text" value="Cebu City" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all"/>
                             </div>
-
                             <!-- Province -->
                             <div data-editable-container>
                                 <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Province</label>
                                 <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">Province:</span> Cebu</p>
                                 <input type="text" value="Cebu" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all"/>
                             </div>
-
                             <!-- Zip Code -->
                             <div data-editable-container class="md:col-span-2">
                                 <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Zip Code</label>
@@ -343,12 +371,13 @@
         </li>
     </template>
 
+    <!-- Modal for Viewing IDs/Profile Pic -->
     <div id="id-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-lg shadow-xl max-w-lg w-full relative animate-fadeIn">
             <button id="close-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-3xl font-bold">&times;</button>
             <div class="p-6">
-                <h3 class="text-xl font-bold text-gray-800 mb-4">Uploaded Government ID</h3>
-                <img src="https://i.imgur.com/g3010p9.jpeg" alt="Government ID" class="w-full h-auto rounded-md"/>
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Image Preview</h3>
+                <img src="" alt="Preview" class="w-full h-auto rounded-md"/>
             </div>
         </div>
     </div>
@@ -366,7 +395,26 @@
         const openIcon = document.getElementById('menu-open-icon');
         const closeIcon = document.getElementById('menu-close-icon');
 
+        // --- Profile Image Elements ---
+        const mainProfileImage = document.getElementById('main-profile-image');
+        const navProfileImage = document.getElementById('nav-profile-image');
+        const mobileProfileImage = document.getElementById('mobile-profile-image');
+        const cameraIcon = document.getElementById('profile-camera-icon');
+        const popupMenu = document.getElementById('profile-popup-menu');
+        const btnChoosePic = document.getElementById('btn-choose-pic');
+        const btnSeePic = document.getElementById('btn-see-pic');
+        const fileInput = document.getElementById('profile-file-input');
+
         let isEditMode = false;
+
+        // Mobile Menu Toggle
+        if (mobileMenuButton) {
+             mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                openIcon.classList.toggle('hidden');
+                closeIcon.classList.toggle('hidden');
+            });
+        }
 
         // --- Main Edit/Save Toggle ---
         const toggleEditMode = () => {
@@ -380,6 +428,11 @@
                 logoutBtn.classList.toggle('hidden', isEditMode);
             }
 
+            // Toggle Camera Icon logic
+            if (cameraIcon) cameraIcon.classList.toggle('hidden', !isEditMode);
+            // Hide popup if closing edit mode
+            if (!isEditMode && popupMenu) popupMenu.classList.add('hidden');
+
             // Toggle "Add" and "Remove" buttons
             document.querySelectorAll('.add-item-btn, .remove-item-btn').forEach(btn => {
                 btn.classList.toggle('hidden', !isEditMode);
@@ -390,7 +443,7 @@
                 el.classList.toggle('hidden', isEditMode);
             });
 
-            // Toggle editable fields (Labels, Inputs, Textareas, Selects)
+            // Toggle editable fields
             document.querySelectorAll('[data-editable-container]').forEach(container => {
                 const viewEls = container.querySelectorAll('.data-view');
                 const editEls = container.querySelectorAll('.data-edit');
@@ -440,6 +493,72 @@
         if (editProfileBtn) editProfileBtn.addEventListener('click', toggleEditMode);
         if (saveProfileBtn) saveProfileBtn.addEventListener('click', toggleEditMode);
 
+        // --- PROFILE PICTURE LOGIC ---
+
+        // 1. Toggle Popup on Camera Icon Click
+        if (cameraIcon) {
+            cameraIcon.addEventListener('click', (e) => {
+                if (isEditMode) {
+                    e.stopPropagation();
+                    popupMenu.classList.toggle('hidden');
+                }
+            });
+        }
+
+        // 2. Handle "Choose Profile Picture"
+        if (btnChoosePic) {
+            btnChoosePic.addEventListener('click', (e) => {
+                e.stopPropagation();
+                fileInput.click();
+                popupMenu.classList.add('hidden');
+            });
+        }
+
+        // 3. Handle File Selection and Update Images
+        if (fileInput) {
+            fileInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const newSrc = e.target.result;
+                        // Update Main Image
+                        if(mainProfileImage) mainProfileImage.src = newSrc;
+                        // Update Navbar Image
+                        if(navProfileImage) navProfileImage.src = newSrc;
+                        // Update Mobile Menu Image
+                        if(mobileProfileImage) mobileProfileImage.src = newSrc;
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // 4. Handle "See Profile Picture"
+        if (btnSeePic) {
+            btnSeePic.addEventListener('click', (e) => {
+                e.stopPropagation();
+                popupMenu.classList.add('hidden');
+
+                const modalImg = idModal.querySelector('img');
+                const modalTitle = idModal.querySelector('h3');
+
+                if (modalImg) modalImg.src = mainProfileImage.src;
+                if (modalTitle) modalTitle.textContent = "Profile Picture";
+
+                idModal.classList.remove('hidden');
+            });
+        }
+
+        // 5. Close Popup when clicking outside
+        document.addEventListener('click', (e) => {
+            if (popupMenu && !popupMenu.classList.contains('hidden')) {
+                if (!popupMenu.contains(e.target) && e.target !== cameraIcon) {
+                    popupMenu.classList.add('hidden');
+                }
+            }
+        });
+
         // --- Add Item Functionality ---
         addItemBtns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -467,7 +586,7 @@
             }
         });
 
-        // --- File Upload Display ---
+        // --- File Upload Display (Generic for IDs) ---
         document.addEventListener('change', e => {
             if (e.target && e.target.classList.contains('file-upload-btn')) {
                 const file = e.target.files[0];
@@ -484,6 +603,11 @@
 
         document.addEventListener('click', e => {
             if (e.target && e.target.classList.contains('view-id-btn')) {
+                const modalTitle = idModal.querySelector('h3');
+                const modalImg = idModal.querySelector('img');
+                if (modalTitle) modalTitle.textContent = "Uploaded Government ID";
+                // Placeholder ID image
+                if (modalImg) modalImg.src = "https://i.imgur.com/g3010p9.jpeg";
                 openModal();
             }
         });
@@ -501,15 +625,6 @@
                 closeModal();
             }
         });
-
-        // --- Mobile Menu ---
-        if (mobileMenuButton) {
-          mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-            openIcon.classList.toggle('hidden');
-            closeIcon.classList.toggle('hidden');
-          });
-        }
     });
     </script>
 </body>

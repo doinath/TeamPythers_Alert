@@ -18,6 +18,9 @@ class User(models.Model):
     middle_name = models.CharField(max_length=50, null=True, blank=True)
     last_name = models.CharField(max_length=50)
 
+    email_address = models.EmailField(max_length=255, null=True, blank=True)
+    phone_number = models.CharField(max_length=15, null=True, blank=True)
+
     date_of_birth = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=1, choices=type_gender, null=True, blank=True)
 
@@ -46,7 +49,7 @@ class User(models.Model):
 
 
 # -----------------------------------------------------------
-#   ADDITIONAL INFORMATION
+#   ADDITIONAL INFORMATION (Secondary/Emergency Contacts)
 # -----------------------------------------------------------
 class ContactInfo(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='contact_numbers')

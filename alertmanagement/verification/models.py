@@ -1,5 +1,6 @@
 from django.db import models
 
+# NOTE: Update 'path.to.account.models' with the correct import for your User and Authority models
 from account.models import Authority, User
 
 class RoleVerification(models.Model):

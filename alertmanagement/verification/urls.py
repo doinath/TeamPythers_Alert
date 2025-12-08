@@ -8,6 +8,6 @@ app_name = 'verification'
 
 urlpatterns = [
     path("list/", RoleVerification.as_view(), name="verification"),
-    path("goverment/", GovernmentDocument.as_view(), name="document"),
-    path("submitted/", SubmittedDocument.as_view(), name="submitted"),
+    # path("goverment/", GovernmentDocument.as_view(), name="document"),
+    # path("submitted/", SubmittedDocument.as_view(), name="submitted"),
 ]

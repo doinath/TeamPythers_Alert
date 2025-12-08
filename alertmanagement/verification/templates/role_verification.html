@@ -152,8 +152,15 @@
             border-bottom: 1px solid #eee;
             padding: 12px 0;
             font-size: 14px;
-            cursor: pointer;
+            cursor: pointer; /* Default cursor for PENDING items */
         }
+
+        /* New style to visually indicate non-clickable rows */
+        .data-row[data-status="APPROVED"],
+        .data-row[data-status="DECLINED"] {
+            cursor: default;
+        }
+
 
         .table-header {
             color: #888;
@@ -206,7 +213,7 @@
             color: #856404;
         }
 
-        .declined {
+        .declined, .rejected { /* Added .rejected to map to Django model status */
             background-color: #fde8e8;
             color: #dc3545;
         }
@@ -331,8 +338,9 @@
             </div>
 
             <ul class="nav-tabs">
-                <li class="active"><a href="#">Dashboard</a></li>
+                <li><a href="#">Dashboard</a></li>
                 <li><a href="#">Chat</a></li>
+                <li class="active"><a href="#">Verification</a></li>
             </ul>
         </div>
 
@@ -360,7 +368,7 @@
             </ul>
 
             <div class="data-rows-container">
-                <ul class="data-row" data-role="LGU Staff" data-status-tag="APPROVED">
+                <ul class="data-row" data-verification-id="101" data-role="LGU Staff" data-status="APPROVED">
                     <li class="col-person">
                         <i class="fas fa-user-circle"></i> <span class="person-name">Dela Cruz, Juan Y.</span>
                     </li>
@@ -371,28 +379,28 @@
                     </li>
                 </ul>
 
-                <ul class="data-row" data-role="Citizen" data-status-tag="DECLINED">
+                <ul class="data-row" data-verification-id="102" data-role="Citizen" data-status="REJECTED">
                     <li class="col-person">
                         <i class="fas fa-user-circle"></i> <span class="person-name">Doe, Jane D.</span>
                     </li>
                     <li class="col-time">14:07 31/10/25</li>
                     <li class="col-location">Tabunok, Talisay City</li>
                     <li class="col-status">
-                        <span class="status-tag declined">DECLINED</span>
+                        <span class="status-tag declined">REJECTED</span>
                     </li>
                 </ul>
 
-                <ul class="data-row" data-role="LGU Staff" data-status-tag="DECLINED">
+                <ul class="data-row" data-verification-id="103" data-role="LGU Staff" data-status="REJECTED">
                     <li class="col-person">
                         <i class="fas fa-user-circle"></i> <span class="person-name">Tan, Rombo</span>
                     </li>
                     <li class="col-time">12:21 31/10/25</li>
                     <li class="col-location">Mohon, Talisay City</li>
                     <li class="col-status">
-                        <span class="status-tag declined">DECLINED</span>
+                        <span class="status-tag declined">REJECTED</span>
                     </li>
                 </ul>
-                <ul class="data-row" data-role="Authority" data-status-tag="PENDING">
+                <ul class="data-row" data-verification-id="104" data-role="Authority" data-status="PENDING">
                     <li class="col-person">
                         <i class="fas fa-user-circle"></i> <span class="person-name">Angcastillo, Natan Jedd N.</span>
                     </li>
@@ -402,7 +410,7 @@
                         <span class="status-tag pending">PENDING</span>
                     </li>
                 </ul>
-                <ul class="data-row" data-role="Authority" data-status-tag="PENDING">
+                <ul class="data-row" data-verification-id="105" data-role="Authority" data-status="PENDING">
                     <li class="col-person">
                         <i class="fas fa-user-circle"></i> <span class="person-name">Poldo, Kylie N.</span>
                     </li>
@@ -412,7 +420,7 @@
                         <span class="status-tag pending">PENDING</span>
                     </li>
                 </ul>
-                <ul class="data-row" data-role="Authority" data-status-tag="PENDING">
+                <ul class="data-row" data-verification-id="106" data-role="Authority" data-status="PENDING">
                     <li class="col-person">
                         <i class="fas fa-user-circle"></i> <span class="person-name">Badyanha, Sherry Lyn C.</span>
                     </li>
@@ -461,44 +469,115 @@
         </div>
     </div>
     <script>
+        // Helper function for CSRF token (required for Django POST/PUT requests)
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Function to dynamically update the status on the page and in the modal
+        function setModalStatus(statusElement, statusText) {
+            statusElement.textContent = statusText;
+            // Remove all possible status classes
+            statusElement.classList.remove('approved', 'declined', 'pending');
+
+            // Map status text to CSS classes
+            const statusClass = statusText === 'APPROVED' ? 'approved' :
+                                statusText === 'PENDING' ? 'pending' :
+                                'declined'; // Use 'declined' for 'REJECTED'
+            statusElement.classList.add(statusClass);
+        }
+
+        // Function to update the row element visually after an action
+        function updateRowStatus(row, newStatus) {
+            // 1. Update the row's data attribute
+            row.setAttribute('data-status', newStatus);
+
+            // 2. Update the status tag text and class
+            const statusTag = row.querySelector('.status-tag');
+            statusTag.textContent = newStatus;
+            setModalStatus(statusTag, newStatus);
+        }
+
+        // Function to handle the actual database update via AJAX/Fetch
+        function handleVerificationAction(rowElement, action) {
+            const verificationId = rowElement.getAttribute('data-verification-id');
+            const personName = rowElement.querySelector('.person-name').textContent.trim();
+
+            // Map the button action to the Django model's STATUS_CHOICES
+            const newStatus = action === 'APPROVE' ? 'APPROVED' : 'REJECTED';
+
+            console.log(`Action: ${action} on Verification ID ${verificationId} (${personName})`);
+
+            // **Placeholder for Django Backend Fetch **
+            /*
+            fetch('/verification/update_status/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    verification_id: verificationId,
+                    new_status: newStatus
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateRowStatus(rowElement, newStatus);
+                } else {
+                    alert('Error updating status: ' + (data.message || 'Unknown error'));
+                }
+            })
+            .catch(error => console.error('Fetch error:', error));
+            */
+
+            // --- SIMULATION (Update UI only) ---
+            alert(`SIMULATION: Successfully set ${personName}'s status to ${newStatus}.`);
+            updateRowStatus(rowElement, newStatus);
+            // ------------------------------------
+        }
+
+
         document.addEventListener('DOMContentLoaded', function() {
             const modal = document.getElementById('verificationModal');
             const modalTitle = document.getElementById('modalPersonName');
             const modalRole = document.getElementById('modalRole');
             const modalStatus = document.getElementById('modalStatus');
             const dataRows = document.querySelectorAll('.data-row');
-
-            // Function to dynamically set status text and color class
-            function setModalStatus(statusText) {
-                modalStatus.textContent = statusText;
-                // Remove existing status classes
-                modalStatus.classList.remove('approved', 'declined', 'pending');
-
-                // Add the class corresponding to the status text
-                if (statusText === 'APPROVED') {
-                    modalStatus.classList.add('approved');
-                } else if (statusText === 'DECLINED') {
-                    modalStatus.classList.add('declined');
-                } else if (statusText === 'PENDING') {
-                    modalStatus.classList.add('pending');
-                }
-            }
+            let activeRow = null; // Store the currently clicked row element
 
             dataRows.forEach(row => {
                 row.addEventListener('click', function() {
+                    const status = row.getAttribute('data-status');
+
+                    // 🛑 Restriction: Only open modal if status is PENDING
+                    if (status !== 'PENDING') {
+                        return; // Exit the function, preventing modal opening
+                    }
+
+                    // Store the current row element
+                    activeRow = row;
+
                     const personNameElement = row.querySelector('.person-name');
                     const name = personNameElement ? personNameElement.textContent.trim() : 'Unknown User';
-
-                    // Get data attributes from the clicked row
                     const role = row.getAttribute('data-role') || 'N/A';
-                    const statusText = row.getAttribute('data-status-tag') || 'N/A'; // Use data-status-tag
 
                     // Populate the modal content
                     modalTitle.textContent = 'Review: ' + name;
                     modalRole.textContent = role;
-
-                    // Set status text and styling
-                    setModalStatus(statusText);
+                    setModalStatus(modalStatus, status);
 
                     // Show the modal
                     modal.style.display = 'flex';
@@ -509,13 +588,20 @@
             modal.addEventListener('click', function(e) {
                 if (e.target === modal) {
                     modal.style.display = 'none';
+                    activeRow = null;
                 }
             });
 
-            // Close modal when clicking any button inside the footer
+            // 🚀 Handle Approve/Decline actions
             document.querySelectorAll('.modal-footer .modal-btn').forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function(e) {
                     modal.style.display = 'none';
+
+                    if (activeRow) {
+                        const action = e.target.classList.contains('btn-approve') ? 'APPROVE' : 'DECLINE';
+                        handleVerificationAction(activeRow, action);
+                        activeRow = null;
+                    }
                 });
             });
         });

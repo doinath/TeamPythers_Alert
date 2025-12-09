@@ -3,523 +3,386 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Role Verification Dashboard</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        /* CSS provided by the user */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f2f5;
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .dashboard-container {
-            width: 100%;
-            background-color: #ffffff;
-            border-radius: 0;
-            box-shadow: none;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .top-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 30px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .header-left-group {
-            display: flex;
-            align-items: center;
-        }
-
-        .alert-logo {
-            display: flex;
-            align-items: center;
-            margin-right: 35px;
-            white-space: nowrap;
-        }
-
-        .alert-logo img {
-            height: 30px;
-            width: auto;
-        }
-
-        .alert-logo .fas {
-            margin-right: 8px;
-        }
-
-        .nav-tabs {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-        }
-
-        .nav-tabs li {
-            padding: 0 0 5px 0;
-            margin-right: 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        .nav-tabs li a {
-            text-decoration: none;
-            color: #555;
-        }
-
-        .nav-tabs li.active {
-            border-bottom: 3px solid #dc3545;
-        }
-
-        .nav-tabs li.active a {
-            color: #000;
-            font-weight: bold;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-        }
-
-        .user-name {
-            font-size: 15px;
-            margin-right: 15px;
-            font-weight: 500;
-        }
-
-        .profile-pic {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 15px;
-        }
-
-        .sidebar {
-            display: none;
-        }
-
-        .main-content {
-            display: flex;
-            flex-grow: 1;
-        }
-
-        .table-section {
-            flex-grow: 1;
-            padding: 20px 30px;
-        }
-
-        .search-bar {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .search-bar input[type="text"] {
-            padding: 10px 15px;
-            padding-left: 35px;
-            border: 1px solid #ccc;
-            border-radius: 20px;
-            width: 250px;
-            font-size: 14px;
-        }
-
-        .search-bar .fas {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            right: 270px;
-            color: #888;
-            font-size: 14px;
-        }
-
-        .table-header, .data-row {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: grid;
-            grid-template-columns: 2.2fr 1.5fr 2fr 1fr;
-            align-items: center;
-            border-bottom: 1px solid #eee;
-            padding: 12px 0;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        .table-header {
-            color: #888;
-            font-weight: 500;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #ccc;
-            text-transform: uppercase;
-        }
-
-        .data-row {
-            color: #333;
-            transition: background-color 0.1s;
-        }
-
-        .data-row:hover {
-            background-color: #fafafa;
-        }
-
-        .col-person {
-            display: flex;
-            align-items: center;
-            font-weight: 500;
-        }
-
-        .person-name {
-            margin-left: 10px;
-        }
-
-        .col-person .fas {
-            font-size: 30px;
-            color: #aaa;
-        }
-
-        .status-tag {
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: bold;
-            text-align: center;
-            display: inline-block;
-        }
-
-        .approved {
-            background-color: #e6f7ed;
-            color: #28a745;
-        }
-
-        .status-tag.pending {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-
-        .declined {
-            background-color: #fde8e8;
-            color: #dc3545;
-        }
-
-        /* --- MODAL STYLES --- */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.4);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            overflow-y: auto;
-        }
-
-        .modal-content {
-            background-color: #ffffff;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 900px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-            margin: 40px 0;
-        }
-
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 20px;
-            padding: 20px 30px;
-            border-top: 1px solid #eee;
-        }
-
-        .modal-btn {
-            padding: 10px 30px;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            min-width: 120px;
-        }
-
-        .btn-approve {
-            background-color: #28a745;
-            color: white;
-        }
-
-        .btn-approve:hover {
-            background-color: #1e7e34;
-        }
-
-        .btn-decline {
-            background-color: #dc3545;
-            color: white;
-        }
-
-        .btn-decline:hover {
-            background-color: #c82333;
-        }
-
-        /* --- SUBMITTED DOCUMENT STYLES (now part of modal-content) --- */
-        .document-viewer {
-            padding: 30px;
-            max-width: 100%;
-            margin: 0;
-        }
-        .document-header {
-            border-bottom: 2px solid #eee;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-        }
-        .document-header h1 {
-            font-size: 28px;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        .document-header p {
-            font-size: 16px;
-            color: #555;
-            margin: 0;
-        }
-        .file-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-        .file-item {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-        .file-item img {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-            background-color: #f5f5f5;
-        }
-        .file-caption {
-            padding: 10px;
-            text-align: center;
-            font-size: 14px;
-            font-weight: 500;
-            background-color: #f8f8f8;
-            border-top: 1px solid #eee;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Role Verification Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Font Awesome (kept) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <!-- Tailwind CDN (pure Tailwind approach) -->
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body>
-    <div class="dashboard-container">
-    <header class="top-header">
-        <div class="header-left-group">
-            <div class="alert-logo">
-                <img src="{% static 'imgs/alert_logo.png' %}" alt="ALERT Logo">
-            </div>
-
-            <ul class="nav-tabs">
-                <li class="active"><a href="#">Dashboard</a></li>
-                <li><a href="#">Chat</a></li>
-            </ul>
+<body class="font-sans bg-gray-100 min-h-screen flex">
+  <div class="w-full bg-white shadow-none overflow-hidden relative">
+    <!-- Top header -->
+    <header class="flex justify-between items-center px-8 py-4 border-b border-gray-200">
+      <div class="flex items-center">
+        <div class="flex items-center mr-10 whitespace-nowrap">
+          <a href="/account/authority_dashboard/">
+          <img src="{% static 'imgs/alert_logo.png' %}" alt="ALERT Logo" class="h-8 w-auto" />
+          </a>
         </div>
 
-        <div class="user-profile">
-            <span class="user-name">Shervin</span>
-            <img src="{% static 'imgs/shervin_pfp.jpg' %}" alt="Shervin's Profile" class="profile-pic">
-            <i class="fas fa-ellipsis-v"></i>
-        </div>
+        <ul class="flex space-x-6 list-none p-0 m-0">
+          <li class="text-black font-bold border-b-4 border-red-600 pb-1 text-base cursor-default"><a href="#" class="no-underline">Dashboard</a></li>
+          <li class="text-gray-600 text-base cursor-pointer"><a href="#" class="no-underline">Chat</a></li>
+
+        </ul>
+      </div>
+
+      <div class="flex items-center">
+        <span class="text-[15px] mr-4 font-medium">Shervin</span>
+        <img src="{% static 'imgs/shervin_pfp.jpg' %}" alt="Shervin's Profile" class="w-9 h-9 rounded-full object-cover mr-4" />
+        <i class="fas fa-ellipsis-v text-gray-600"></i>
+      </div>
     </header>
 
-    <main class="main-content">
-        <nav class="sidebar"></nav>
+    <main class="flex">
+      <!-- Sidebar placeholder (hidden by original) -->
+      <nav class="hidden"></nav>
 
-        <section class="table-section">
-            <div class="search-bar">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder=" Search">
-            </div>
+      <!-- Table Section -->
+      <section class="flex-grow px-8 py-6">
+        <!-- Search bar -->
+        <div class="flex justify-end mb-5 relative">
+          <i class="fas fa-search absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+          <input type="text" placeholder=" Search" class="border border-gray-300 rounded-full pl-4 pr-10 py-2 w-64 text-sm" />
+        </div>
 
-            <ul class="table-header">
-                <li class="col-person">PERSON</li>
-                <li class="col-time">TIME AND DATE</li>
-                <li class="col-location">LOCATION</li>
-                <li class="col-status">STATUS</li>
-            </ul>
+        <!-- Table header -->
+        <!-- Using a custom grid column layout similar to original: [2.2fr 1.5fr 2fr 1fr] -->
+        <ul class="grid grid-cols-[2.2fr_1.5fr_2fr_1fr] gap-4 border-b border-gray-300 pb-3 text-gray-500 uppercase text-sm font-medium list-none m-0 p-0">
+          <li>PERSON</li>
+          <li>TIME AND DATE</li>
+          <li>LOCATION</li>
+          <li>STATUS</li>
+        </ul>
 
-            <div class="data-rows-container">
-                <ul class="data-row" data-role="LGU Staff" data-status-tag="APPROVED">
-                    <li class="col-person">
-                        <i class="fas fa-user-circle"></i> <span class="person-name">Dela Cruz, Juan Y.</span>
-                    </li>
-                    <li class="col-time">14:10 31/10/25</li>
-                    <li class="col-location">Iyawan, Talisay City</li>
-                    <li class="col-status">
-                        <span class="status-tag approved">APPROVED</span>
-                    </li>
-                </ul>
+        <!-- Data rows container -->
+        <div class="data-rows-container mt-2 space-y-0">
+          <!-- APPROVED row (non-clickable) -->
+          <ul class="data-row grid grid-cols-[2.2fr_1.5fr_2fr_1fr] items-center border-b border-gray-200 py-3 text-gray-800 cursor-default list-none m-0 p-0"
+              data-verification-id="101" data-role="LGU Staff" data-status="APPROVED">
+            <li class="flex items-center font-medium">
+              <i class="fas fa-user-circle text-3xl text-gray-400 mr-3"></i>
+              <span class="person-name">Dela Cruz, Juan Y.</span>
+            </li>
 
-                <ul class="data-row" data-role="Citizen" data-status-tag="DECLINED">
-                    <li class="col-person">
-                        <i class="fas fa-user-circle"></i> <span class="person-name">Doe, Jane D.</span>
-                    </li>
-                    <li class="col-time">14:07 31/10/25</li>
-                    <li class="col-location">Tabunok, Talisay City</li>
-                    <li class="col-status">
-                        <span class="status-tag declined">DECLINED</span>
-                    </li>
-                </ul>
+            <li class="text-sm">14:10 31/10/25</li>
+            <li class="text-sm">Iyawan, Talisay City</li>
 
-                <ul class="data-row" data-role="LGU Staff" data-status-tag="DECLINED">
-                    <li class="col-person">
-                        <i class="fas fa-user-circle"></i> <span class="person-name">Tan, Rombo</span>
-                    </li>
-                    <li class="col-time">12:21 31/10/25</li>
-                    <li class="col-location">Mohon, Talisay City</li>
-                    <li class="col-status">
-                        <span class="status-tag declined">DECLINED</span>
-                    </li>
-                </ul>
-                <ul class="data-row" data-role="Authority" data-status-tag="PENDING">
-                    <li class="col-person">
-                        <i class="fas fa-user-circle"></i> <span class="person-name">Angcastillo, Natan Jedd N.</span>
-                    </li>
-                    <li class="col-time">11:11 31/10/25</li>
-                    <li class="col-location">Tabunok, Talisay City</li>
-                    <li class="col-status">
-                        <span class="status-tag pending">PENDING</span>
-                    </li>
-                </ul>
-                <ul class="data-row" data-role="Authority" data-status-tag="PENDING">
-                    <li class="col-person">
-                        <i class="fas fa-user-circle"></i> <span class="person-name">Poldo, Kylie N.</span>
-                    </li>
-                    <li class="col-time">14:44 30/10/25</li>
-                    <li class="col-location">Cansojong, Talisay City</li>
-                    <li class="col-status">
-                        <span class="status-tag pending">PENDING</span>
-                    </li>
-                </ul>
-                <ul class="data-row" data-role="Authority" data-status-tag="PENDING">
-                    <li class="col-person">
-                        <i class="fas fa-user-circle"></i> <span class="person-name">Badyanha, Sherry Lyn C.</span>
-                    </li>
-                    <li class="col-time">11:55 30/10/25</li>
-                    <li class="col-location">Dumlog, Talisay City</li>
-                    <li class="col-status">
-                        <span class="status-tag pending">PENDING</span>
-                    </li>
-                </ul>
-            </div>
-        </section>
+            <li>
+              <span class="status-tag inline-block px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">APPROVED</span>
+            </li>
+          </ul>
+
+          <!-- REJECTED row (non-clickable) -->
+          <ul class="data-row grid grid-cols-[2.2fr_1.5fr_2fr_1fr] items-center border-b border-gray-200 py-3 text-gray-800 cursor-default list-none m-0 p-0"
+              data-verification-id="102" data-role="Citizen" data-status="REJECTED">
+            <li class="flex items-center font-medium">
+              <i class="fas fa-user-circle text-3xl text-gray-400 mr-3"></i>
+              <span class="person-name">Doe, Jane D.</span>
+            </li>
+
+            <li class="text-sm">14:07 31/10/25</li>
+            <li class="text-sm">Tabunok, Talisay City</li>
+
+            <li>
+              <span class="status-tag inline-block px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">REJECTED</span>
+            </li>
+          </ul>
+
+          <!-- REJECTED row -->
+          <ul class="data-row grid grid-cols-[2.2fr_1.5fr_2fr_1fr] items-center border-b border-gray-200 py-3 text-gray-800 cursor-default list-none m-0 p-0"
+              data-verification-id="103" data-role="LGU Staff" data-status="REJECTED">
+            <li class="flex items-center font-medium">
+              <i class="fas fa-user-circle text-3xl text-gray-400 mr-3"></i>
+              <span class="person-name">Tan, Rombo</span>
+            </li>
+
+            <li class="text-sm">12:21 31/10/25</li>
+            <li class="text-sm">Mohon, Talisay City</li>
+
+            <li>
+              <span class="status-tag inline-block px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">REJECTED</span>
+            </li>
+          </ul>
+
+          <!-- PENDING (clickable) -->
+          <ul class="data-row grid grid-cols-[2.2fr_1.5fr_2fr_1fr] items-center border-b border-gray-200 py-3 text-gray-800 hover:bg-gray-50 cursor-pointer list-none m-0 p-0"
+              data-verification-id="104" data-role="Authority" data-status="PENDING">
+            <li class="flex items-center font-medium">
+              <i class="fas fa-user-circle text-3xl text-gray-400 mr-3"></i>
+              <span class="person-name">Angcastillo, Natan Jedd N.</span>
+            </li>
+
+            <li class="text-sm">11:11 31/10/25</li>
+            <li class="text-sm">Tabunok, Talisay City</li>
+
+            <li>
+              <span class="status-tag inline-block px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700">PENDING</span>
+            </li>
+          </ul>
+
+          <!-- PENDING -->
+          <ul class="data-row grid grid-cols-[2.2fr_1.5fr_2fr_1fr] items-center border-b border-gray-200 py-3 text-gray-800 hover:bg-gray-50 cursor-pointer list-none m-0 p-0"
+              data-verification-id="105" data-role="Authority" data-status="PENDING">
+            <li class="flex items-center font-medium">
+              <i class="fas fa-user-circle text-3xl text-gray-400 mr-3"></i>
+              <span class="person-name">Poldo, Kylie N.</span>
+            </li>
+
+            <li class="text-sm">14:44 30/10/25</li>
+            <li class="text-sm">Cansojong, Talisay City</li>
+
+            <li>
+              <span class="status-tag inline-block px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700">PENDING</span>
+            </li>
+          </ul>
+
+          <!-- PENDING -->
+          <ul class="data-row grid grid-cols-[2.2fr_1.5fr_2fr_1fr] items-center border-b border-gray-200 py-3 text-gray-800 hover:bg-gray-50 cursor-pointer list-none m-0 p-0"
+              data-verification-id="106" data-role="Authority" data-status="PENDING">
+            <li class="flex items-center font-medium">
+              <i class="fas fa-user-circle text-3xl text-gray-400 mr-3"></i>
+              <span class="person-name">Badyanha, Sherry Lyn C.</span>
+            </li>
+
+            <li class="text-sm">11:55 30/10/25</li>
+            <li class="text-sm">Dumlog, Talisay City</li>
+
+            <li>
+              <span class="status-tag inline-block px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700">PENDING</span>
+            </li>
+          </ul>
+        </div>
+      </section>
     </main>
 
-    <div id="verificationModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="document-viewer">
-                <div class="document-header">
-                    <h1 id="modalPersonName"></h1>
-                    <p>Role Requested: <span id="modalRole"></span> | Status: <span id="modalStatus"></span></p>
-                </div>
+    <!-- Modal (hidden by default) -->
+    <div id="verificationModal" class="modal-overlay fixed inset-0 bg-black/40 hidden justify-center items-start z-50 overflow-y-auto">
+      <div class="modal-content bg-white rounded-xl w-[90%] max-w-3xl shadow-2xl my-10 overflow-hidden">
+        <div class="document-viewer p-6">
+          <div class="document-header border-b border-gray-200 pb-4 mb-6">
+            <h1 id="modalPersonName" class="text-2xl font-semibold text-gray-900"></h1>
+            <p class="text-sm text-gray-600">Role Requested: <span id="modalRole" class="font-medium"></span> | Status: <span id="modalStatus" class="font-semibold"></span></p>
+          </div>
 
-                <div class="file-gallery">
-                    <div class="file-item">
-                        <img src="placeholder_id_front.jpg" alt="Front of ID">
-                        <div class="file-caption">Government ID (Front)</div>
-                    </div>
-                    <div class="file-item">
-                        <img src="placeholder_id_back.jpg" alt="Back of ID">
-                        <div class="file-caption">Government ID (Back)</div>
-                    </div>
-                    <div class="file-item">
-                        <img src="placeholder_certificate.jpg" alt="Certificate">
-                        <div class="file-caption">Employment Certificate</div>
-                    </div>
-                    <div class="file-item">
-                        <img src="placeholder_proof.jpg" alt="Proof of Address">
-                        <div class="file-caption">Proof of Address</div>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button class="modal-btn btn-approve">APPROVE</button>
-                    <button class="modal-btn btn-decline">DECLINE</button>
-                </div>
+          <div class="file-gallery grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="file-item border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+              <img src="placeholder_id_front.jpg" alt="Front of ID" class="w-full h-56 object-cover bg-gray-100" />
+              <div class="file-caption text-center text-sm font-medium bg-gray-50 border-t border-gray-200 p-3">Government ID (Front)</div>
             </div>
+
+            <div class="file-item border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+              <img src="placeholder_id_back.jpg" alt="Back of ID" class="w-full h-56 object-cover bg-gray-100" />
+              <div class="file-caption text-center text-sm font-medium bg-gray-50 border-t border-gray-200 p-3">Government ID (Back)</div>
+            </div>
+
+            <div class="file-item border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+              <img src="placeholder_certificate.jpg" alt="Certificate" class="w-full h-56 object-cover bg-gray-100" />
+              <div class="file-caption text-center text-sm font-medium bg-gray-50 border-t border-gray-200 p-3">Employment Certificate</div>
+            </div>
+
+            <div class="file-item border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+              <img src="placeholder_proof.jpg" alt="Proof of Address" class="w-full h-56 object-cover bg-gray-100" />
+              <div class="file-caption text-center text-sm font-medium bg-gray-50 border-t border-gray-200 p-3">Proof of Address</div>
+            </div>
+          </div>
+
+          <div class="modal-footer flex justify-end gap-4 mt-6 border-t border-gray-100 pt-4">
+            <button class="modal-btn btn-approve inline-block px-6 py-2 rounded-lg text-white font-bold bg-green-600 hover:bg-green-700 min-w-[120px]">APPROVE</button>
+            <button class="modal-btn btn-decline inline-block px-6 py-2 rounded-lg text-white font-bold bg-red-600 hover:bg-red-700 min-w-[120px]">DECLINE</button>
+          </div>
         </div>
+      </div>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const modal = document.getElementById('verificationModal');
-            const modalTitle = document.getElementById('modalPersonName');
-            const modalRole = document.getElementById('modalRole');
-            const modalStatus = document.getElementById('modalStatus');
-            const dataRows = document.querySelectorAll('.data-row');
 
-            // Function to dynamically set status text and color class
-            function setModalStatus(statusText) {
-                modalStatus.textContent = statusText;
-                // Remove existing status classes
-                modalStatus.classList.remove('approved', 'declined', 'pending');
+  </div>
 
-                // Add the class corresponding to the status text
-                if (statusText === 'APPROVED') {
-                    modalStatus.classList.add('approved');
-                } else if (statusText === 'DECLINED') {
-                    modalStatus.classList.add('declined');
-                } else if (statusText === 'PENDING') {
-                    modalStatus.classList.add('pending');
-                }
-            }
+  <!-- JS (preserves original behavior, updated to toggle Tailwind classes) -->
+  <script>
+    // CSRF helper (same as original)
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
 
-            dataRows.forEach(row => {
-                row.addEventListener('click', function() {
-                    const personNameElement = row.querySelector('.person-name');
-                    const name = personNameElement ? personNameElement.textContent.trim() : 'Unknown User';
+    // Status class sets for Tailwind (we'll add/remove these)
+    const STATUS_CLASSES = {
+      'APPROVED': ['bg-green-100', 'text-green-700'],
+      'PENDING' : ['bg-yellow-100', 'text-yellow-700'],
+      'REJECTED': ['bg-red-100', 'text-red-700'],
+      // some back-compatibility for 'DECLINED' if used
+      'DECLINED': ['bg-red-100', 'text-red-700']
+    };
 
-                    // Get data attributes from the clicked row
-                    const role = row.getAttribute('data-role') || 'N/A';
-                    const statusText = row.getAttribute('data-status-tag') || 'N/A'; // Use data-status-tag
+    // Remove existing status classes from an element
+    function removeStatusClasses(el) {
+      if (!el) return;
+      // Flatten class arrays and remove them
+      const allClasses = new Set([].concat(...Object.values(STATUS_CLASSES)));
+      allClasses.forEach(cls => el.classList.remove(cls));
+    }
 
-                    // Populate the modal content
-                    modalTitle.textContent = 'Review: ' + name;
-                    modalRole.textContent = role;
+    // Apply given status (APPROVED/PENDING/REJECTED) to a status element (span)
+    function applyStatusClasses(el, status) {
+      if (!el) return;
+      removeStatusClasses(el);
+      const classes = STATUS_CLASSES[status] || STATUS_CLASSES['REJECTED'];
+      el.classList.add(...classes);
+      // Also ensure base classes for pill appearance exist
+      el.classList.add('inline-block', 'px-3', 'py-1', 'rounded-full', 'text-xs', 'font-bold');
+    }
 
-                    // Set status text and styling
-                    setModalStatus(statusText);
+    // Set modal status text and styling
+    function setModalStatus(statusElement, statusText) {
+      statusElement.textContent = statusText;
+      applyStatusClasses(statusElement, statusText);
+    }
 
-                    // Show the modal
-                    modal.style.display = 'flex';
-                });
-            });
+    // Update row UI after status change
+    function updateRowStatus(row, newStatus) {
+      row.setAttribute('data-status', newStatus);
 
-            // Close modal when clicking outside the content
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    modal.style.display = 'none';
-                }
-            });
+      // Find the status-tag element in the row
+      const statusTag = row.querySelector('.status-tag');
+      if (statusTag) {
+        statusTag.textContent = newStatus;
+        applyStatusClasses(statusTag, newStatus);
+      }
 
-            // Close modal when clicking any button inside the footer
-            document.querySelectorAll('.modal-footer .modal-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    modal.style.display = 'none';
-                });
-            });
+      // For non-pending statuses, make row non-clickable / default cursor
+      if (newStatus !== 'PENDING') {
+        row.classList.remove('cursor-pointer', 'hover:bg-gray-50');
+        row.classList.add('cursor-default');
+      } else {
+        row.classList.add('cursor-pointer', 'hover:bg-gray-50');
+        row.classList.remove('cursor-default');
+      }
+    }
+
+    // Simulated backend update (or replacement for fetch)
+    function handleVerificationAction(rowElement, action) {
+      const verificationId = rowElement.getAttribute('data-verification-id');
+      const personName = rowElement.querySelector('.person-name') ? rowElement.querySelector('.person-name').textContent.trim() : 'Unknown';
+      const newStatus = action === 'APPROVE' ? 'APPROVED' : 'REJECTED';
+
+      console.log(`Action: ${action} on Verification ID ${verificationId} (${personName})`);
+
+      // --- Place for real fetch to backend (commented) ---
+      /*
+      fetch('/verification/update_status/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+          verification_id: verificationId,
+          new_status: newStatus
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          updateRowStatus(rowElement, newStatus);
+        } else {
+          alert('Error updating status: ' + (data.message || 'Unknown error'));
+        }
+      })
+      .catch(err => console.error('Fetch error:', err));
+      */
+
+      // --- UI-only simulation ---
+      alert(`SIMULATION: Successfully set ${personName}'s status to ${newStatus}.`);
+      updateRowStatus(rowElement, newStatus);
+    }
+
+    // DOM interactions (open modal on pending rows, wire buttons)
+    document.addEventListener('DOMContentLoaded', function () {
+      const modal = document.getElementById('verificationModal');
+      const modalTitle = document.getElementById('modalPersonName');
+      const modalRole = document.getElementById('modalRole');
+      const modalStatus = document.getElementById('modalStatus');
+
+      const dataRows = document.querySelectorAll('.data-row');
+      let activeRow = null;
+
+      dataRows.forEach(row => {
+        row.addEventListener('click', function () {
+          const status = row.getAttribute('data-status');
+
+          // Only open modal for pending items
+          if (status !== 'PENDING') return;
+
+          activeRow = row;
+
+          const personNameElement = row.querySelector('.person-name');
+          const name = personNameElement ? personNameElement.textContent.trim() : 'Unknown User';
+          const role = row.getAttribute('data-role') || 'N/A';
+
+          modalTitle.textContent = 'Review: ' + name;
+          modalRole.textContent = role;
+          setModalStatus(modalStatus, status);
+
+          // Show modal (toggle classes)
+          modal.classList.remove('hidden');
+          modal.classList.add('flex');
+          // ensure the modal scroll starts at top on open
+          modal.scrollTop = 0;
         });
-    </script>
-</div>
+      });
+
+      // Close modal when clicking outside the content
+      modal.addEventListener('click', function (e) {
+        // if click target is overlay itself (not modal content), close
+        if (e.target === modal) {
+          modal.classList.add('hidden');
+          modal.classList.remove('flex');
+          activeRow = null;
+        }
+      });
+
+      // Wire approve/decline buttons
+      document.querySelectorAll('.modal-footer .modal-btn, .modal-footer .btn-approve, .modal-footer .btn-decline').forEach(button => {
+        button.addEventListener('click', function (e) {
+          // Hide modal
+          modal.classList.add('hidden');
+          modal.classList.remove('flex');
+
+          if (activeRow) {
+            const action = e.target.classList.contains('btn-approve') ? 'APPROVE' : 'DECLINE';
+            handleVerificationAction(activeRow, action);
+            activeRow = null;
+          }
+        });
+      });
+
+      // Also wire the visible action buttons inside modal-footer (since we used classes)
+      const approveBtn = document.querySelector('.btn-approve');
+      const declineBtn = document.querySelector('.btn-decline');
+      if (approveBtn) {
+        approveBtn.addEventListener('click', function (e) {
+          // Already handled by the generic handler above; included for safety
+        });
+      }
+      if (declineBtn) {
+        declineBtn.addEventListener('click', function (e) {
+          // Already handled by the generic handler above; included for safety
+        });
+      }
+    });
+  </script>
 </body>
 </html>

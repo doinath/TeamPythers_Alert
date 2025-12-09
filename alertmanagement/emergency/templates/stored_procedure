@@ -1,0 +1,55 @@
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_SubmitEmergencyReport`(
+    IN p_citizen_id INT,
+    IN p_emergency_type VARCHAR(50),
+    IN p_other_specified VARCHAR(100),
+    IN p_reporting_for_others VARCHAR(3),
+    IN p_patient_full_name VARCHAR(150),
+    IN p_description TEXT,
+    IN p_gps_location VARCHAR(100)
+)
+BEGIN
+    DECLARE v_final_description TEXT;
+    DECLARE v_final_category VARCHAR(50);
+    DECLARE v_final_gps VARCHAR(100);
+
+    SET v_final_gps = IFNULL(p_gps_location, '');
+    IF v_final_gps = '' THEN
+        SET v_final_gps = '0.0000, 0.0000';
+    END IF;
+
+    IF p_emergency_type = 'others' OR p_emergency_type = 'accident' THEN
+        SET v_final_category = 'other';
+    ELSE
+        SET v_final_category = p_emergency_type;
+    END IF;
+
+    SET v_final_description = p_description;
+    IF p_other_specified IS NOT NULL AND p_other_specified != '' THEN
+        SET v_final_description = CONCAT('[SPECIFIC TYPE: ', p_other_specified, '] \n', v_final_description);
+    END IF;
+    IF p_reporting_for_others = 'yes' AND p_patient_full_name IS NOT NULL AND p_patient_full_name != '' THEN
+        SET v_final_description = CONCAT('[REPORTING FOR PATIENT: ', p_patient_full_name, '] \n', v_final_description);
+    END IF;
+    INSERT INTO emergency_emergencyevent (
+        userID_id,
+        category,
+        description,
+        gps_location,
+        status,
+        severity_level,
+        created_at,
+        updated_at
+    ) VALUES (
+        p_citizen_id,
+        v_final_category,
+        v_final_description,
+        v_final_gps,
+        'reported',
+        'low',
+        NOW(),
+        NOW()
+    );
+
+END$$
+DELIMITER ;

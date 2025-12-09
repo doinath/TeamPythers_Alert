@@ -50,7 +50,7 @@ class GovernmentDocument(models.Model):
     id_type = models.CharField(max_length=255)
     id_number = models.CharField(max_length=255)
     filepath = models.FileField(upload_to="verification_documents/")
-    status = models.CharField(max_length=20)
+    status = models.CharField(max_length=20, default='PENDING')
 
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
 

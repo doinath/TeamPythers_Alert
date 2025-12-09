@@ -71,31 +71,34 @@
                                     {{ request.user.first_name }} {{ request.user.last_name }}
                                 </span>
                             {% else %}
-                                <span class="text-gray-800 font-medium text-sm mr-3">
-                                    John Doe
-                                </span>
+                                <span class="text-gray-800 font-medium text-sm mr-3">Guest</span>
                             {% endif %}
 
-                            <!-- Clickable Profile Picture with Role-Based URL -->
-                            {% if request.user.role == 'citizen' %}
-                                <a href="{% url 'citizen_profile' %}" class="group">
-                            {% elif request.user.role == 'responder' %}
-                                <a href="{% url 'responder_profile' %}" class="group">
-                            {% elif request.user.role == 'authority' %}
-                                <a href="{% url 'authority_profile' %}" class="group">
+                            <!--
+                                LOGIC FIX: Removed 'hasattr' (not valid in templates).
+                                Django templates allow checking related objects directly.
+                                If they don't exist, it evaluates to False.
+                            -->
+
+                            <!-- Check if Responder Profile exists -->
+                            {% if request.user.custom_profile.citizen_profile.responder_profile %}
+                                 <a href="{% url 'account:responder_profile' %}" class="group">
+                            <!-- Check if Authority Profile exists -->
+                            {% elif request.user.custom_profile.citizen_profile.authority %}
+                                 <a href="{% url 'account:authority_profile' %}" class="group">
+                            <!-- Default to Citizen -->
                             {% else %}
-                                <a href="#" class="group">
+                                 <a href="{% url 'account:citizen_profile' %}" class="group">
                             {% endif %}
-                                    {% if request.user.profile_picture %}
-                                        <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
-                                             src="{{ request.user.profile_picture.url }}"
-                                             alt="User Avatar" />
-                                    {% else %}
-                                        <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
-                                             src="https://i.pravatar.cc/40?u={{ request.user.username }}"
-                                             alt="User Avatar" />
-                                    {% endif %}
-                                </a>
+
+                                <!--
+                                    IMAGE FIX: Models do not have profile_picture.
+                                    Using UI Avatars for safe rendering.
+                                -->
+                                <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
+                                     src="https://ui-avatars.com/api/?name={{ request.user.first_name }}+{{ request.user.last_name }}&background=EF4444&color=fff"
+                                     alt="User Avatar" />
+                            </a>
                         </div>
 
                         <!-- Mobile Menu Button -->
@@ -120,18 +123,20 @@
             <!-- Mobile Menu -->
             <div id="mobile-menu" class="hidden md:hidden bg-white border-t absolute w-full z-30 shadow-lg top-16 left-0">
                 <nav class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                    <!-- Corrected URL Syntax -->
                     <a href="{% url 'account:citizen_dashboard' %}" class="block px-3 py-2 rounded-md text-base font-medium bg-red-50 text-red-700">Dashboard</a>
                     <a href="{% url 'communication:messages' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Chat</a>
                     <a href="{% url 'communication:call_logs' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Call logs</a>
                 </nav>
                 <div class="pt-4 pb-3 border-t border-gray-200">
                     <div class="flex items-center px-5">
-                        {% if request.user.profile_picture %}
-                            <img class="h-10 w-10 rounded-full object-cover" src="{{ request.user.profile_picture.url }}" alt="User Avatar" />
-                        {% else %}
-                            <img class="h-10 w-10 rounded-full object-cover" src="https://i.pravatar.cc/100?u={{ request.user.username }}" alt="User Avatar" />
-                        {% endif %}
+                        <!--
+                             MOBILE FIX: Removed 'request.user.profile_picture' check.
+                             Replaced with UI Avatars to prevent crash.
+                        -->
+                        <img class="h-10 w-10 rounded-full object-cover"
+                             src="https://ui-avatars.com/api/?name={{ request.user.first_name }}+{{ request.user.last_name }}&background=EF4444&color=fff"
+                             alt="User Avatar" />
+
                         <div class="ml-3">
                             <div class="text-base font-medium text-gray-800">{{ request.user.first_name }} {{ request.user.last_name }}</div>
                             <div class="text-sm font-medium text-gray-500">{{ request.user.email }}</div>
@@ -234,12 +239,33 @@
                         </div>
                     </div>
 
+                    <!-- ================= AUTHORITY APPROVAL MODAL ================= -->
+                    <div id="approval-success-modal" class="fixed inset-0 bg-gray-900 bg-opacity-90 flex items-center justify-center z-[200] p-4 hidden">
+                        <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md mx-auto relative modal-animate text-center border-t-8 border-blue-600">
+
+                            <!-- Success Icon -->
+                            <div class="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-blue-100 mb-6">
+                                <svg class="h-10 w-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+
+                            <h2 class="text-2xl font-bold text-gray-900 mb-2">Application Approved!</h2>
+                            <p class="text-gray-600 mb-8">
+                                Your application to become an <span class="font-bold text-blue-600">Authority</span> has been verified and approved by the administrator.
+                            </p>
+
+                            <button onclick="redirectToAuthority()" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors shadow-lg transform hover:scale-105 duration-200">
+                                Go to Authority Dashboard
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- Application Cards -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <!-- Responder Card -->
                         <div class="bg-white p-6 rounded-xl shadow-lg flex flex-col items-start hover:shadow-xl transition-shadow duration-300 border border-gray-100">
                             <div class="p-3 bg-red-100 rounded-lg mb-4">
-                                <!-- Shield Icon for Responder -->
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                                 </svg>
@@ -256,7 +282,6 @@
                         <!-- Authority Card -->
                         <div class="bg-white p-6 rounded-xl shadow-lg flex flex-col items-start hover:shadow-xl transition-shadow duration-300 border border-gray-100">
                             <div class="p-3 bg-blue-100 rounded-lg mb-4">
-                                <!-- Building/Landmark Icon for Authority -->
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                 </svg>
@@ -303,6 +328,7 @@
     </div>
 
     <!-- ================= MODALS ================= -->
+    <!-- (Modals are unchanged from your input, they are correct) -->
 
     <!-- SOS Modal -->
     <div id="sos-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4 hidden">
@@ -403,188 +429,208 @@
 
     <!-- Responder Profile Modal -->
     <div id="responder-modal" class="fixed inset-0 z-[100] overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" onclick="closeModal('responder-modal')"></div>
-        <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-            <div class="relative transform overflow-hidden rounded-2xl bg-gray-50 text-left shadow-xl transition-all my-8 w-full max-w-3xl border border-gray-200 modal-animate">
-                <div class="absolute top-4 right-4 z-10">
-                    <button onclick="closeModal('responder-modal')" class="text-gray-400 hover:text-gray-600 p-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                    </button>
-                </div>
+    <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" onclick="closeModal('responder-modal')"></div>
+    <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+        <div class="relative transform overflow-hidden rounded-2xl bg-gray-50 text-left shadow-xl transition-all my-8 w-full max-w-3xl border border-gray-200 modal-animate">
+            <div class="absolute top-4 right-4 z-10">
+                <button onclick="closeModal('responder-modal')" class="text-gray-400 hover:text-gray-600 p-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
 
-                <div class="p-8">
-                    <h2 class="text-3xl font-bold text-gray-800 text-center mb-2">
-                        Complete Your <span class="text-red-600">Responder</span> Profile
-                    </h2>
-                    <p class="text-gray-600 mb-8 text-center">
-                        This information is vital for verifying your authority and assigning emergency tasks effectively.
-                    </p>
+            <div class="p-8">
+                <h2 class="text-3xl font-bold text-gray-800 text-center mb-2">
+                    Complete Your <span class="text-red-600">Responder</span> Profile
+                </h2>
+                <p class="text-gray-600 mb-8 text-center">
+                    This information is vital for verifying your authority and assigning emergency tasks effectively.
+                </p>
 
-                    <form onsubmit="event.preventDefault(); alert('Responder Saved'); closeModal('responder-modal');">
-                        <!-- Professional Information -->
-                        <section>
-                            <h3 class="text-xl font-semibold text-gray-700 mb-4">Professional Information</h3>
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-600 mb-1">Department Unit</label>
-                                <input type="text" required placeholder="e.g., Unit 404 - Central Station" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-shadow" />
-                            </div>
+                <!-- 1. Ensure enctype is multipart/form-data for file uploads -->
+                <form action="{% url 'account:apply_responder' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-600 mb-1">Role</label>
-                                    <select required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-shadow bg-white">
-                                        <option value="">Select Role</option>
-                                        <option value="Medical">Medical Responders</option>
-                                        <option value="Fire">Fire Responders</option>
-                                        <option value="Law">Law Enforcement</option>
-                                        <option value="Rescue">Rescue & Search</option>
-                                        <option value="Logistics">Logistics</option>
-                                        <option value="Community">Community</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-600 mb-1">Service Area</label>
-                                    <input type="text" required placeholder="e.g., Downtown District" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-shadow" />
-                                </div>
-                            </div>
-                        </section>
-
-                        <!-- Verification ID -->
-                        <section class="mt-6 pt-6 border-t border-gray-200">
-                            <h3 class="text-xl font-semibold text-gray-700 mb-4">Verification</h3>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-600 mb-1">ID Type</label>
-                                    <select required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-shadow bg-white">
-                                        <option value="">Select ID Type</option>
-                                        <option value="National ID">National ID</option>
-                                        <option value="Department ID">Department ID</option>
-                                        <option value="PRC License">PRC License</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-600 mb-1">ID Number</label>
-                                    <input type="text" required placeholder="Enter ID Number" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-shadow" />
-                                </div>
-                            </div>
-
-                            <div class="space-y-4">
-                                <div class="p-4 border rounded-lg bg-white">
-                                    <label class="block text-sm font-medium text-gray-600 mb-1">
-                                        Upload Government Responder's Requirement ID
-                                    </label>
-                                    <div class="mt-2 flex items-center justify-center w-full">
-                                        <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-red-50 hover:border-red-300 transition-colors">
-                                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mb-2 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                                                <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
-                                                <p class="text-xs text-gray-500">PNG, JPG or PDF (MAX. 5MB)</p>
-                                            </div>
-                                            <input type="file" class="hidden" accept=".png,.jpg,.jpeg,.pdf" />
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-
-                        <div class="mt-8 flex flex-col sm:flex-row gap-4">
-                            <button type="submit" class="flex-1 bg-gradient-to-r from-red-600 to-red-700 text-white font-bold py-3 px-4 rounded-lg hover:from-red-700 hover:to-red-800 shadow-lg transition-transform transform hover:scale-105">
-                                Save Responder Profile
-                            </button>
-                            <button type="button" onclick="closeModal('responder-modal')" class="flex-1 bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg hover:bg-gray-300 shadow-lg transition-transform transform hover:scale-105">
-                                Cancel
-                            </button>
+                    <!-- Professional Information -->
+                    <section>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-4">Professional Information</h3>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-600 mb-1">Department Unit</label>
+                            <input type="text" name="department_unit" required placeholder="e.g., Unit 404 - Central Station" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-shadow" />
                         </div>
-                    </form>
-                </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600 mb-1">Role</label>
+                                <select name="role" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-shadow bg-white">
+                                    <option value="">Select Role</option>
+                                    <option value="Medical">Medical Responders</option>
+                                    <option value="Fire">Fire Responders</option>
+                                    <option value="Law">Law Enforcement</option>
+                                    <option value="Rescue">Rescue & Search</option>
+                                    <option value="Logistics">Logistics</option>
+                                    <option value="Community">Community</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600 mb-1">Service Area</label>
+                                <input type="text" name="service_area" required placeholder="e.g., Downtown District" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-shadow" />
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Verification ID -->
+                    <section class="mt-6 pt-6 border-t border-gray-200">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-4">Verification</h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600 mb-1">ID Type</label>
+                                <select name="id_type" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-shadow bg-white">
+                                    <option value="">Select ID Type</option>
+                                    <option value="National ID">National ID</option>
+                                    <option value="Department ID">Department ID</option>
+                                    <option value="PRC License">PRC License</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600 mb-1">ID Number</label>
+                                <input type="text" name="id_number" required placeholder="Enter ID Number" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-shadow" />
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="p-4 border rounded-lg bg-white">
+                                <label class="block text-sm font-medium text-gray-600 mb-1">
+                                    Upload Government Responder's Requirement ID
+                                </label>
+                                <div class="mt-2 flex items-center justify-center w-full">
+                                    <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-red-50 hover:border-red-300 transition-colors">
+                                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                            <!-- Icon -->
+                                            <svg id="upload-icon" xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mb-2 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+
+                                            <!-- 2. Added ID to text so we can change it via JS -->
+                                            <p id="upload-text" class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                                            <p class="text-xs text-gray-500">PNG, JPG or PDF (MAX. 5MB)</p>
+                                        </div>
+
+                                        <!-- 3. Added ID to input for JS listener -->
+                                        <input type="file" id="responder_id_file" name="id_file" class="hidden" accept=".png,.jpg,.jpeg,.pdf" required />
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="mt-8 flex flex-col sm:flex-row gap-4">
+                        <button type="submit" class="flex-1 bg-gradient-to-r from-red-600 to-red-700 text-white font-bold py-3 px-4 rounded-lg hover:from-red-700 hover:to-red-800 shadow-lg transition-transform transform hover:scale-105">
+                            Save Responder Profile
+                        </button>
+                        <button type="button" onclick="closeModal('responder-modal')" class="flex-1 bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg hover:bg-gray-300 shadow-lg transition-transform transform hover:scale-105">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
 
     <!-- Authority Profile Modal -->
     <div id="authority-modal" class="fixed inset-0 z-[100] overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" onclick="closeModal('authority-modal')"></div>
-        <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-            <div class="relative transform overflow-hidden rounded-2xl bg-gray-50 text-left shadow-xl transition-all my-8 w-full max-w-3xl border border-gray-200 modal-animate">
+    <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" onclick="closeModal('authority-modal')"></div>
+    <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+        <div class="relative transform overflow-hidden rounded-2xl bg-gray-50 text-left shadow-xl transition-all my-8 w-full max-w-3xl border border-gray-200 modal-animate">
 
-                <div class="absolute top-4 right-4 z-10">
-                    <button onclick="closeModal('authority-modal')" class="text-gray-400 hover:text-gray-600 p-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                    </button>
-                </div>
+            <div class="absolute top-4 right-4 z-10">
+                <button onclick="closeModal('authority-modal')" class="text-gray-400 hover:text-gray-600 p-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
 
-                <div class="p-8">
-                    <h2 class="text-3xl font-bold text-gray-800 text-center mb-2">
-                        Complete Your <span class="text-blue-600">Authority</span> Profile
-                    </h2>
-                    <p class="text-gray-600 mb-8 text-center">
-                        Register your organization to coordinate with our network and enhance emergency response capabilities.
-                    </p>
+            <div class="p-8">
+                <h2 class="text-3xl font-bold text-gray-800 text-center mb-2">
+                    Complete Your <span class="text-blue-600">Authority</span> Profile
+                </h2>
+                <p class="text-gray-600 mb-8 text-center">
+                    Register your organization to coordinate with our network and enhance emergency response capabilities.
+                </p>
 
-                    <form onsubmit="event.preventDefault(); alert('Authority Saved'); closeModal('authority-modal');">
-                        <section>
-                            <h3 class="text-xl font-semibold text-gray-700 mb-4">Organization Information</h3>
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-600 mb-1">Agency Name</label>
-                                <input type="text" required placeholder="e.g., City Disaster Risk Reduction Office" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" />
-                            </div>
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-600 mb-1">Jurisdiction Area</label>
-                                <input type="text" required placeholder="e.g., Metropolitan District, Zone A" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" />
-                            </div>
-                        </section>
+                <!-- 1. Updated Form Attributes -->
+                <form action="{% url 'account:apply_authority' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
 
-                        <section class="mt-6 pt-6 border-t border-gray-200">
-                            <h3 class="text-xl font-semibold text-gray-700 mb-4">Verification</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-600 mb-1">ID Type</label>
-                                    <select required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow bg-white">
-                                        <option value="">Select ID Type</option>
-                                        <option value="National ID">National ID</option>
-                                        <option value="Agency ID">Agency ID</option>
-                                        <option value="Other">Other Government ID</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-600 mb-1">ID Number</label>
-                                    <input type="text" required placeholder="Enter ID Number" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" />
-                                </div>
-                            </div>
-
-                            <div class="space-y-4">
-                                <div class="p-4 border rounded-lg bg-white">
-                                    <label class="block text-sm font-medium text-gray-600 mb-1">
-                                        Upload Government Authority Requirement ID
-                                    </label>
-                                    <div class="mt-2 flex items-center justify-center w-full">
-                                        <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-blue-50 hover:border-blue-300 transition-colors">
-                                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mb-2 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                                                <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
-                                                <p class="text-xs text-gray-500">PNG, JPG or PDF (MAX. 5MB)</p>
-                                            </div>
-                                            <input type="file" class="hidden" accept=".png,.jpg,.jpeg,.pdf" />
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-
-                        <div class="mt-8 flex flex-col sm:flex-row gap-4">
-                            <button type="submit" class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold py-3 px-4 rounded-lg hover:from-blue-700 hover:to-blue-800 shadow-lg transition-transform transform hover:scale-105">
-                                Save Authority Profile
-                            </button>
-                            <button type="button" onclick="closeModal('authority-modal')" class="flex-1 bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg hover:bg-gray-300 shadow-lg transition-transform transform hover:scale-105">
-                                Cancel
-                            </button>
+                    <section>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-4">Organization Information</h3>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-600 mb-1">Agency Name</label>
+                            <!-- Added name -->
+                            <input type="text" name="agency_name" required placeholder="e.g., City Disaster Risk Reduction Office" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" />
                         </div>
-                    </form>
-                </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-600 mb-1">Jurisdiction Area</label>
+                            <!-- Added name -->
+                            <input type="text" name="jurisdiction_area" required placeholder="e.g., Metropolitan District, Zone A" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" />
+                        </div>
+                    </section>
+
+                    <section class="mt-6 pt-6 border-t border-gray-200">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-4">Verification</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600 mb-1">ID Type</label>
+                                <!-- Added name -->
+                                <select name="id_type" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow bg-white">
+                                    <option value="">Select ID Type</option>
+                                    <option value="National ID">National ID</option>
+                                    <option value="Agency ID">Agency ID</option>
+                                    <option value="Other">Other Government ID</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600 mb-1">ID Number</label>
+                                <!-- Added name -->
+                                <input type="text" name="id_number" required placeholder="Enter ID Number" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" />
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="p-4 border rounded-lg bg-white">
+                                <label class="block text-sm font-medium text-gray-600 mb-1">
+                                    Upload Government Authority Requirement ID
+                                </label>
+                                <div class="mt-2 flex items-center justify-center w-full">
+                                    <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-blue-50 hover:border-blue-300 transition-colors">
+                                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                            <!-- Added ID for Icon -->
+                                            <svg id="auth-upload-icon" xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mb-2 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+
+                                            <!-- Added ID for Text -->
+                                            <p id="auth-upload-text" class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                                            <p class="text-xs text-gray-500">PNG, JPG or PDF (MAX. 5MB)</p>
+                                        </div>
+
+                                        <!-- Added name, unique ID, and removed hidden functionality (kept class hidden) -->
+                                        <input type="file" id="authority_id_file" name="id_file" class="hidden" accept=".png,.jpg,.jpeg,.pdf" required />
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="mt-8 flex flex-col sm:flex-row gap-4">
+                        <button type="submit" class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold py-3 px-4 rounded-lg hover:from-blue-700 hover:to-blue-800 shadow-lg transition-transform transform hover:scale-105">
+                            Save Authority Profile
+                        </button>
+                        <button type="button" onclick="closeModal('authority-modal')" class="flex-1 bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg hover:bg-gray-300 shadow-lg transition-transform transform hover:scale-105">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
 
     <script>
         // Global State
@@ -809,6 +855,49 @@
             initMap();
         });
 
+        // --- Responder  File Upload Logic ---
+        const fileInput = document.getElementById('responder_id_file');
+        const fileText = document.getElementById('upload-text');
+        const uploadIcon = document.getElementById('upload-icon');
+
+        fileInput.addEventListener('change', function(e) {
+            if (this.files && this.files[0]) {
+                const fileName = this.files[0].name;
+                // Update UI to show selected file
+                fileText.innerHTML = `<span class="font-bold text-red-600">Selected:</span> ${fileName}`;
+                uploadIcon.classList.add('text-red-600'); // Change icon color
+            }
+        });
+
+        // --- Authority File Upload Logic ---
+        const authFileInput = document.getElementById('authority_id_file');
+        const authFileText = document.getElementById('auth-upload-text');
+        const authUploadIcon = document.getElementById('auth-upload-icon');
+
+        authFileInput.addEventListener('change', function(e) {
+            if (this.files && this.files[0]) {
+                const fileName = this.files[0].name;
+                // Update UI to show selected file
+                authFileText.innerHTML = `<span class="font-bold text-blue-600">Selected:</span> ${fileName}`;
+                authUploadIcon.classList.add('text-blue-600'); // Change icon color to blue
+                authUploadIcon.classList.remove('text-gray-400');
+            }
+        });
+
+        // AUTHORITY APPROVAL MODAL TRIGGER
+        {% if approval_alert %}
+            document.addEventListener('DOMContentLoaded', function() {
+                const approvalModal = document.getElementById('approval-success-modal');
+                if(approvalModal) {
+                    approvalModal.classList.remove('hidden');
+                }
+            });
+        {% endif %}
+
+        function redirectToAuthority() {
+            // Redirect to the Authority Dashboard URL
+            window.location.href = "{% url 'account:authority_dashboard' %}";
+        }
     </script>
 </body>
 </html>

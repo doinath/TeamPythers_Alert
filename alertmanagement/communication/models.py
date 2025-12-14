@@ -1,6 +1,7 @@
 from django.db import models
+from django.conf import settings
 from emergency.models import EmergencyEvent
-from account.models import User
+
 
 class Message(models.Model):
     message_id = models.AutoField(primary_key=True)
@@ -8,7 +9,8 @@ class Message(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     emergency_event = models.ForeignKey(EmergencyEvent, on_delete=models.CASCADE)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    # Use settings.AUTH_USER_MODEL to avoid instance mismatch errors
+    user_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.message_text
@@ -16,37 +18,45 @@ class Message(models.Model):
 
 class CallLog(models.Model):
     CALL_TYPES = [
-        ("incoming", "Incoming"),
-        ("outgoing", "Outgoing"),
+        ("incoming", "Incoming"),  # From perspective of receiver
+        ("outgoing", "Outgoing"),  # From perspective of initiator
         ("missed", "Missed"),
     ]
 
+    STATUS_CHOICES = [
+        ("ringing", "Ringing"),
+        ("active", "Active"),
+        ("completed", "Completed"),
+        ("declined", "Declined"),
+        ("cancelled", "Cancelled"),
+    ]
+
     call_id = models.AutoField(primary_key=True)
-    start_time = models.DateTimeField(auto_now_add=True)
+
+    # Citizen (Caller)
+    user_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='initiated_calls')
+
+    # Authority/Responder (Receiver)
+    responder = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+                                  related_name='received_calls')
+
+    emergency_event = models.ForeignKey(EmergencyEvent, on_delete=models.CASCADE, null=True, blank=True)
+
+    start_time = models.DateTimeField(auto_now_add=True)  # Time initiated
     end_time = models.DateTimeField(null=True, blank=True)
     duration = models.IntegerField(null=True, blank=True)
     call_type = models.CharField(max_length=20, choices=CALL_TYPES)
 
-    emergency_event = models.ForeignKey(EmergencyEvent, on_delete=models.CASCADE)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    # NEW FIELD
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='ringing')
 
     def __str__(self):
-        return str(self.call_id)
+        return f"Call {self.call_id} ({self.status})"
 
     @property
     def formatted_duration(self):
-        if self.duration is None:
-            return "00:00"
-
+        if self.duration is None: return "00:00"
         total_seconds = self.duration
-
-        hours = total_seconds // 3600
-        remaining_seconds = total_seconds % 3600
-        minutes = remaining_seconds // 60
-        seconds = remaining_seconds % 60
-
-        # Format the output based on whether there are hours, minutes, or just seconds.
-        # Ensure two-digit formatting for minutes and seconds.
-        if hours > 0:
-            return f"{hours}:{minutes:02d}:{seconds:02d}"
+        minutes = total_seconds // 60
+        seconds = total_seconds % 60
         return f"{minutes:02d}:{seconds:02d}"

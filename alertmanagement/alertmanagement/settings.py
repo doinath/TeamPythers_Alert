@@ -68,7 +68,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'alertmanagement',
         'USER': 'root',
-        'PASSWORD': 'Admin#123',
+        'PASSWORD': 'bossdale3253',
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {
@@ -92,7 +92,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Manila'
 
 USE_I18N = True
 

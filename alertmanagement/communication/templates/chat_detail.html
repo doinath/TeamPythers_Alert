@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Chat with {{ target_user.first_name }}</title>
+</head>
+<body>
+    <h1>Chat with {{ target_user.first_name }} {{ target_user.last_name }}</h1>
+    <p>Chat interface coming soon...</p>
+    <a href="{% url 'communication:call_logs' %}">Back to Call Logs</a>
+</body>
+</html>

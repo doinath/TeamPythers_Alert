@@ -68,7 +68,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'alertmanagement',
         'USER': 'root',
-        'PASSWORD': 'bossdale3253',
+        'PASSWORD': 'Admin#123',
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {
@@ -106,9 +106,13 @@ STATICFILES_DIRS = [
     BASE_DIR / 'verification' / "assets"
 ]
 
-STATIC_URL = 'static/'
+# 1. Allow cookies to work without HTTPS (Essential for localhost)
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
-
+# 2. Tell Django to trust requests from your local address
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
+]
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

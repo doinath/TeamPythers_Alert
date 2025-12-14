@@ -362,7 +362,36 @@ class ResponderProfileView(LoginRequiredMixin, View):
 
 class AuthorityProfileView(LoginRequiredMixin, View):
     def get(self, request):
-        return render(request, "authority_profile.html")
+        try:
+            # 1. Access the main custom profile linked to the Auth User
+            user_profile = request.user.custom_profile
+
+            # 2. Access the Authority-specific details
+            # We assume Authority is linked through Citizen -> Authority
+            authority_details = Authority.objects.get(
+                citizen__user_id=user_profile
+            )
+
+            # 3. Fetch related data
+            medical_conditions = MedicalCondition.objects.filter(user_id=user_profile)
+            contacts = ContactInfo.objects.filter(user_id=user_profile)
+            gov_ids = GovernmentDocument.objects.filter(user_id=user_profile)
+
+            context = {
+                'authority_user': user_profile,  # General User data (Name, Contact, Address, DOB, Gender)
+                'authority_details': authority_details,  # Authority-specific data (Agency, Jurisdiction)
+                'medical_conditions': medical_conditions,
+                'emergency_contacts': contacts,
+                'government_ids': gov_ids,
+            }
+            return render(request, "authority_profile.html", context)
+
+        except Authority.DoesNotExist:
+            messages.error(request, "Authority profile details not found. Please ensure your application is approved.")
+            return redirect('account:authority_dashboard')
+        except CustomUser.DoesNotExist:
+            messages.error(request, "User profile not found.")
+            return redirect('account:index')  # Redirect to index or login if base profile is missing
 
 
 # ---------------------------

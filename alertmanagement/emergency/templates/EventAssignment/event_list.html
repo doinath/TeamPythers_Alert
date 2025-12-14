@@ -36,8 +36,8 @@
                 <div class="flex items-center space-x-4">
                     <div class="hidden md:flex items-center space-x-4">
                         <span class="text-gray-800 font-medium text-sm mr-2">
-                            {% if user.is_authenticated %}
-                                {{ user.first_name }} {{ user.last_name }}
+                            {% if user.is_authenticated and user.custom_profile %}
+                                {{ user.custom_profile.first_name }} {{ user.custom_profile.last_name }}
                             {% else %}
                                 Julian Andales
                             {% endif %}

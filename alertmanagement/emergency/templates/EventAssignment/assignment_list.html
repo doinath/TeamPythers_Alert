@@ -31,9 +31,37 @@
                 </div>
                 <div class="flex items-center space-x-4">
                     <div class="hidden md:flex items-center space-x-4">
+
+                        {% if user.is_authenticated and user.custom_profile.citizen_profile.responder_profile %}
+                            {% with responder=user.custom_profile.citizen_profile.responder_profile %}
+
+                                {% if responder.duty_status == 'ON' %}
+                                    <span class="bg-green-600 text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2 shadow-sm">
+                                        AVAILABLE
+                                    </span>
+                                {% elif responder.duty_status == 'RES' or responder.duty_status == 'BUSY' %}
+                                    <span class="bg-[#d9534f] text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2 shadow-sm">
+                                        ON DUTY - BUSY
+                                    </span>
+                                {% elif responder.duty_status == 'OFF' or responder.duty_status == 'UNAV' %}
+                                    <span class="bg-gray-500 text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2 shadow-sm">
+                                        OFFLINE
+                                    </span>
+                                {% else %}
+                                    <span class="bg-blue-600 text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2 shadow-sm">
+                                        {{ responder.get_duty_status_display }}
+                                    </span>
+                                {% endif %}
+
+                            {% endwith %}
+                        {% else %}
+                            <span class="bg-gray-400 text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2">
+                                NO STATUS
+                            </span>
+                        {% endif %}
                         <span class="text-gray-800 font-medium text-sm mr-2">
-                            {% if user.is_authenticated %}
-                                {{ user.first_name }} {{ user.last_name }}
+                            {% if user.is_authenticated and user.custom_profile %}
+                                {{ user.custom_profile.first_name }} {{ user.custom_profile.last_name }}
                             {% else %}
                                 Julian Andales
                             {% endif %}

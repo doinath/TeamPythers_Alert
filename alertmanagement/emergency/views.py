@@ -1,3 +1,4 @@
+from django.db import connection
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib import messages
@@ -8,7 +9,17 @@ from django.db.models import Q
 from account.models import User as AccountUser, Citizen, Responder, ContactInfo
 from .models import EmergencyEvent, EventAssignment, MedicalCondition
 
-# --- VIEW CLASSES ---
+
+# --- HELPER FUNCTION FOR DEV MODE ---
+def get_dev_user(original_user, dev_id):
+    if dev_id:
+        try:
+            target_user = AccountUser.objects.get(user_id=dev_id)
+            return target_user.account
+        except Exception:
+            return original_user
+    return original_user
+
 
 class HomepageView(View):
     template_name = "EmergencyEvent/index.html"
@@ -51,57 +62,60 @@ class ReceiveCallView(View):
 class EventListView(View):
     template_name = "EventAssignment/event_list.html"
 
-    def get(self, request):
+    def get(self, request, dev_id=None):
+        # 1. Handle Dev Mode User
+        context_user = get_dev_user(request.user, dev_id)
+
         events = EmergencyEvent.objects.select_related('userID__user_id').all().order_by('-created_at')
-        context = {'events': events}
+
+        context = {
+            'events': events,
+            'user': context_user  # Overrides request.user in template
+        }
         return render(request, self.template_name, context)
 
 
 class AssignmentListView(View):
-    """
-    View for Responders to see ALL of THEIR assigned events (active, completed, cancelled)
-    by querying the EventAssignment table directly.
-    """
     template_name = "EventAssignment/assignment_list.html"
 
-    def get(self, request):
+    def get(self, request, dev_id=None):
+        # Priority: URL param (dev_id) > GET param (?dev_id=)
+        target_dev_id = dev_id or request.GET.get('dev_id')
+
+        context_user = request.user  # Default to logged-in user
+        responder_profile = None
         assignments = []
 
-        # 1. IDENTIFY RESPONDER
-        responder_profile = None
-
-        # --- DEV FALLBACK LOGIC ---
-        dev_id = request.GET.get('dev_id')
-        if dev_id:
+        if target_dev_id:
             try:
-                # Use the ID from the URL parameter for development/testing
-                responder_profile = Responder.objects.get(pk=dev_id)
-            except Responder.DoesNotExist:
-                messages.error(request, f"Responder with ID {dev_id} not found.")
-        # --- AUTHENTICATED USER LOGIC ---
+                target_account_user = AccountUser.objects.get(user_id=target_dev_id)
+                context_user = target_account_user.account
+                responder_profile = target_account_user.citizen_profile.responder_profile
+            except AccountUser.DoesNotExist:
+                messages.error(request, f"User with ID {target_dev_id} not found.")
+            except Exception:
+                messages.error(request, f"User ID {target_dev_id} does not have a Responder profile.")
+
         elif request.user.is_authenticated:
             try:
-                # Standard retrieval for logged-in user
-                # NOTE: This assumes a deeply nested relationship from Django User -> AccountUser -> Citizen -> Responder
                 responder_profile = request.user.custom_profile.citizen_profile.responder_profile
+                context_user = request.user
             except AttributeError:
                 messages.error(request, "User is authenticated but does not have a Responder profile.")
-
-        # 2. FILTER ALL ASSIGNMENTS FOR THE RESPONDER
         if responder_profile:
-            # Fetch ALL assignment records for this responder
             assignments = EventAssignment.objects.filter(
                 responder=responder_profile
             ).select_related(
                 'emergency_event__userID__user_id'
             ).order_by('-assigned_at')
         else:
-            messages.info(request, "Please log in or use the ?dev_id=X parameter to view assignments.")
+            if not target_dev_id:
+                messages.info(request, "Please log in or use the /viewlist/7/ url to view assignments.")
 
         context = {
             'assignments': assignments,
-            # Add responder profile for debugging/display if needed
-            'responder': responder_profile
+            'responder': responder_profile,
+            'user': context_user
         }
         return render(request, self.template_name, context)
 
@@ -109,24 +123,19 @@ class AssignmentListView(View):
 # --- VIEW FOR MEDICAL RECORD ---
 
 class MedicalRecordView(View):
-    template_name = "EmergencyEvent/medical_records.html"
+    template_name = "EmergencyEvent/medical_record.html"
 
-    def get(self, request, event_id):
-        # 1. Get the Event
+    def get(self, request, event_id=None):
+        # Fallback if no event_id is provided (just to prevent crashes, though URL enforces it usually)
+        if not event_id:
+            messages.error(request, "No Event ID specified for medical records.")
+            return redirect('EmergencyEvent:event_list')
+
         event = get_object_or_404(EmergencyEvent, pk=event_id)
-
-        # 2. Get the Citizen (The Victim/Reporter)
         citizen = event.userID
         user_profile = citizen.user_id
-
-        # 3. Fetch Related Data
         medical_conditions = MedicalCondition.objects.filter(user_id=user_profile)
-
-        # Fetch Contact Numbers
         contact_numbers = ContactInfo.objects.filter(user_id=user_profile)
-
-        # Fetch Email (Optional, assuming relationship exists)
-        # emails = user_profile.secondary_emails.all()
 
         context = {
             'event': event,
@@ -134,6 +143,8 @@ class MedicalRecordView(View):
             'user_profile': user_profile,
             'medical_conditions': medical_conditions,
             'contact_numbers': contact_numbers,
+            # We don't necessarily need dev_id swap here unless you want to see who is viewing the record
+            'user': request.user
         }
         return render(request, self.template_name, context)
 
@@ -143,80 +154,78 @@ class MedicalRecordView(View):
 class EventDetailsResponderView(View):
     template_name = "EmergencyEvent/event_details_responder.html"
 
-    def get(self, request, event_id=None):
+    def get(self, request, event_id=None, dev_id=None):
+        # 1. Handle Dev Mode User
+        context_user = get_dev_user(request.user, dev_id)
+
         event = None
         if event_id:
             event = get_object_or_404(EmergencyEvent, pk=event_id)
         else:
             event = EmergencyEvent.objects.order_by('-created_at').first()
             if not event:
-                messages.error(request, "No events found in the database.")
+                messages.error(request, "No events found.")
                 return redirect('EmergencyEvent:event_list')
 
-        context = {'event': event}
+        context = {
+            'event': event,
+            'user': context_user
+        }
         return render(request, self.template_name, context)
 
-    def post(self, request, event_id=None):
+    def post(self, request, event_id=None, dev_id=None):
         if not event_id:
             return redirect('EmergencyEvent:event_list')
 
         event = get_object_or_404(EmergencyEvent, pk=event_id)
         action = request.POST.get('action')
-
-        # Normalize status
         current_status = str(event.status).lower().strip()
-
-        # --- STATUS LOGIC ---
 
         if action == 'acknowledge':
             if current_status in ['reported', 'pending', 'in_progress']:
                 event.status = 'on the way'
                 event.save()
                 messages.success(request, "Status updated: ON THE WAY")
-            else:
-                messages.warning(request, f"Cannot acknowledge: Event is '{current_status}'.")
-
         elif action == 'on_scene':
             if current_status in ['reported', 'pending', 'in_progress', 'on the way', 'on_the_way']:
                 event.status = 'on scene'
                 event.save()
                 messages.success(request, "Status updated: ON SCENE")
-            else:
-                messages.warning(request, f"Cannot update to On Scene: Event is '{current_status}'.")
-
         elif action == 'resolved':
             if current_status not in ['completed', 'resolved', 'closed']:
-                event.status = 'completed'
-                event.save()
-
-                if event.responder:
-                    responder = event.responder
-                    responder.duty_status = 'ON'
-                    responder.save()
-
-                    EventAssignment.objects.filter(
-                        emergency_event=event,
-                        responder=responder,
-                        status='active'
-                    ).update(status='completed')
-
-                messages.success(request, "Event Resolved. You are now AVAILABLE.")
+                try:
+                    with connection.cursor() as cursor:
+                        cursor.callproc('sp_ResolveEvent', [event.eventID])
+                    messages.success(request, "Event Resolved (SP Executed). You are now AVAILABLE.")
+                except Exception as e:
+                    messages.error(request, f"Error resolving event: {e}")
             else:
                 messages.info(request, "Event is already completed.")
 
+        # Redirect back to the same view (preserving dev_id if it existed in the URL logic)
+        # Note: 'redirect' usually takes the view name and args.
+        if dev_id:
+            return redirect('EmergencyEvent:event_details_responder_dev', event_id=event.eventID, dev_id=dev_id)
         return redirect('EmergencyEvent:event_details_responder', event_id=event.eventID)
 
 
 class EventDetailsAuthorityView(View):
     template_name = "EmergencyEvent/event_details_authority.html"
 
-    def get(self, request, event_id=None):
+    def get(self, request, event_id=None, dev_id=None):
+        # 1. Handle Dev Mode User
+        context_user = get_dev_user(request.user, dev_id)
+
         event = None
         if event_id:
             event = get_object_or_404(EmergencyEvent, pk=event_id)
         else:
             event = EmergencyEvent.objects.order_by('-created_at').first()
-        context = {'event': event}
+
+        context = {
+            'event': event,
+            'user': context_user
+        }
         return render(request, self.template_name, context)
 
 
@@ -225,22 +234,27 @@ class EventDetailsAuthorityView(View):
 class CreateReportView(View):
     template_name = "EmergencyEvent/report_form.html"
 
-    def get(self, request):
-        return render(request, self.template_name)
+    def get(self, request, dev_id=None):
+        # 1. Handle Dev Mode User
+        context_user = get_dev_user(request.user, dev_id)
+        return render(request, self.template_name, {'user': context_user})
 
-    def post(self, request):
+    def post(self, request, dev_id=None):
+        # We need the context user for the form logic too
+        context_user = get_dev_user(request.user, dev_id)
+
         try:
-            # User / Citizen Logic
             citizen_obj = None
-            if request.user.is_authenticated:
+            # Use context_user to determine the citizen, not just request.user
+            if context_user.is_authenticated:
                 try:
-                    custom_user = request.user.custom_profile
+                    custom_user = context_user.custom_profile
                     citizen_obj = custom_user.citizen_profile
                 except Exception:
                     messages.error(request, "Error: Your account is not linked to a Citizen profile.")
-                    return render(request, self.template_name)
+                    return render(request, self.template_name, {'user': context_user})
             else:
-                # Dev Fallback (Ensures a Citizen exists for reporting)
+                # Default fallback for unauthenticated users
                 auth_user, _ = DjangoAuthUser.objects.get_or_create(username='julian_dev',
                                                                     defaults={'email': 'julian@dev.com',
                                                                               'first_name': 'Julian',
@@ -254,68 +268,54 @@ class CreateReportView(View):
                                                                                                  'city': 'Cebu City'})
                 citizen_obj, _ = Citizen.objects.get_or_create(user_id=account_user)
 
-            # Form Data
-            emergency_type = request.POST.get('emergencyType')
-            other_specified = request.POST.get('other_specified')
-            final_category = other_specified.upper() if (emergency_type == 'others' and other_specified) else str(
-                emergency_type).upper()
-
-            gps_location = request.POST.get('gps_location') or '0.0, 0.0'
+            emergency_type = request.POST.get('emergencyType', '')
+            other_specified = request.POST.get('other_specified', '')
+            reporting_for_others = request.POST.get('reportingForOthers', 'no')
+            gps_location = request.POST.get('gps_location', '')
+            fname = request.POST.get('p_fname', '')
+            mname = request.POST.get('p_mname', '')
+            lname = request.POST.get('p_lname', '')
+            patient_full_name = f"{fname} {mname} {lname}".strip()
             address_text = request.POST.get('address_text', 'No Address Provided')
             description_raw = request.POST.get('description', '')
-            severity_input = request.POST.get('severity', 'low')
+            description_for_sp = f"{description_raw}\n[ADDRESS: {address_text}]"
 
-            severity_map = {'low': 1, 'medium': 2, 'high': 3}
-            severity_int = severity_map.get(severity_input, 1)
+            # --- Call the Stored Procedure ---
+            with connection.cursor() as cursor:
+                cursor.callproc('sp_SubmitEmergencyReport', [
+                    citizen_obj.pk,
+                    emergency_type,
+                    other_specified,
+                    reporting_for_others,
+                    patient_full_name,
+                    description_for_sp,
+                    gps_location
+                ])
 
-            # Patient Info
-            is_reporting_others = request.POST.get('reportingForOthers')
-            patient_info = ""
-            if is_reporting_others == 'yes':
-                fname = request.POST.get('p_fname', '')
-                mname = request.POST.get('p_mname', '')
-                lname = request.POST.get('p_lname', '')
-                patient_info = f"\n[PATIENT: {fname} {mname} {lname}]"
-
-            final_description = f"{description_raw}\n[ADDRESS: {address_text}]{patient_info}"
-
-            # Create Event
-            EmergencyEvent.objects.create(
-                userID=citizen_obj,
-                category=final_category,
-                description=final_description,
-                gps_location=gps_location,
-                status='PENDING',
-                severity_level=severity_int
-            )
-
-            messages.success(request, "Report Submitted Successfully! Stay safe.")
+            messages.success(request, "Report Submitted Successfully via Secure SP!")
             return redirect('EmergencyEvent:report_form')
 
         except Exception as e:
             print(f"DEBUG ERROR: {e}")
             messages.error(request, f"Submission Failed: {str(e)}")
-            return render(request, self.template_name)
+            return render(request, self.template_name, {'user': context_user})
 
 
 class ResponderAvailabilityView(View):
     template_name = "EventAssignment/responder_availability_emergency.html"
 
-    def get(self, request):
+    def get(self, request, dev_id=None):
+        # 1. Handle Dev Mode User
+        context_user = get_dev_user(request.user, dev_id)
+
         event_id = request.GET.get('event_id')
-
-        # 1. Fetch Responders
         responders = Responder.objects.select_related('citizen__user_id').all()
-
-        # 2. Get Assigned IDs for THIS event (to show cancel buttons)
         assigned_ids = []
         if event_id:
             assigned_ids = list(EventAssignment.objects.filter(
                 emergency_event_id=event_id,
                 status='active'
             ).values_list('responder_id', flat=True))
-
-        # 3. Counters
         total_count = responders.count()
         assigned_count = responders.filter(duty_status__in=['RES', 'BUSY']).count()
 
@@ -325,10 +325,14 @@ class ResponderAvailabilityView(View):
             'assigned_count': assigned_count,
             'event_id': event_id,
             'assigned_ids': assigned_ids,
+            'user': context_user
         }
         return render(request, self.template_name, context)
 
-    def post(self, request):
+    def post(self, request, dev_id=None):
+        # Note: POST usually doesn't need to spoof the user unless we are logging who performed the action.
+        # But if you want to redirect back to the dev URL, you'd need to handle that here.
+
         action = request.POST.get('action')
         responder_id = request.POST.get('responder_id')
         event_id = request.POST.get('event_id')
@@ -338,50 +342,22 @@ class ResponderAvailabilityView(View):
             return redirect(f'/emergency/responder-availability/?event_id={event_id}')
 
         try:
-            responder = get_object_or_404(Responder, pk=responder_id)
-            event = get_object_or_404(EmergencyEvent, pk=event_id)
+            with connection.cursor() as cursor:
+                if action == 'assign':
+                    responder = Responder.objects.get(pk=responder_id)
+                    if responder.duty_status in ['RES', 'BUSY']:
+                        messages.error(request, "Responder is already busy.")
+                    else:
+                        cursor.callproc('sp_AssignResponder', [responder_id, event_id])
+                        messages.success(request, "Responder Assigned Successfully via SP.")
 
-            if action == 'assign':
-                if responder.duty_status in ['RES', 'BUSY']:
-                    messages.error(request, "Responder is already busy.")
-                else:
-                    # Update Status
-                    responder.duty_status = 'RES'
-                    responder.save()
-
-                    # Update Event (Latest responder gets linked directly)
-                    event.responder = responder
-                    event.status = 'in_progress'
-                    event.save()
-
-                    # Create Assignment Record (This is what AssignmentListView looks for!)
-                    EventAssignment.objects.create(
-                        role='responder',
-                        status='active',
-                        responder=responder,
-                        emergency_event=event
-                    )
-                    messages.success(request, f"Assigned {responder.citizen.user_id.last_name}.")
-
-            elif action == 'remove':
-                # Cancel Assignment
-                assignment = EventAssignment.objects.filter(
-                    emergency_event=event, responder=responder, status='active'
-                ).first()
-
-                if assignment:
-                    assignment.status = 'cancelled'
-                    assignment.save()
-
-                    responder.duty_status = 'ON'
-                    responder.save()
-                    messages.warning(request, "Responder removed.")
-                else:
-                    messages.error(request, "Could not find active assignment to remove.")
+                elif action == 'remove':
+                    cursor.callproc('sp_RemoveResponder', [responder_id, event_id])
+                    messages.warning(request, "Responder Removed via SP.")
 
             return redirect(f'/emergency/responder-availability/?event_id={event_id}')
 
         except Exception as e:
             print(f"Error: {e}")
-            messages.error(request, "Assignment failed.")
+            messages.error(request, f"Operation failed: {e}")
             return redirect(f'/emergency/responder-availability/?event_id={event_id}')

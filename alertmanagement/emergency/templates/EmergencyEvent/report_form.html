@@ -40,8 +40,8 @@
                 <div class="flex items-center space-x-4">
                     <div class="hidden md:flex items-center space-x-4">
                         <span class="text-gray-800 font-medium text-sm mr-2">
-                             {% if user.is_authenticated %}
-                                {{ user.first_name }} {{ user.last_name }}
+                             {% if user.is_authenticated and user.custom_profile %}
+                                {{ user.custom_profile.first_name }} {{ user.custom_profile.last_name }}
                             {% else %}
                                 Julian Andales (Guest)
                             {% endif %}
@@ -91,7 +91,7 @@
                     <div>
                         <label class="block text-sm font-bold text-gray-700 uppercase mb-2">Reporter Name</label>
                         <input type="text"
-                            value="{% if user.is_authenticated %}{{ user.first_name }} {{ user.last_name }}{% else %}Julian Andales{% endif %}"
+                            value="{% if user.is_authenticated and user.custom_profile %}{{ user.custom_profile.first_name }} {{ user.custom_profile.last_name }}{% else %}Julian Andales{% endif %}"
                             class="w-full border border-gray-300 rounded px-3 py-2 text-sm text-gray-700 bg-gray-50 focus:outline-none" readonly>
                     </div>
 
@@ -212,7 +212,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Mobile Menu Logic (From Reference)
+            // Mobile Menu Logic
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
 
@@ -222,7 +222,6 @@
                 });
             }
 
-            // Map & Geolocation Logic
             const pinBtn = document.getElementById('pin-location-btn');
             const placeholder = document.getElementById('map-placeholder');
             const iframe = document.getElementById('map-iframe');
@@ -242,16 +241,13 @@
                                 const lon = position.coords.longitude;
                                 const bbox = 0.005;
 
-                                // Update Map
                                 iframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - bbox},${lat - bbox},${lon + bbox},${lat + bbox}&layer=mapnik&marker=${lat},${lon}`;
                                 placeholder.classList.add('hidden');
                                 iframe.classList.remove('hidden');
 
-                                // Update Inputs
                                 gpsInput.value = `${lat}, ${lon}`;
                                 addressInput.value = `Pinned Coordinates: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
 
-                                // UI Feedback
                                 pinBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Update Location';
                                 toast.classList.remove('hidden');
                                 setTimeout(() => toast.classList.add('hidden'), 3000);

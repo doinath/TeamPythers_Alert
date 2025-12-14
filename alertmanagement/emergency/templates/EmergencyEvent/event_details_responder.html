@@ -28,39 +28,44 @@
                         <img src="{% static 'emergency/logo.jpg' %}" alt="ALERT Logo" class="h-10 w-auto object-contain" />
                     </div>
                     <nav class="hidden md:flex items-center space-x-6">
-                        <a href="{% url 'EmergencyEvent:assignment_list' %}" class="text-gray-500 hover:text-red-600 transition-colors font-medium">My Assignments</a> <a href="#" class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Dashboard</a>
+                        <a href="{% url 'EmergencyEvent:assignment_list' %}" class="text-gray-500 hover:text-red-600 transition-colors font-medium">My Assignments</a>
+                        <a href="#" class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Dashboard</a>
                     </nav>
                 </div>
                 <div class="flex items-center space-x-4">
                     <div class="hidden md:flex items-center space-x-4">
 
-                        {% if user.is_authenticated and user.responder_profile %}
-                            {% if user.responder_profile.duty_status == 'ON' %}
-                                <span class="bg-green-600 text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2">
-                                    AVAILABLE
-                                </span>
-                            {% elif user.responder_profile.duty_status == 'RES' or user.responder_profile.duty_status == 'BUSY' %}
-                                <span class="bg-[#d9534f] text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2">
-                                    ON DUTY - BUSY
-                                </span>
-                            {% elif user.responder_profile.duty_status == 'OFF' or user.responder_profile.duty_status == 'UNAV' %}
-                                <span class="bg-gray-500 text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2">
-                                    OFFLINE
-                                </span>
-                            {% else %}
-                                <span class="bg-blue-600 text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2">
-                                    {{ user.responder_profile.get_duty_status_display }}
-                                </span>
-                            {% endif %}
+                        {% if user.is_authenticated and user.custom_profile.citizen_profile.responder_profile %}
+                            {% with responder=user.custom_profile.citizen_profile.responder_profile %}
+
+                                {% if responder.duty_status == 'ON' %}
+                                    <span class="bg-green-600 text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2 shadow-sm">
+                                        AVAILABLE
+                                    </span>
+                                {% elif responder.duty_status == 'RES' or responder.duty_status == 'BUSY' %}
+                                    <span class="bg-[#d9534f] text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2 shadow-sm">
+                                        ON DUTY - BUSY
+                                    </span>
+                                {% elif responder.duty_status == 'OFF' or responder.duty_status == 'UNAV' %}
+                                    <span class="bg-gray-500 text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2 shadow-sm">
+                                        OFFLINE
+                                    </span>
+                                {% else %}
+                                    <span class="bg-blue-600 text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2 shadow-sm">
+                                        {{ responder.get_duty_status_display }}
+                                    </span>
+                                {% endif %}
+
+                            {% endwith %}
                         {% else %}
-                            <span class="bg-[#d9534f] text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2">
-                                ON DUTY - DEV
+                            <span class="bg-gray-400 text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2">
+                                NO STATUS
                             </span>
                         {% endif %}
 
                         <span class="text-gray-800 font-medium text-sm mr-2">
-                            {% if user.is_authenticated %}
-                                {{ user.first_name }} {{ user.last_name }}
+                            {% if user.is_authenticated and user.custom_profile %}
+                                {{ user.custom_profile.first_name }} {{ user.custom_profile.last_name }}
                             {% else %}
                                 Julian Andales
                             {% endif %}
@@ -119,10 +124,10 @@
                 <div class="flex items-baseline mb-[15px]">
                     <span class="w-[200px] shrink-0 font-semibold text-[#d9534f] text-sm uppercase">Location:</span>
                     <span class="flex-1 font-bold text-[#333] text-base uppercase" id="location-text">
-                        {% if event %}
+                        {% if event and event.gps_location %}
                             {{ event.gps_location }}
                         {% else %}
-                            Caigit, Cebu City
+                            <span class="text-gray-400 italic">No GPS Data</span>
                         {% endif %}
                     </span>
                 </div>
@@ -191,20 +196,19 @@
                     </button>
                 </form>
 
-<div class="flex flex-wrap justify-end gap-[15px]">
+                <div class="flex flex-wrap justify-end gap-[15px]">
+                    <a href="{% url 'EmergencyEvent:medical_record' event.eventID|default:0 %}"
+                       class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base text-center">
+                        Medical Records
+                    </a>
 
-    <a href="{% url 'EmergencyEvent:medical_record' event.eventID %}"
-       class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base text-center">
-        Medical Records
-    </a>
-
-    <button class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base">
-        Call
-    </button>
-    <button class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base">
-        Chat
-    </button>
-</div>
+                    <button class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base">
+                        Call
+                    </button>
+                    <button class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base">
+                        Chat
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -230,28 +234,66 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const dbLocation = "{% if event and event.gps_location %}{{ event.gps_location }}{% endif %}";
+            // Safely get the value from Django
+            const dbLocation = "{% if event and event.gps_location %}{{ event.gps_location|escapejs }}{% endif %}";
             const locationTextEl = document.getElementById('location-text');
             const loadingEl = document.getElementById('map-loading');
             const iframe = document.getElementById('map-iframe');
 
+            // Default Fallback (Cebu City)
+            const defaultLat = 10.3157;
+            const defaultLon = 123.8854;
+
             function loadMap(lat, lon) {
+                // Ensure inputs are numbers
+                lat = parseFloat(lat);
+                lon = parseFloat(lon);
+
+                // Update text if it was empty/placeholder
+                if(locationTextEl && (locationTextEl.innerText.includes("No GPS") || locationTextEl.innerText.trim() === "")) {
+                    locationTextEl.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+                }
+
+                // OpenStreetMap Embed
                 const bboxOffset = 0.005;
-                iframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - bboxOffset},${lat - bboxOffset},${lon + bboxOffset},${lat + bboxOffset}&layer=mapnik&marker=${lat},${lon}`;
+                const embedUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - bboxOffset},${lat - bboxOffset},${lon + bboxOffset},${lat + bboxOffset}&layer=mapnik&marker=${lat},${lon}`;
+
+                iframe.src = embedUrl;
+
                 iframe.onload = () => {
                     loadingEl.style.opacity = '0';
-                    setTimeout(() => { loadingEl.style.display = 'none'; }, 300);
+                    setTimeout(() => {
+                        loadingEl.style.display = 'none';
+                    }, 300);
                 };
             }
 
-            if (dbLocation && dbLocation.trim() !== "") {
-                const parts = dbLocation.split(',');
-                if (parts.length === 2) {
-                    loadMap(parseFloat(parts[0]), parseFloat(parts[1]));
+            function parseAndLoad(locString) {
+                // Regex to find floating point numbers (handles negatives too)
+                const matches = locString.match(/-?\d+(\.\d+)?/g);
+
+                if (matches && matches.length >= 2) {
+                    const lat = parseFloat(matches[0]);
+                    const lon = parseFloat(matches[1]);
+
+                    // Check for 0,0 (often a default "empty" value in DBs)
+                    if (Math.abs(lat) < 0.0001 && Math.abs(lon) < 0.0001) {
+                        console.warn("Location is 0,0. Loading fallback.");
+                        loadMap(defaultLat, defaultLon);
+                    } else {
+                        loadMap(lat, lon);
+                    }
                 } else {
-                    loadMap(10.3157, 123.8854);
+                    console.error("Could not parse coordinates from:", locString);
+                    loadMap(defaultLat, defaultLon);
                 }
+            }
+
+            // --- Execution Flow ---
+            if (dbLocation && dbLocation.trim() !== "") {
+                parseAndLoad(dbLocation);
             } else {
+                // Try Browser Geolocation if DB is empty
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(
                         (position) => {
@@ -260,10 +302,13 @@
                             if(locationTextEl) locationTextEl.innerText = `Current Dev Loc: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
                             loadMap(lat, lon);
                         },
-                        (error) => { loadMap(10.3157, 123.8854); }
+                        (error) => {
+                            console.warn("Geolocation denied/error. Loading fallback.");
+                            loadMap(defaultLat, defaultLon);
+                        }
                     );
                 } else {
-                    alert("Geolocation is not supported by this browser.");
+                    loadMap(defaultLat, defaultLon);
                 }
             }
         });

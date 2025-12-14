@@ -40,13 +40,15 @@
                         <span class="bg-[#d9534f] text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2">
                             AUTHORITY - ADMIN
                         </span>
+
                         <span class="text-gray-800 font-medium text-sm mr-2">
-                            {% if user.is_authenticated %}
-                                {{ user.first_name }} {{ user.last_name }}
+                            {% if user.is_authenticated and user.custom_profile %}
+                                {{ user.custom_profile.first_name }} {{ user.custom_profile.last_name }}
                             {% else %}
                                 Julian Andales
                             {% endif %}
                         </span>
+
                         <img class="h-8 w-8 rounded-full object-cover border border-gray-200" src="{% static 'emergency/profile_image.jpg' %}" alt="User Avatar" />
                     </div>
                     <div class="md:hidden flex items-center">
@@ -64,13 +66,15 @@
                 </span>
                 <div class="flex items-center">
                     <img class="h-8 w-8 rounded-full object-cover mr-2" src="{% static 'emergency/profile_image.jpg' %}" alt="User Avatar" />
+
                     <span class="font-medium text-sm">
-                        {% if user.is_authenticated %}
-                            {{ user.first_name }} {{ user.last_name }}
+                        {% if user.is_authenticated and user.custom_profile %}
+                            {{ user.custom_profile.first_name }} {{ user.custom_profile.last_name }}
                         {% else %}
                             Julian Andales
                         {% endif %}
                     </span>
+
                 </div>
             </div>
             <nav class="space-y-2">
@@ -118,10 +122,10 @@
                 <div class="flex items-baseline mb-[15px]">
                     <span class="w-[200px] shrink-0 font-semibold text-[#d9534f] text-sm uppercase">Location:</span>
                     <span class="flex-1 font-bold text-[#333] text-base uppercase" id="location-text">
-                        {% if event %}
+                        {% if event and event.gps_location %}
                             {{ event.gps_location }}
                         {% else %}
-                            Caigit, Cebu City
+                            <span class="text-gray-400 italic">No GPS Data</span>
                         {% endif %}
                     </span>
                 </div>
@@ -167,7 +171,7 @@
                             Resolved
                         </button>
                     {% else %}
-                        <a href="{% url 'EmergencyEvent:responder_availability' %}?event_id={{ event.eventID }}"
+                        <a href="{% url 'EmergencyEvent:responder_availability' %}?event_id={{ event.eventID|default:'' }}"
                            class="w-[150px] py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] hover:-translate-y-px transition-all duration-300 text-base flex items-center justify-center">
                             Assign
                         </a>
@@ -175,19 +179,18 @@
                 </div>
 
                 <div class="flex flex-wrap justify-end gap-[15px]">
+                    <a href="{% url 'EmergencyEvent:medical_record' event.eventID|default:0 %}"
+                       class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base text-center">
+                        Medical Records
+                    </a>
 
-    <a href="{% url 'EmergencyEvent:medical_record' event.eventID %}"
-       class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base text-center">
-        Medical Records
-    </a>
-
-    <button class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base">
-        Call
-    </button>
-    <button class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base">
-        Chat
-    </button>
-</div>
+                    <button class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base">
+                        Call
+                    </button>
+                    <button class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base">
+                        Chat
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -224,17 +227,25 @@
                     mobileMenu.classList.toggle('hidden');
                 });
             }
-
-            // --- MAP LOGIC ---
-            const dbLocation = "{% if event and event.gps_location %}{{ event.gps_location }}{% endif %}";
+            const dbLocation = "{% if event and event.gps_location %}{{ event.gps_location|escapejs }}{% endif %}";
             const locationTextEl = document.getElementById('location-text');
             const loadingEl = document.getElementById('map-loading');
             const iframe = document.getElementById('map-iframe');
-
+            const defaultLat = 10.3157;
+            const defaultLon = 123.8854;
             function loadMap(lat, lon) {
+                // Ensure inputs are numbers
+                lat = parseFloat(lat);
+                lon = parseFloat(lon);
+                if(locationTextEl && (locationTextEl.innerText.includes("No GPS") || locationTextEl.innerText.trim() === "")) {
+                    locationTextEl.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+                }
                 const bboxOffset = 0.005;
-                iframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - bboxOffset},${lat - bboxOffset},${lon + bboxOffset},${lat + bboxOffset}&layer=mapnik&marker=${lat},${lon}`;
+                const embedUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - bboxOffset},${lat - bboxOffset},${lon + bboxOffset},${lat + bboxOffset}&layer=mapnik&marker=${lat},${lon}`;
 
+                iframe.src = embedUrl;
+
+                // Hide loading spinner when map is ready
                 iframe.onload = () => {
                     loadingEl.style.opacity = '0';
                     setTimeout(() => {
@@ -242,14 +253,27 @@
                     }, 300);
                 };
             }
+            function parseAndLoad(locString) {
+                const matches = locString.match(/-?\d+(\.\d+)?/g);
 
-            if (dbLocation && dbLocation.trim() !== "") {
-                const parts = dbLocation.split(',');
-                if (parts.length === 2) {
-                    loadMap(parseFloat(parts[0]), parseFloat(parts[1]));
+                if (matches && matches.length >= 2) {
+                    const lat = parseFloat(matches[0]);
+                    const lon = parseFloat(matches[1]);
+
+                    // Check for 0,0 (often a default "empty" value in DBs)
+                    if (Math.abs(lat) < 0.0001 && Math.abs(lon) < 0.0001) {
+                        console.warn("Location is 0,0. Loading fallback.");
+                        loadMap(defaultLat, defaultLon);
+                    } else {
+                        loadMap(lat, lon);
+                    }
                 } else {
-                    loadMap(10.3157, 123.8854);
+                    console.error("Could not parse coordinates from:", locString);
+                    loadMap(defaultLat, defaultLon);
                 }
+            }
+            if (dbLocation && dbLocation.trim() !== "") {
+                parseAndLoad(dbLocation);
             } else {
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(
@@ -260,11 +284,12 @@
                             loadMap(lat, lon);
                         },
                         (error) => {
-                            loadMap(10.3157, 123.8854);
+                            console.warn("Geolocation denied/error. Loading fallback.");
+                            loadMap(defaultLat, defaultLon);
                         }
                     );
                 } else {
-                    alert("Geolocation is not supported by this browser.");
+                    loadMap(defaultLat, defaultLon);
                 }
             }
         });

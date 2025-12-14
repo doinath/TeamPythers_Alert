@@ -30,25 +30,18 @@ class RegisterView(View):
             }
             return render(request, "register.html", context=context)
 
-        # 3. Create the New User Account
         try:
             user = User.objects.create_user(
-                username=email,  # Use email as the unique username
+                username=email,
                 email=email,
                 password=password,
                 first_name=first_name,
                 last_name=last_name
             )
-            # You would also create the related Citizen model instance here if needed:
-            # Citizen.objects.create(user=user)
-
             messages.success(request, 'Account created successfully! Please complete your profile.')
-
-            # 4. On SUCCESS, redirect to the profile completion page
             return redirect('citizen_profile_completion')
 
         except Exception as e:
-            # Handle any other exceptions during creation (e.g., database error)
             messages.error(request, f'An unexpected error occurred: {e}')
 
             context = {

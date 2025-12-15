@@ -21,50 +21,44 @@
 <body class="bg-[#f0f2f5] font-sans text-[#333] min-h-screen flex flex-col">
 
     <header class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="w-full px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center space-x-8">
                     <div class="flex items-center space-x-2">
                         <img src="{% static 'emergency/logo.jpg' %}" alt="ALERT Logo" class="h-10 w-auto object-contain" />
                     </div>
                     <nav class="hidden md:flex items-center space-x-6">
-                        <a href="{% url 'EmergencyEvent:assignment_list' %}" class="text-gray-500 hover:text-red-600 transition-colors font-medium">My Assignments</a>
+                        {% if request.resolver_match.kwargs.dev_id %}
+                            <a href="{% url 'EmergencyEvent:assignment_list_dev' request.resolver_match.kwargs.dev_id %}"
+                               class="text-gray-500 hover:text-red-600 transition-colors font-medium">My Assignments</a>
+                        {% else %}
+                            <a href="{% url 'EmergencyEvent:assignment_list' %}"
+                               class="text-gray-500 hover:text-red-600 transition-colors font-medium">My Assignments</a>
+                        {% endif %}
+
                         <a href="#" class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Dashboard</a>
                     </nav>
                 </div>
                 <div class="flex items-center space-x-4">
                     <div class="hidden md:flex items-center space-x-4">
 
-                        {% if user.is_authenticated and user.custom_profile.citizen_profile.responder_profile %}
+                        {# Status Badge Logic Preserved #}
+                        {% if user.custom_profile.citizen_profile.responder_profile %}
                             {% with responder=user.custom_profile.citizen_profile.responder_profile %}
-
                                 {% if responder.duty_status == 'ON' %}
-                                    <span class="bg-green-600 text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2 shadow-sm">
-                                        AVAILABLE
-                                    </span>
+                                    <span class="bg-green-600 text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2 shadow-sm">AVAILABLE</span>
                                 {% elif responder.duty_status == 'RES' or responder.duty_status == 'BUSY' %}
-                                    <span class="bg-[#d9534f] text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2 shadow-sm">
-                                        ON DUTY - BUSY
-                                    </span>
-                                {% elif responder.duty_status == 'OFF' or responder.duty_status == 'UNAV' %}
-                                    <span class="bg-gray-500 text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2 shadow-sm">
-                                        OFFLINE
-                                    </span>
+                                    <span class="bg-[#d9534f] text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2 shadow-sm">ON DUTY - BUSY</span>
                                 {% else %}
-                                    <span class="bg-blue-600 text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2 shadow-sm">
-                                        {{ responder.get_duty_status_display }}
-                                    </span>
+                                    <span class="bg-gray-500 text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2 shadow-sm">OFFLINE</span>
                                 {% endif %}
-
                             {% endwith %}
                         {% else %}
-                            <span class="bg-gray-400 text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2">
-                                NO STATUS
-                            </span>
+                            <span class="bg-gray-400 text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2">NO STATUS</span>
                         {% endif %}
 
                         <span class="text-gray-800 font-medium text-sm mr-2">
-                            {% if user.is_authenticated and user.custom_profile %}
+                            {% if user.custom_profile %}
                                 {{ user.custom_profile.first_name }} {{ user.custom_profile.last_name }}
                             {% else %}
                                 Julian Andales
@@ -72,11 +66,51 @@
                         </span>
                         <img class="h-8 w-8 rounded-full object-cover border border-gray-200" src="{% static 'emergency/profile_image.jpg' %}" alt="User Avatar" />
                     </div>
+
+                    <div class="md:hidden flex items-center">
+                        <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-800 focus:outline-none">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </header>
 
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t p-4">
+            <div class="mb-4 pb-4 border-b border-gray-100">
+                {% if user.custom_profile.citizen_profile.responder_profile %}
+                    {% with responder=user.custom_profile.citizen_profile.responder_profile %}
+                        {% if responder.duty_status == 'ON' %}
+                            <span class="inline-block bg-green-600 text-white font-semibold px-2 py-1 rounded text-xs uppercase mb-2">AVAILABLE</span>
+                        {% elif responder.duty_status == 'RES' or responder.duty_status == 'BUSY' %}
+                            <span class="inline-block bg-[#d9534f] text-white font-semibold px-2 py-1 rounded text-xs uppercase mb-2">ON DUTY - BUSY</span>
+                        {% else %}
+                            <span class="inline-block bg-gray-500 text-white font-semibold px-2 py-1 rounded text-xs uppercase mb-2">OFFLINE</span>
+                        {% endif %}
+                    {% endwith %}
+                {% endif %}
+
+                <div class="flex items-center">
+                    <img class="h-8 w-8 rounded-full object-cover mr-2" src="{% static 'emergency/profile_image.jpg' %}" alt="User Avatar" />
+                    <span class="font-medium text-sm">
+                        {% if user.custom_profile %}
+                            {{ user.custom_profile.first_name }} {{ user.custom_profile.last_name }}
+                        {% else %}
+                            Julian Andales
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+            <nav class="space-y-2">
+                {% if request.resolver_match.kwargs.dev_id %}
+                    <a href="{% url 'EmergencyEvent:assignment_list_dev' request.resolver_match.kwargs.dev_id %}" class="block py-2 text-gray-600 hover:bg-gray-50 rounded px-2">My Assignments</a>
+                {% else %}
+                    <a href="{% url 'EmergencyEvent:assignment_list' %}" class="block py-2 text-gray-600 hover:bg-gray-50 rounded px-2">My Assignments</a>
+                {% endif %}
+                <a href="#" class="block py-2 text-red-600 font-bold bg-red-50 rounded px-2">Dashboard</a>
+            </nav>
+        </div>
+    </header>
     <main class="flex-grow p-5 flex flex-col lg:flex-row gap-5 animate-fadeIn">
 
         <div class="flex flex-col flex-1 w-full">
@@ -158,10 +192,10 @@
 
                 <div class="ml-[200px] -mt-[10px] mb-[25px]">
                     <span class="text-[#5cb85c] text-sm underline cursor-pointer hover:text-[#4cae4c]">
-                        {% if event %}
-                            {{ event.userID.user_id.contact_numbers.first.contact_info|default:"No Number Found" }}
+                        {% if citizen_contact %}
+                            {{ citizen_contact.contact_info }}
                         {% else %}
-                            0931-112-3490
+                            0931-112-3490 (Default)
                         {% endif %}
                     </span>
                 </div>
@@ -197,7 +231,8 @@
                 </form>
 
                 <div class="flex flex-wrap justify-end gap-[15px]">
-                    <a href="{% url 'EmergencyEvent:medical_record' event.eventID|default:0 %}"
+
+                    <a href="{% url 'EmergencyEvent:medical_record' event.eventID|default:0 %}{% if request.resolver_match.kwargs.dev_id %}?dev_id={{ request.resolver_match.kwargs.dev_id }}{% endif %}"
                        class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base text-center">
                         Medical Records
                     </a>
@@ -213,8 +248,9 @@
         </div>
 
         <div class="flex-none w-full lg:w-[55%] flex flex-col h-[400px] lg:h-auto">
-            <div class="relative rounded-[10px] overflow-hidden shadow-md flex-1 bg-gray-200">
-                <div id="map-loading" class="absolute inset-0 flex items-center justify-center bg-gray-50 z-10 transition-opacity duration-300">
+            <div class="relative rounded-[10px] overflow-hidden shadow-md flex-1 bg-gray-200 group">
+
+                <div id="map-loading" class="absolute inset-0 flex items-center justify-center bg-gray-100 z-10 transition-opacity duration-300">
                     <div class="flex flex-col items-center">
                         <svg class="animate-spin h-8 w-8 text-[#d9534f] mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -223,7 +259,9 @@
                         <span class="text-[#d9534f] font-bold text-sm">Locating...</span>
                     </div>
                 </div>
+
                 <iframe id="map-iframe" class="w-full h-full border-0" src="" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+
                 <div class="absolute top-5 right-5 bg-[#d9534f] text-white px-4 py-2 rounded shadow-md font-bold text-lg z-20">
                     Emergency Locations
                 </div>
@@ -234,27 +272,50 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Safely get the value from Django
-            const dbLocation = "{% if event and event.gps_location %}{{ event.gps_location|escapejs }}{% endif %}";
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            if (mobileMenuButton) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+
+            // --- ROBUST MAP LOADING LOGIC ---
+            // 1. Get raw string, trim whitespace
+            const dbLocation = "{% if event and event.gps_location %}{{ event.gps_location|escapejs }}{% endif %}".trim();
+
             const locationTextEl = document.getElementById('location-text');
             const loadingEl = document.getElementById('map-loading');
             const iframe = document.getElementById('map-iframe');
 
-            // Default Fallback (Cebu City)
+            // Fallback Location (Cebu City)
             const defaultLat = 10.3157;
             const defaultLon = 123.8854;
 
             function loadMap(lat, lon) {
-                // Ensure inputs are numbers
+                // Ensure number format
                 lat = parseFloat(lat);
                 lon = parseFloat(lon);
 
-                // Update text if it was empty/placeholder
+                // --- AUTO-FIX SWAPPED COORDINATES ---
+                // If 'lat' is greater than 90, it's actually Longitude.
+                // Philippines Lat is ~4-21, Lon is ~116-127.
+                if (Math.abs(lat) > 90 && Math.abs(lon) <= 90) {
+                    console.warn("Detected swapped coordinates. Correcting...");
+                    const temp = lat;
+                    lat = lon;
+                    lon = temp;
+                }
+
+                // Update text if empty or generic
                 if(locationTextEl && (locationTextEl.innerText.includes("No GPS") || locationTextEl.innerText.trim() === "")) {
                     locationTextEl.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
                 }
 
-                // OpenStreetMap Embed
+                console.log(`Loading Map: Lat ${lat}, Lon ${lon}`);
+
+                // OpenStreetMap Embed URL
                 const bboxOffset = 0.005;
                 const embedUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - bboxOffset},${lat - bboxOffset},${lon + bboxOffset},${lat + bboxOffset}&layer=mapnik&marker=${lat},${lon}`;
 
@@ -269,19 +330,20 @@
             }
 
             function parseAndLoad(locString) {
-                // Regex to find floating point numbers (handles negatives too)
+                console.log("Parsing Location:", locString);
+                // Regex matches numbers like "10.123" or "-123.456"
                 const matches = locString.match(/-?\d+(\.\d+)?/g);
 
                 if (matches && matches.length >= 2) {
-                    const lat = parseFloat(matches[0]);
-                    const lon = parseFloat(matches[1]);
+                    const val1 = parseFloat(matches[0]);
+                    const val2 = parseFloat(matches[1]);
 
-                    // Check for 0,0 (often a default "empty" value in DBs)
-                    if (Math.abs(lat) < 0.0001 && Math.abs(lon) < 0.0001) {
+                    // Check for invalid 0,0 coordinates (default DB value)
+                    if (Math.abs(val1) < 0.0001 && Math.abs(val2) < 0.0001) {
                         console.warn("Location is 0,0. Loading fallback.");
                         loadMap(defaultLat, defaultLon);
                     } else {
-                        loadMap(lat, lon);
+                        loadMap(val1, val2);
                     }
                 } else {
                     console.error("Could not parse coordinates from:", locString);
@@ -289,11 +351,11 @@
                 }
             }
 
-            // --- Execution Flow ---
-            if (dbLocation && dbLocation.trim() !== "") {
+            // Execution
+            if (dbLocation && dbLocation !== "") {
                 parseAndLoad(dbLocation);
             } else {
-                // Try Browser Geolocation if DB is empty
+                // Try browser location
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(
                         (position) => {
@@ -303,7 +365,7 @@
                             loadMap(lat, lon);
                         },
                         (error) => {
-                            console.warn("Geolocation denied/error. Loading fallback.");
+                            console.warn("Geolocation denied or failed.");
                             loadMap(defaultLat, defaultLon);
                         }
                     );

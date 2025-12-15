@@ -7,8 +7,6 @@
     <title>Event Details (Authority) - ALERT</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
@@ -30,7 +28,14 @@
                         <img src="{% static 'emergency/logo.jpg' %}" alt="ALERT Logo" class="h-10 w-auto object-contain" />
                     </div>
                     <nav class="hidden md:flex items-center space-x-6">
-                        <a href="#" class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Dashboard</a>
+                        {% if request.resolver_match.kwargs.dev_id %}
+                            <a href="{% url 'EmergencyEvent:event_list_dev' request.resolver_match.kwargs.dev_id %}"
+                               class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Dashboard</a>
+                        {% else %}
+                            <a href="{% url 'EmergencyEvent:event_list' %}"
+                               class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Dashboard</a>
+                        {% endif %}
+
                         <a href="#" class="text-gray-500 hover:text-red-600 transition-colors font-medium">Chat</a>
                         <a href="#" class="text-gray-500 hover:text-red-600 transition-colors font-medium">Call Logs</a>
                     </nav>
@@ -42,8 +47,10 @@
                         </span>
 
                         <span class="text-gray-800 font-medium text-sm mr-2">
-                            {% if user.is_authenticated and user.custom_profile %}
+                            {% if user.custom_profile %}
                                 {{ user.custom_profile.first_name }} {{ user.custom_profile.last_name }}
+                            {% elif user.first_name %}
+                                {{ user.first_name }} {{ user.last_name }}
                             {% else %}
                                 Julian Andales
                             {% endif %}
@@ -66,25 +73,28 @@
                 </span>
                 <div class="flex items-center">
                     <img class="h-8 w-8 rounded-full object-cover mr-2" src="{% static 'emergency/profile_image.jpg' %}" alt="User Avatar" />
-
                     <span class="font-medium text-sm">
-                        {% if user.is_authenticated and user.custom_profile %}
+                        {% if user.custom_profile %}
                             {{ user.custom_profile.first_name }} {{ user.custom_profile.last_name }}
+                        {% elif user.first_name %}
+                            {{ user.first_name }} {{ user.last_name }}
                         {% else %}
                             Julian Andales
                         {% endif %}
                     </span>
-
                 </div>
             </div>
             <nav class="space-y-2">
-                <a href="#" class="block py-2 text-red-600 font-bold bg-red-50 rounded px-2">Dashboard</a>
+                {% if request.resolver_match.kwargs.dev_id %}
+                    <a href="{% url 'EmergencyEvent:event_list_dev' request.resolver_match.kwargs.dev_id %}" class="block py-2 text-red-600 font-bold bg-red-50 rounded px-2">Dashboard</a>
+                {% else %}
+                    <a href="{% url 'EmergencyEvent:event_list' %}" class="block py-2 text-red-600 font-bold bg-red-50 rounded px-2">Dashboard</a>
+                {% endif %}
                 <a href="#" class="block py-2 text-gray-600 hover:bg-gray-50 rounded px-2">Chat</a>
                 <a href="#" class="block py-2 text-gray-600 hover:bg-gray-50 rounded px-2">Call Logs</a>
             </nav>
         </div>
     </header>
-
     <main class="flex-grow w-full p-5 lg:p-6 flex flex-col lg:flex-row gap-5 animate-fadeIn">
 
         <div class="flex flex-col flex-1 w-full">
@@ -143,8 +153,8 @@
 
                 <div class="ml-[200px] -mt-[10px] mb-[25px]">
                     <span class="text-[#5cb85c] text-sm underline cursor-pointer hover:text-[#4cae4c]">
-                        {% if event %}
-                            {{ event.userID.user_id.contact_numbers.first.contact_info|default:"0931-112-3490" }}
+                        {% if citizen_contact %}
+                            {{ citizen_contact.contact_info }}
                         {% else %}
                             0931-112-3490
                         {% endif %}
@@ -171,18 +181,35 @@
                             Resolved
                         </button>
                     {% else %}
-                        <a href="{% url 'EmergencyEvent:responder_availability' %}?event_id={{ event.eventID|default:'' }}"
-                           class="w-[150px] py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] hover:-translate-y-px transition-all duration-300 text-base flex items-center justify-center">
-                            Assign
-                        </a>
+
+                        {% if request.resolver_match.kwargs.dev_id %}
+                            <a href="{% url 'EmergencyEvent:responder_availability_dev' request.resolver_match.kwargs.dev_id %}?event_id={{ event.eventID|default:'' }}"
+                               class="w-[150px] py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] hover:-translate-y-px transition-all duration-300 text-base flex items-center justify-center">
+                                Assign
+                            </a>
+                        {% else %}
+                            <a href="{% url 'EmergencyEvent:responder_availability' %}?event_id={{ event.eventID|default:'' }}"
+                               class="w-[150px] py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] hover:-translate-y-px transition-all duration-300 text-base flex items-center justify-center">
+                                Assign
+                            </a>
+                        {% endif %}
+
                     {% endif %}
                 </div>
 
                 <div class="flex flex-wrap justify-end gap-[15px]">
-                    <a href="{% url 'EmergencyEvent:medical_record' event.eventID|default:0 %}"
-                       class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base text-center">
-                        Medical Records
-                    </a>
+
+                    {% if request.resolver_match.kwargs.dev_id %}
+                        <a href="{% url 'EmergencyEvent:medical_record' event.eventID|default:0 %}?dev_id={{ request.resolver_match.kwargs.dev_id }}"
+                           class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base text-center">
+                            Medical Records
+                        </a>
+                    {% else %}
+                        <a href="{% url 'EmergencyEvent:medical_record' event.eventID|default:0 %}"
+                           class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base text-center">
+                            Medical Records
+                        </a>
+                    {% endif %}
 
                     <button class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base">
                         Call
@@ -227,25 +254,46 @@
                     mobileMenu.classList.toggle('hidden');
                 });
             }
-            const dbLocation = "{% if event and event.gps_location %}{{ event.gps_location|escapejs }}{% endif %}";
+
+            // --- ROBUST MAP LOADING LOGIC ---
+            // trim() removes accidental whitespace around the string
+            const dbLocation = "{% if event and event.gps_location %}{{ event.gps_location|escapejs }}{% endif %}".trim();
+
             const locationTextEl = document.getElementById('location-text');
             const loadingEl = document.getElementById('map-loading');
             const iframe = document.getElementById('map-iframe');
+
+            // Fallback Location (Cebu City)
             const defaultLat = 10.3157;
             const defaultLon = 123.8854;
+
             function loadMap(lat, lon) {
-                // Ensure inputs are numbers
                 lat = parseFloat(lat);
                 lon = parseFloat(lon);
+
+                // --- FIX: CHECK FOR SWAPPED COORDINATES ---
+                // Latitude must be between -90 and 90.
+                // If 'lat' is > 90 (e.g., 122.56), it is actually Longitude.
+                if (Math.abs(lat) > 90 && Math.abs(lon) <= 90) {
+                    console.warn("Detected swapped coordinates. Correcting...");
+                    const temp = lat;
+                    lat = lon;
+                    lon = temp;
+                }
+
+                // Update text if missing or placeholder
                 if(locationTextEl && (locationTextEl.innerText.includes("No GPS") || locationTextEl.innerText.trim() === "")) {
                     locationTextEl.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
                 }
+
+                console.log(`Loading Map at: ${lat}, ${lon}`);
+
+                // OpenStreetMap Embed URL
                 const bboxOffset = 0.005;
                 const embedUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - bboxOffset},${lat - bboxOffset},${lon + bboxOffset},${lat + bboxOffset}&layer=mapnik&marker=${lat},${lon}`;
 
                 iframe.src = embedUrl;
 
-                // Hide loading spinner when map is ready
                 iframe.onload = () => {
                     loadingEl.style.opacity = '0';
                     setTimeout(() => {
@@ -253,38 +301,43 @@
                     }, 300);
                 };
             }
+
             function parseAndLoad(locString) {
+                console.log("Raw Location String:", locString);
+                // Find numbers (handles "10.123, 123.456" or "Lat: 10.123 Lon: 123.456")
                 const matches = locString.match(/-?\d+(\.\d+)?/g);
 
                 if (matches && matches.length >= 2) {
-                    const lat = parseFloat(matches[0]);
-                    const lon = parseFloat(matches[1]);
+                    const val1 = parseFloat(matches[0]);
+                    const val2 = parseFloat(matches[1]);
 
-                    // Check for 0,0 (often a default "empty" value in DBs)
-                    if (Math.abs(lat) < 0.0001 && Math.abs(lon) < 0.0001) {
+                    // Check for invalid 0,0 coordinates (DB default)
+                    if (Math.abs(val1) < 0.0001 && Math.abs(val2) < 0.0001) {
                         console.warn("Location is 0,0. Loading fallback.");
                         loadMap(defaultLat, defaultLon);
                     } else {
-                        loadMap(lat, lon);
+                        loadMap(val1, val2);
                     }
                 } else {
                     console.error("Could not parse coordinates from:", locString);
                     loadMap(defaultLat, defaultLon);
                 }
             }
-            if (dbLocation && dbLocation.trim() !== "") {
+
+            // Execution
+            if (dbLocation && dbLocation !== "") {
                 parseAndLoad(dbLocation);
             } else {
+                // Try getting browser location if no DB location
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(
                         (position) => {
                             const lat = position.coords.latitude;
                             const lon = position.coords.longitude;
-                            if(locationTextEl) locationTextEl.innerText = `Current Dev Loc: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
                             loadMap(lat, lon);
                         },
                         (error) => {
-                            console.warn("Geolocation denied/error. Loading fallback.");
+                            console.warn("Geolocation failed or denied.");
                             loadMap(defaultLat, defaultLon);
                         }
                     );

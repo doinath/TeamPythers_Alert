@@ -16,8 +16,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
         .animate-fadeIn { animation: fadeIn 0.5s ease-out forwards; }
-
-        /* Custom Radio Styles */
         .peer { opacity: 0; position: absolute; }
         .peer:checked + label { border-width: 2px; }
     </style>
@@ -25,27 +23,43 @@
 <body class="bg-gray-100 font-sans text-gray-800 min-h-screen flex flex-col">
 
     <header class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="w-full px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center space-x-8">
                     <div class="flex items-center space-x-2">
                         <img src="{% static 'emergency/logo.jpg' %}" alt="ALERT Logo" class="h-10 w-auto object-contain" />
                     </div>
                     <nav class="hidden md:flex items-center space-x-6">
-                        <a href="{% url 'EmergencyEvent:index' %}" class="text-gray-500 hover:text-red-600 transition-colors font-medium">Home</a>
-                        <a href="#" class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Report Incident</a>
+                        {% if request.resolver_match.kwargs.dev_id %}
+                            <a href="{% url 'EmergencyEvent:event_list_dev' request.resolver_match.kwargs.dev_id %}"
+                               class="text-gray-500 hover:text-red-600 transition-colors font-medium">Dashboard</a>
+
+                            <a href="{% url 'EmergencyEvent:report_form_dev' request.resolver_match.kwargs.dev_id %}"
+                               class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Report Incident</a>
+                        {% else %}
+                            <a href="{% url 'EmergencyEvent:index' %}"
+                               class="text-gray-500 hover:text-red-600 transition-colors font-medium">Home</a>
+
+                            <a href="{% url 'EmergencyEvent:report_form' %}"
+                               class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Report Incident</a>
+                        {% endif %}
                     </nav>
                 </div>
 
                 <div class="flex items-center space-x-4">
                     <div class="hidden md:flex items-center space-x-4">
+                        <span class="bg-[#d9534f] text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2">
+                            AUTHORITY - ADMIN
+                        </span>
+
                         <span class="text-gray-800 font-medium text-sm mr-2">
-                             {% if user.is_authenticated and user.custom_profile %}
+                            {% if user.is_authenticated and user.custom_profile %}
                                 {{ user.custom_profile.first_name }} {{ user.custom_profile.last_name }}
                             {% else %}
-                                Julian Andales (Guest)
+                                {{ reporter_name }}
                             {% endif %}
                         </span>
+
                         <img class="h-8 w-8 rounded-full object-cover border border-gray-200" src="{% static 'emergency/profile_image.jpg' %}" alt="User Avatar" />
                     </div>
                     <div class="md:hidden flex items-center">
@@ -58,16 +72,42 @@
         </div>
 
         <div id="mobile-menu" class="hidden md:hidden bg-white border-t p-4">
+            <div class="mb-4 pb-4 border-b border-gray-100">
+                <span class="inline-block bg-[#d9534f] text-white font-semibold px-2 py-1 rounded text-xs uppercase mb-2">
+                    AUTHORITY - ADMIN
+                </span>
+                <div class="flex items-center">
+                    <img class="h-8 w-8 rounded-full object-cover mr-2" src="{% static 'emergency/profile_image.jpg' %}" alt="User Avatar" />
+
+                    <span class="font-medium text-sm">
+                        {% if user.is_authenticated and user.custom_profile %}
+                            {{ user.custom_profile.first_name }} {{ user.custom_profile.last_name }}
+                        {% else %}
+                            {{ reporter_name }}
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
             <nav class="space-y-2">
-                <a href="{% url 'EmergencyEvent:index' %}" class="block py-2 text-gray-600 hover:bg-gray-50 rounded px-2">Home</a>
-                <a href="#" class="block py-2 text-red-600 font-bold bg-red-50 rounded px-2">Report Incident</a>
+                {% if request.resolver_match.kwargs.dev_id %}
+                    <a href="{% url 'EmergencyEvent:event_list_dev' request.resolver_match.kwargs.dev_id %}"
+                       class="block py-2 text-gray-600 hover:bg-gray-50 rounded px-2">Dashboard</a>
+                    <a href="{% url 'EmergencyEvent:report_form_dev' request.resolver_match.kwargs.dev_id %}"
+                       class="block py-2 text-red-600 font-bold bg-red-50 rounded px-2">Report Incident</a>
+                {% else %}
+                    <a href="{% url 'EmergencyEvent:index' %}"
+                       class="block py-2 text-gray-600 hover:bg-gray-50 rounded px-2">Home</a>
+                    <a href="{% url 'EmergencyEvent:report_form' %}"
+                       class="block py-2 text-red-600 font-bold bg-red-50 rounded px-2">Report Incident</a>
+                {% endif %}
             </nav>
         </div>
     </header>
-
     <main class="flex-grow container mx-auto p-4 sm:p-6 lg:p-8 animate-fadeIn">
 
-        <form method="POST" action="" class="bg-white rounded-lg shadow-sm p-6 sm:p-8" id="report-form">
+        <form method="POST"
+              action="{% if request.resolver_match.kwargs.dev_id %}{% url 'EmergencyEvent:report_form_dev' request.resolver_match.kwargs.dev_id %}{% else %}{% url 'EmergencyEvent:report_form' %}{% endif %}"
+              class="bg-white rounded-lg shadow-sm p-6 sm:p-8" id="report-form">
             {% csrf_token %}
 
             {% if messages %}
@@ -91,7 +131,7 @@
                     <div>
                         <label class="block text-sm font-bold text-gray-700 uppercase mb-2">Reporter Name</label>
                         <input type="text"
-                            value="{% if user.is_authenticated and user.custom_profile %}{{ user.custom_profile.first_name }} {{ user.custom_profile.last_name }}{% else %}Julian Andales{% endif %}"
+                            value="{{ reporter_name }}"
                             class="w-full border border-gray-300 rounded px-3 py-2 text-sm text-gray-700 bg-gray-50 focus:outline-none" readonly>
                     </div>
 
@@ -106,18 +146,25 @@
                         <div class="flex flex-wrap gap-x-6 gap-y-3 mb-3">
                             <label class="flex items-center space-x-2 cursor-pointer">
                                 <input type="radio" name="emergencyType" value="fire" class="text-red-600 focus:ring-red-500" required>
+                                <i class="fas fa-fire text-red-500 text-lg"></i>
                                 <span class="text-sm font-semibold text-gray-700">FIRE</span>
                             </label>
+
                             <label class="flex items-center space-x-2 cursor-pointer">
                                 <input type="radio" name="emergencyType" value="crime" class="text-red-600 focus:ring-red-500">
+                                <i class="fas fa-handcuffs text-gray-700 text-lg"></i>
                                 <span class="text-sm font-semibold text-gray-700">CRIME</span>
                             </label>
+
                             <label class="flex items-center space-x-2 cursor-pointer">
                                 <input type="radio" name="emergencyType" value="medical" class="text-red-600 focus:ring-red-500">
+                                <i class="fas fa-star-of-life text-blue-500 text-lg"></i>
                                 <span class="text-sm font-semibold text-gray-700">MEDICAL</span>
                             </label>
+
                             <label class="flex items-center space-x-2 cursor-pointer">
                                 <input type="radio" name="emergencyType" value="accident" class="text-red-600 focus:ring-red-500">
+                                <i class="fas fa-car-burst text-orange-500 text-lg"></i>
                                 <span class="text-sm font-semibold text-gray-700">ACCIDENT</span>
                             </label>
                         </div>
@@ -212,7 +259,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Mobile Menu Logic
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
 

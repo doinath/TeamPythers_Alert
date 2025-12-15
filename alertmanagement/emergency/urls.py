@@ -8,46 +8,41 @@ urlpatterns = [
     path("", views.HomepageView.as_view(), name="index"),
     path("account/", views.login_view, name="login"),
 
-    # --- MAIN LIST VIEWS (Updated with Dev IDs) ---
+    # --- MAIN LIST VIEWS ---
 
-    # 1. Assignment List: /viewlist/ OR /viewlist/6/
+    # 1. Assignment List
     path("viewlist/", views.AssignmentListView.as_view(), name="assignment_list"),
     path("viewlist/<int:dev_id>/", views.AssignmentListView.as_view(), name="assignment_list_dev"),
 
-    # 2. Event List: /event-list/ OR /event-list/6/
+    # 2. Event List
     path("event-list/", views.EventListView.as_view(), name="event_list"),
     path("event-list/<int:dev_id>/", views.EventListView.as_view(), name="event_list_dev"),
 
-    # 3. Report Incident: /report-incident/ OR /report-incident/6/
+    # 3. Report Incident
     path("report-incident/", views.CreateReportView.as_view(), name="report_form"),
     path("report-incident/<int:dev_id>/", views.CreateReportView.as_view(), name="report_form_dev"),
 
-    # 4. Responder Availability: /responder-availability/ OR /responder-availability/6/
+    # 4. Responder Availability
     path("responder-availability/", views.ResponderAvailabilityView.as_view(), name="responder_availability"),
-    path("responder-availability/<int:dev_id>/", views.ResponderAvailabilityView.as_view(),
-         name="responder_availability_dev"),
+    path("responder-availability/<int:dev_id>/", views.ResponderAvailabilityView.as_view(), name="responder_availability_dev"),
 
-    # --- DETAILS VIEWS (Updated Logic) ---
+    # --- DETAILS VIEWS ---
 
-    # Authority View: /details-authority/event_id/ OR /details-authority/event_id/dev_id/
-    path("details-authority/<int:event_id>/", views.EventDetailsAuthorityView.as_view(),
-         name="event_details_authority"),
-    path("details-authority/<int:event_id>/<int:dev_id>/", views.EventDetailsAuthorityView.as_view(),
-         name="event_details_authority_dev"),
+    # Authority View
+    path("details-authority/<int:event_id>/", views.EventDetailsAuthorityView.as_view(), name="event_details_authority"),
+    path("details-authority/<int:event_id>/<int:dev_id>/", views.EventDetailsAuthorityView.as_view(), name="event_details_authority_dev"),
 
-    # Responder View: /details-responder/event_id/ OR /details-responder/event_id/dev_id/
-    path("details-responder/<int:event_id>/", views.EventDetailsResponderView.as_view(),
-         name="event_details_responder"),
-    path("details-responder/<int:event_id>/<int:dev_id>/", views.EventDetailsResponderView.as_view(),
-         name="event_details_responder_dev"),
+    # Responder View
+    path("details-responder/<int:event_id>/", views.EventDetailsResponderView.as_view(), name="event_details_responder"),
+    path("details-responder/<int:event_id>/<int:dev_id>/", views.EventDetailsResponderView.as_view(), name="event_details_responder_dev"),
 
     # Defaults (No Event ID)
-    path("details-authority/", views.EventDetailsAuthorityView.as_view(), name="event_details_authorit"),
-    path("details-responder/", views.EventDetailsResponderView.as_view(), name="event_details_responder"),
+    path("details-authority/", views.EventDetailsAuthorityView.as_view(), name="event_details_authority_default"),
+    path("details-responder/", views.EventDetailsResponderView.as_view(), name="event_details_responder_default"),
 
-    # --- MEDICAL RECORDS ---
-    path("medical-record/", views.MedicalRecordView.as_view(), name="medical_records"),
+    # --- MEDICAL RECORDS (UPDATED) ---
     path("medical-record/<int:event_id>/", views.MedicalRecordView.as_view(), name="medical_record"),
+    path("medical-record/<int:event_id>/<int:dev_id>/", views.MedicalRecordView.as_view(), name="medical_record_dev"),
 
     # --- Placeholders ---
     path("assignment/create/", views.CreateAssignmentView.as_view(), name="create_assignment"),

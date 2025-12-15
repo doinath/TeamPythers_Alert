@@ -19,24 +19,32 @@
         .leaflet-control-zoom, .leaflet-control-attribution {
             display: none !important;
         }
+        /* Smooth fade in for modals */
+        .modal-animate {
+            animation: fadeIn 0.2s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
     </style>
 </head>
 <body class="bg-gray-100 font-sans">
     <div id="root">
-        <div class="min-h-screen bg-gray-100">
+        <div class="min-h-screen bg-gray-100 flex flex-col">
             <!-- Header -->
-            <header class="bg-white shadow-md">
+            <header class="bg-white shadow-md sticky top-0 z-50">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex items-center justify-between h-16">
                         <!-- Logo and Nav -->
-                    <div class="flex items-center space-x-8">
-                        <div class="flex items-center space-x-2">
-                            <img src="{% static 'images/logo.png' %}" alt="ALERT Logo" class="h-10 w-auto object-contain" />
+                        <div class="flex items-center space-x-8">
+                            <div class="flex items-center space-x-2">
+                                <img src="{% static 'images/logo.png' %}" onerror="this.src='https://via.placeholder.com/40?text=A'" alt="ALERT Logo" class="h-10 w-auto object-contain" />
+                            </div>
+                            <nav class="hidden md:flex items-center space-x-6">
+                                <a href="#" class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Dashboard</a>
+                            </nav>
                         </div>
-                        <nav class="hidden md:flex items-center space-x-6">
-                            <a href="#" class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Dashboard</a>
-                        </nav>
-                    </div>
                         <div class="flex items-center space-x-4">
                             <div id="desktop-status-badge" class="hidden md:block bg-gradient-to-b from-red-600 to-red-800 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md transition-all duration-300">
                                 OFF DUTY
@@ -59,7 +67,7 @@
                     </div>
                 </div>
                 <!-- Mobile Menu -->
-                <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+                <div id="mobile-menu" class="hidden md:hidden bg-white border-t absolute w-full z-30 shadow-lg top-16 left-0">
                     <nav class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                         <a href="#" class="block px-3 py-2 rounded-md text-base font-medium bg-red-50 text-red-700">Dashboard</a>
                     </nav>
@@ -81,7 +89,7 @@
             </header>
 
             <!-- Main Content -->
-            <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+            <main class="flex-grow container mx-auto p-4 sm:p-6 lg:p-8">
                 <!-- Tab Navigation -->
                 <div class="mb-6 border-b border-gray-200">
                   <nav class="-mb-px flex space-x-8" aria-label="Tabs">
@@ -112,70 +120,47 @@
                     <div id="dashboard-overview" class="hidden">
                         <!-- Aggregate Stat Cards -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                            <!-- Card 1: Total Handled Events -->
+                            <!-- Card 1 -->
                             <div class="bg-white p-5 rounded-xl shadow-lg flex items-center space-x-4">
                                 <div class="bg-red-100 p-3 rounded-full">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                    </svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                                 </div>
-                                <div>
-                                    <p class="text-sm text-gray-500 font-medium">Total Handled Events</p>
-                                    <p class="text-2xl font-extrabold text-gray-800">142</p>
-                                </div>
+                                <div><p class="text-sm text-gray-500 font-medium">Total Handled Events</p><p class="text-2xl font-extrabold text-gray-800">142</p></div>
                             </div>
-                            <!-- Card 2: Hours on Duty (Today) -->
+                            <!-- Card 2 -->
                             <div class="bg-white p-5 rounded-xl shadow-lg flex items-center space-x-4">
                                 <div class="bg-blue-100 p-3 rounded-full">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                 </div>
-                                <div>
-                                    <p class="text-sm text-gray-500 font-medium">Hours on Duty (Today)</p>
-                                    <p class="text-2xl font-extrabold text-gray-800">6.5h</p>
-                                </div>
+                                <div><p class="text-sm text-gray-500 font-medium">Hours on Duty</p><p class="text-2xl font-extrabold text-gray-800">6.5h</p></div>
                             </div>
-                            <!-- Card 3: Avg. Resolution Time -->
+                            <!-- Card 3 -->
                             <div class="bg-white p-5 rounded-xl shadow-lg flex items-center space-x-4">
                                 <div class="bg-green-100 p-3 rounded-full">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                 </div>
-                                <div>
-                                    <p class="text-sm text-gray-500 font-medium">Avg. Resolution Time</p>
-                                    <p class="text-2xl font-extrabold text-gray-800">12m 34s</p>
-                                </div>
+                                <div><p class="text-sm text-gray-500 font-medium">Avg. Resolution</p><p class="text-2xl font-extrabold text-gray-800">12m</p></div>
                             </div>
-                            <!-- Card 4: Resolved Incidents -->
+                            <!-- Card 4 -->
                             <div class="bg-white p-5 rounded-xl shadow-lg flex items-center space-x-4">
                                 <div class="bg-yellow-100 p-3 rounded-full">
-                                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                                    </svg>
+                                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
                                 </div>
-                                <div>
-                                    <p class="text-sm text-gray-500 font-medium">Success Rate</p>
-                                    <p class="text-2xl font-extrabold text-gray-800">98.6%</p>
-                                </div>
+                                <div><p class="text-sm text-gray-500 font-medium">Success Rate</p><p class="text-2xl font-extrabold text-gray-800">98%</p></div>
                             </div>
                         </div>
 
                         <!-- Awaiting Assignment View -->
                         <div id="waiting-for-assignment-view" class="hidden text-center py-16 px-6 bg-white rounded-xl shadow-lg">
                             <div class="mx-auto h-12 w-12 text-green-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12">
-                                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                             </div>
-                            <h2 class="mt-4 text-2xl font-bold text-gray-800">You are on duty and available.</h2>
-                            <p class="mt-2 text-base text-gray-600">Awaiting new emergency assignments from the command center.</p>
+                            <h2 class="mt-4 text-2xl font-bold text-gray-800">You are on duty.</h2>
+                            <p class="mt-2 text-base text-gray-600">Awaiting new emergency assignments...</p>
                         </div>
 
                         <!-- Current Assignment Container -->
                         <div id="assignment-card-container" class="hidden">
-                            <!-- Current Assignment Overview Card -->
                             <div class="bg-white rounded-xl shadow-lg p-6">
                                 <div class="flex flex-col sm:flex-row justify-between sm:items-center">
                                     <div>
@@ -183,30 +168,20 @@
                                         <h2 class="text-2xl font-bold text-gray-800 mt-1">Medical Assistance</h2>
                                         <div class="flex items-center flex-wrap gap-x-4 gap-y-2 mt-2 text-sm text-gray-600">
                                             <div class="flex items-center space-x-1">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                </svg>
                                                 <span>Caigit, Cebu City</span>
                                             </div>
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-800">
-                                                HIGH SEVERITY
-                                            </span>
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-800">HIGH SEVERITY</span>
                                         </div>
                                     </div>
                                     <div class="mt-4 sm:mt-0 sm:ml-6 flex-shrink-0">
-                                        <button id="view-details-btn" class="w-full sm:w-auto flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-transform transform hover:scale-105">
-                                            View Details & Map
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3 -mr-1 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                              <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                            </svg>
-                                        </button>
+                                        <button class="w-full sm:w-auto flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-red-600 hover:bg-red-700">View Details</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <!-- Citizen View -->
                 <div id="citizen-view" class="hidden">
                      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -225,36 +200,32 @@
 
                             <!-- Emergency Contacts -->
                             <div class="bg-white p-6 rounded-xl shadow-lg">
-                                <h2 class="text-xl font-bold text-gray-800 mb-4">Emergency Contacts</h2>
-                                <div class="space-y-4">
-                                    <div class="contact-section">
-                                        <h3 class="font-semibold text-red-700 mb-2 pb-1 border-b">Police & Law Enforcement</h3>
-                                        <ul class="text-sm text-gray-600 space-y-2">
-                                            <li class="flex justify-between items-center"><span>Cebu City Police Hotline</span><span class="text-gray-500 font-mono text-xs">(555) 233-9111</span></li>
-                                            <li class="flex justify-between items-center"><span>Waterfront Police Station</span><span class="text-gray-500 font-mono text-xs">(555) 254-6277</span></li>
-                                            <li class="flex justify-between items-center"><span>Fuente Osmeña Police Station</span><span class="text-gray-500 font-mono text-xs">(555) 255-7355</span></li>
-                                            <li class="flex justify-between items-center"><span>Mobile Patrol Group</span><span class="text-gray-500 font-mono text-xs">(555) 233-5564</span></li>
-                                        </ul>
-                                    </div>
-                                     <div class="contact-section">
-                                        <h3 class="font-semibold text-red-700 mb-2 pb-1 border-b">Fire Department & Rescue</h3>
-                                        <ul class="text-sm text-gray-600 space-y-2">
-                                            <li class="flex justify-between items-center"><span>Cebu City Fire Department</span><span class="text-gray-500 font-mono text-xs">(555) 256-0541</span></li>
-                                            <li class="flex justify-between items-center"><span>Mandaue City Fire Department</span><span class="text-gray-500 font-mono text-xs">(555) 344-4747</span></li>
-                                            <li class="flex justify-between items-center"><span>Fil-Chinese Volunteer Fire Brigade</span><span class="text-gray-500 font-mono text-xs">(555) 254-0222</span></li>
-                                        </ul>
-                                    </div>
-                                    <div class="contact-section">
-                                        <h3 class="font-semibold text-red-700 mb-2 pb-1 border-b">Hospitals & Medical Services</h3>
-                                        <ul class="text-sm text-gray-600 space-y-2">
-                                            <li class="flex justify-between items-center"><span>Chong Hua Hospital</span><span class="text-gray-500 font-mono text-xs">(555) 255-8000</span></li>
-                                            <li class="flex justify-between items-center"><span>Cebu Doctors' Hospital</span><span class="text-gray-500 font-mono text-xs">(555) 255-5555</span></li>
-                                            <li class="flex justify-between items-center"><span>Velez General Hospital</span><span class="text-gray-500 font-mono text-xs">(555) 253-1871</span></li>
-                                            <li class="flex justify-between items-center"><span>Perpetual Succour Hospital</span><span class="text-gray-500 font-mono text-xs">(555) 233-8620</span></li>
-                                        </ul>
-                                    </div>
-                                </div>
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">Emergency Contacts</h2>
+                        <div class="space-y-6">
+                            <div>
+                                <h3 class="font-semibold text-red-700 mb-2 pb-1 border-b border-red-100 text-sm uppercase tracking-wide">Police & Law Enforcement</h3>
+                                <ul class="text-sm text-gray-600 space-y-2">
+                                    <li class="flex justify-between items-center"><span>Cebu City Police Hotline</span><span class="text-gray-500 font-mono text-xs">(555) 233-9111</span></li>
+                                    <li class="flex justify-between items-center"><span>Waterfront Police Station</span><span class="text-gray-500 font-mono text-xs">(555) 254-6277</span></li>
+                                    <li class="flex justify-between items-center"><span>Mobile Patrol Group</span><span class="text-gray-500 font-mono text-xs">(555) 233-5564</span></li>
+                                </ul>
                             </div>
+                            <div>
+                                <h3 class="font-semibold text-red-700 mb-2 pb-1 border-b border-red-100 text-sm uppercase tracking-wide">Fire Department & Rescue</h3>
+                                <ul class="text-sm text-gray-600 space-y-2">
+                                    <li class="flex justify-between items-center"><span>Cebu City Fire Department</span><span class="text-gray-500 font-mono text-xs">(555) 256-0541</span></li>
+                                    <li class="flex justify-between items-center"><span>Mandaue City Fire Department</span><span class="text-gray-500 font-mono text-xs">(555) 344-4747</span></li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-red-700 mb-2 pb-1 border-b border-red-100 text-sm uppercase tracking-wide">Hospitals & Medical Services</h3>
+                                <ul class="text-sm text-gray-600 space-y-2">
+                                    <li class="flex justify-between items-center"><span>Chong Hua Hospital</span><span class="text-gray-500 font-mono text-xs">(555) 255-8000</span></li>
+                                    <li class="flex justify-between items-center"><span>Cebu Doctors' Hospital</span><span class="text-gray-500 font-mono text-xs">(555) 255-5555</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                         </div>
 
                         <!-- Right Column -->
@@ -263,46 +234,31 @@
                                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
                                     <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900">What <span class="text-red-600">KIND</span> of Emergency?</h1>
                                     <button id="file-report-btn" class="mt-4 sm:mt-0 flex items-center justify-center space-x-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z"></path>
-                                            <path fill-rule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clip-rule="evenodd"></path>
-                                        </svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z"></path><path fill-rule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
                                         <span>File a Report</span>
                                     </button>
                                 </div>
                                 <div id="emergency-buttons-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
                                     <button data-type="Fire" class="emergency-button flex flex-col items-center justify-center p-8 text-white bg-gradient-to-br from-orange-500 via-red-600 to-rose-700 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300">
-                                        <img src="{% static 'images/fire_icon.png' %}" alt="Fire Icon" class="h-12 w-auto" />
+                                        <img src="{% static 'images/fire_icon.png' %}" onerror="this.src='https://img.icons8.com/color/96/fire-element.png'" alt="Fire Icon" class="h-12 w-auto mb-2" />
                                         <span class="font-semibold">Fire</span>
                                     </button>
                                     <button data-type="Flood" class="emergency-button flex flex-col items-center justify-center p-8 text-white bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300">
-                                        <img src="{% static 'images/flood_icon.png' %}" alt="Flood Icon" class="h-12 w-auto" />
+                                        <img src="{% static 'images/flood_icon.png' %}" onerror="this.src='https://img.icons8.com/color/96/flood.png'" alt="Flood Icon" class="h-12 w-auto mb-2" />
                                         <span class="font-semibold">Flood</span>
                                     </button>
                                     <button data-type="Accident" class="emergency-button flex flex-col items-center justify-center p-8 text-white bg-gradient-to-br from-rose-400 via-rose-500 to-red-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300">
-                                        <img src="{% static 'images/accidents_icon.png' %}" alt="Accident Icon" class="h-12 w-auto" />
+                                        <img src="{% static 'images/accidents_icon.png' %}" onerror="this.src='https://img.icons8.com/color/96/car-crash.png'" alt="Accident Icon" class="h-12 w-auto mb-2" />
                                         <span class="font-semibold">Accident</span>
                                     </button>
                                     <button data-type="Crime" class="emergency-button flex flex-col items-center justify-center p-8 text-white bg-gradient-to-br from-slate-500 via-indigo-600 to-purple-700 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300">
-                                        <img src="{% static 'images/crime_icon.png' %}" alt="Crime Icon" class="h-12 w-auto" />
+                                        <img src="{% static 'images/crime_icon.png' %}" onerror="this.src='https://img.icons8.com/color/96/police-badge.png'" alt="Crime Icon" class="h-12 w-auto mb-2" />
                                         <span class="font-semibold">Crime</span>
                                     </button>
                                     <button data-type="Earthquake" class="emergency-button flex flex-col items-center justify-center p-8 text-white bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300">
-                                        <img src="{% static 'images/earthquake_icon.png' %}" alt="Earthquake Icon" class="h-12 w-auto" />
+                                        <img src="{% static 'images/earthquake_icon.png' %}" onerror="this.src='https://img.icons8.com/color/96/earthquakes.png'" alt="Earthquake Icon" class="h-12 w-auto mb-2" />
                                         <span class="font-semibold">Earthquake</span>
                                     </button>
-                                </div>
-                                <!-- Response Container (Initially Hidden) -->
-                                <div id="response-container" class="hidden text-center py-8">
-                                    <svg class="w-16 h-16 mx-auto text-green-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    <p id="response-message" class="text-lg font-semibold text-gray-800">Responders are on their way.</p>
-                                    <p class="text-sm text-gray-500 mt-1">Your location has been shared.</p>
-                                    <div class="mt-8 flex justify-center gap-4">
-                                        <button id="cancel-button" class="px-8 py-3 bg-gray-200 text-gray-800 font-bold rounded-lg hover:bg-gray-300 transition-transform transform hover:scale-105">Cancel</button>
-                                        <button id="chat-button" class="px-8 py-3 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition-transform transform hover:scale-105">Chat with Responders</button>
-                                    </div>
                                 </div>
                             </div>
 
@@ -310,24 +266,20 @@
                                  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
                                     <label for="search-location" class="text-lg font-bold text-gray-800">Search Location</label>
                                     <button id="pin-location-btn" class="mt-2 sm:mt-0 flex items-center justify-center space-x-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
-                                        </svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" /></svg>
                                         <span>Pin My Current Location</span>
                                     </button>
                                  </div>
-                                 <div id="map-container" class="flex-grow w-full h-64 md:h-full bg-gray-200 rounded-lg overflow-hidden relative flex items-center justify-center">
-                                     <div id="map-loader" class="text-center text-gray-600">
-                                        <svg class="animate-spin h-8 w-8 text-gray-500 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                        <p class="mt-2 text-sm">Fetching your location...</p>
+                                 <div id="map-container" class="flex-grow w-full h-64 md:h-full bg-gray-200 rounded-lg overflow-hidden relative flex items-center justify-center border border-gray-300">
+                                     <div id="map-loader" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-white z-10">
+                                        <svg class="animate-spin h-8 w-8 text-red-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                        <p class="mt-2 text-sm text-gray-600">Fetching your location...</p>
+                                    </div>
+                                    <div id="map-empty" class="text-center text-gray-500">
+                                        <svg class="w-16 h-16 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                        <p>Map not loaded. Click "Pin My Current Location".</p>
                                     </div>
                                     <iframe id="map-iframe" class="w-full h-full hidden" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                                    <div id="location-status" class="absolute bottom-2 left-2 bg-white/80 backdrop-blur-sm px-3 py-1 rounded-md text-xs font-semibold text-gray-700 shadow-md hidden">
-                                        Location pinned!
-                                    </div>
                                  </div>
                             </div>
                         </div>
@@ -336,70 +288,132 @@
             </main>
         </div>
     </div>
+
+    <!-- SOS Modal -->
+    <div id="sos-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm mx-auto relative modal-animate">
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="p-2 bg-red-100 rounded-full animate-pulse">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/><line x1="22" y1="2" x2="15" y2="2"/><polyline points="19 5 15 2 19 2"/></svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800">Emergency Center</h3>
+                <span class="ml-auto text-red-600 font-medium animate-pulse">Calling...</span>
+            </div>
+            <div class="flex flex-col items-center justify-center py-8">
+                <div class="relative mb-4">
+                    <img class="h-24 w-24 rounded-full object-cover ring-4 ring-red-200" src="https://picsum.photos/id/237/100/100" alt="Caller" />
+                    <span class="absolute bottom-0 right-0 p-2 bg-green-500 rounded-full border-2 border-white"></span>
+                </div>
+                <p class="text-xl font-bold text-gray-900">Bessie Cooper</p>
+            </div>
+            <div class="mt-6">
+                <button id="sos-cancel-btn" class="w-full flex items-center justify-center space-x-2 bg-red-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-red-700 transition-colors shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    <span id="sos-timer-text">Cancel (30s)</span>
+                </button>
+                <p class="text-xs text-gray-500 mt-4 text-center">Authorities will be notified automatically if not cancelled.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emergency Response Modal -->
+    <div id="emergency-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm mx-auto relative modal-animate">
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="p-2 bg-red-100 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+                </div>
+                <h3 id="emergency-title" class="text-lg font-semibold text-gray-800">Response</h3>
+                <span id="emergency-status-text" class="ml-auto font-medium text-yellow-600">Waiting...</span>
+            </div>
+            <div class="flex flex-col items-center justify-center py-8">
+                <div class="relative mb-4">
+                    <img class="h-24 w-24 rounded-full object-cover ring-4 ring-red-200" src="https://i.pravatar.cc/150?img=12" alt="Responder" />
+                    <span id="emergency-status-dot" class="absolute bottom-0 right-0 p-2 rounded-full border-2 border-white bg-yellow-400"></span>
+                </div>
+                <p class="text-xl font-bold text-gray-900">Responders</p>
+                <p id="emergency-status-desc" class="text-sm text-gray-500">Connecting to nearest unit...</p>
+            </div>
+            <div class="mt-6 flex space-x-4">
+                <button id="emergency-cancel-btn" class="flex-1 flex items-center justify-center space-x-2 bg-red-600 text-white hover:bg-red-700 font-semibold py-3 px-4 rounded-lg transition-colors shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    <span id="emergency-timer-text">Cancel (60)</span>
+                </button>
+                <button id="emergency-details-btn" class="flex-1 flex items-center justify-center space-x-2 bg-gray-200 text-gray-400 font-semibold py-3 px-4 rounded-lg shadow-lg transition-colors cursor-not-allowed" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    <span>Details</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Modal -->
+    <div id="report-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-[60] p-4 hidden">
+        <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-2xl mx-auto modal-animate max-h-[90vh] overflow-y-auto">
+            <h2 class="text-3xl font-bold text-red-700 mb-6 text-center">Emergency Report Form</h2>
+            <form id="report-form" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Type of Emergency</label>
+                    <input type="text" id="report-type" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" placeholder="e.g., Fire, Accident, Crime" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Location Details</label>
+                    <textarea id="report-location" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" placeholder="Location..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Description</label>
+                    <textarea rows="5" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" placeholder="Describe what happened"></textarea>
+                </div>
+                <div class="flex justify-end space-x-4">
+                    <button type="button" onclick="closeModal('report-modal')" class="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">Close</button>
+                    <button type="submit" class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700">Submit Report</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
+        // Global Variables
+        let sosInterval, emergencyInterval;
+
+        // Helper Functions for Modals
+        function showModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+            if(id === 'sos-modal') clearInterval(sosInterval);
+            if(id === 'emergency-modal') clearInterval(emergencyInterval);
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
 
-            // --- USER DATA ---
-            const users = {
-                responder: {
-                    name: 'Bessie Cooper',
-                    email: 'bessie.cooper@example.com',
-                    avatar: 'https://picsum.photos/id/237/100/100',
-                },
-                citizen: {
-                    name: 'Bessie Cooper',
-                    email: 'bessie.cooper@example.com',
-                    avatar: 'https://i.pravatar.cc/40?u=bessie',
-                }
-            };
-
-            //--- Global Elements ---
+            // --- 1. Mobile Menu Functionality ---
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
             const openIcon = document.getElementById('menu-open-icon');
             const closeIcon = document.getElementById('menu-close-icon');
 
-            // Header Elements
-            const userNameEl = document.querySelector('span.text-gray-700.font-medium');
-            const userAvatarEl = document.querySelector('img[alt="User Avatar"]');
-            const mobileUserNameEl = document.querySelector('#mobile-menu .text-base.font-medium.text-gray-800');
-            const mobileUserEmailEl = document.querySelector('#mobile-menu .text-sm.font-medium.text-gray-500');
-            const mobileUserAvatarEl = document.querySelector('#mobile-menu img');
-            const mobileStatusBadgeContainer = document.querySelector('#mobile-menu .px-5.mb-3');
-
-            // --- Mobile Menu Toggle ---
             if (mobileMenuButton) {
                  mobileMenuButton.addEventListener('click', () => {
-                    mobileMenu.classList.toggle('hidden');
-                    openIcon.classList.toggle('hidden');
-                    closeIcon.classList.toggle('hidden');
+                    const isHidden = mobileMenu.classList.contains('hidden');
+                    if(isHidden) {
+                        mobileMenu.classList.remove('hidden');
+                        openIcon.classList.add('hidden');
+                        closeIcon.classList.remove('hidden');
+                    } else {
+                        mobileMenu.classList.add('hidden');
+                        openIcon.classList.remove('hidden');
+                        closeIcon.classList.add('hidden');
+                    }
                 });
             }
 
-            //--- TABS ---
+            // --- 2. Tabs Functionality ---
             const responderTab = document.getElementById('responder-tab');
             const citizenTab = document.getElementById('citizen-tab');
             const responderView = document.getElementById('responder-view');
             const citizenView = document.getElementById('citizen-view');
-            let isCitizenMapInitialized = false;
-
-            function updateHeader(view) {
-                const user = (view === 'citizen') ? users.citizen : users.responder;
-                if (userNameEl) userNameEl.textContent = user.name;
-                if (userAvatarEl) userAvatarEl.src = user.avatar;
-                if (mobileUserNameEl) mobileUserNameEl.textContent = user.name;
-                if (mobileUserEmailEl) mobileUserEmailEl.textContent = user.email;
-                if (mobileUserAvatarEl) mobileUserAvatarEl.src = user.avatar;
-
-                const desktopStatusBadge = document.getElementById('desktop-status-badge');
-                if (view === 'citizen') {
-                    if (desktopStatusBadge) desktopStatusBadge.classList.add('hidden');
-                    if (mobileStatusBadgeContainer) mobileStatusBadgeContainer.classList.add('hidden');
-                } else {
-                    if (desktopStatusBadge) desktopStatusBadge.classList.remove('hidden');
-                    if (mobileStatusBadgeContainer) mobileStatusBadgeContainer.classList.remove('hidden');
-                }
-            }
 
             responderTab.addEventListener('click', () => {
                 responderTab.classList.add('border-red-600', 'text-red-600');
@@ -408,7 +422,6 @@
                 citizenTab.classList.add('border-transparent', 'text-gray-500');
                 responderView.classList.remove('hidden');
                 citizenView.classList.add('hidden');
-                updateHeader('responder');
             });
 
             citizenTab.addEventListener('click', () => {
@@ -418,214 +431,197 @@
                 responderTab.classList.add('border-transparent', 'text-gray-500');
                 citizenView.classList.remove('hidden');
                 responderView.classList.add('hidden');
-                updateHeader('citizen');
-
-                if (!isCitizenMapInitialized) {
-                    initializeCitizenMap();
-                    isCitizenMapInitialized = true;
-                }
             });
 
-            // ===============================================
-            // RESPONDER DASHBOARD LOGIC
-            // ===============================================
-
-            // --- STATE ---
-            // 'OFF_DUTY', 'AVAILABLE', 'ASSIGNED', 'ACKNOWLEDGED', etc.
+            // --- 3. Responder Status Logic ---
             let appState = 'OFF_DUTY';
-
-            // --- ELEMENTS ---
-            const desktopStatusBadge = document.getElementById('desktop-status-badge');
-            const mobileStatusBadge = document.getElementById('mobile-status-badge');
-            const offDutyView = document.getElementById('off-duty-view');
             const goOnDutyBtn = document.getElementById('go-on-duty-btn');
+            const offDutyView = document.getElementById('off-duty-view');
             const dashboardOverview = document.getElementById('dashboard-overview');
             const waitingForAssignmentView = document.getElementById('waiting-for-assignment-view');
             const assignmentCardContainer = document.getElementById('assignment-card-container');
-            const viewDetailsBtn = document.getElementById('view-details-btn');
+            const desktopStatusBadge = document.getElementById('desktop-status-badge');
+            const mobileStatusBadge = document.getElementById('mobile-status-badge');
 
-            // --- UI UPDATE LOGIC ---
-            const renderResponderView = () => {
-                const allBadges = [desktopStatusBadge, mobileStatusBadge].filter(el => el);
-
-                const setBadgeState = (text, classes) => {
-                    allBadges.forEach(badge => {
-                        badge.className = 'text-white text-xs font-bold px-3 py-1 rounded-full shadow-md transition-all duration-300';
-                        badge.textContent = text;
-                        badge.classList.add(...classes);
-                        if (badge.id === 'desktop-status-badge') badge.classList.add('hidden', 'md:block');
-                        else if (badge.id === 'mobile-status-badge') badge.classList.add('inline-block');
-                    });
-                };
-
-                if (appState === 'OFF_DUTY') {
-                    offDutyView.classList.remove('hidden');
-                    dashboardOverview.classList.add('hidden');
-                    setBadgeState('OFF DUTY', ['bg-gradient-to-b', 'from-gray-500', 'to-gray-700']);
-                } else { // All ON_DUTY states
-                    offDutyView.classList.add('hidden');
-                    dashboardOverview.classList.remove('hidden');
-
-                    if (appState === 'AVAILABLE') {
-                        waitingForAssignmentView.classList.remove('hidden');
-                        assignmentCardContainer.classList.add('hidden');
-                        setBadgeState('ON DUTY - Available', ['bg-gradient-to-b', 'from-green-600', 'to-green-800']);
-                    } else { // Any other ON_DUTY state implies an assignment
-                        waitingForAssignmentView.classList.add('hidden');
-                        assignmentCardContainer.classList.remove('hidden');
-
-                        // Set badge based on specific assignment state
-                        switch (appState) {
-                            case 'ASSIGNED':
-                                setBadgeState('ON DUTY - Assigned', ['bg-gradient-to-b', 'from-red-600', 'to-red-800']);
-                                break;
-                            case 'ACKNOWLEDGED':
-                                setBadgeState('ON DUTY - Acknowledged', ['bg-gradient-to-b', 'from-blue-600', 'to-blue-800']);
-                                break;
-                            // ... other cases for different states can be added here
-                            default:
-                                setBadgeState('ON DUTY - Unknown', ['bg-gradient-to-b', 'from-gray-500', 'to-gray-700']);
-                        }
+            function updateBadges(text, colorClasses) {
+                [desktopStatusBadge, mobileStatusBadge].forEach(badge => {
+                    if(badge) {
+                        badge.innerText = text;
+                        badge.className = `text-white text-xs font-bold px-3 py-1 rounded-full shadow-md transition-all duration-300 ${colorClasses}`;
+                        if(badge.id === 'desktop-status-badge') badge.classList.add('hidden', 'md:block');
+                        else badge.classList.add('inline-block');
                     }
-                }
-            };
+                });
+            }
 
-            // --- EVENT HANDLERS ---
             if(goOnDutyBtn) {
                 goOnDutyBtn.addEventListener('click', () => {
                     appState = 'AVAILABLE';
-                    renderResponderView();
+                    offDutyView.classList.add('hidden');
+                    dashboardOverview.classList.remove('hidden');
+                    waitingForAssignmentView.classList.remove('hidden');
+                    assignmentCardContainer.classList.add('hidden');
+                    updateBadges('AVAILABLE', 'bg-green-600');
 
-                    // SIMULATE GETTING AN ASSIGNMENT AFTER 5 SECONDS
+                    // Simulate Assignment after 5 seconds
                     setTimeout(() => {
-                        // Check if user is still in 'available' state before assigning
                         if (appState === 'AVAILABLE') {
                             appState = 'ASSIGNED';
-                            renderResponderView();
+                            waitingForAssignmentView.classList.add('hidden');
+                            assignmentCardContainer.classList.remove('hidden');
+                            updateBadges('ASSIGNED', 'bg-red-600');
                         }
                     }, 5000);
                 });
             }
 
-            if(viewDetailsBtn) {
-                viewDetailsBtn.addEventListener('click', () => {
-                   alert("The detailed view with map and action buttons would be displayed here.");
+            // --- 4. Citizen Logic: SOS ---
+            const sosBtn = document.getElementById('sos-button');
+            const sosCancelBtn = document.getElementById('sos-cancel-btn');
+            const sosTimerText = document.getElementById('sos-timer-text');
+
+            if(sosBtn) {
+                sosBtn.addEventListener('click', () => {
+                    showModal('sos-modal');
+                    let timeLeft = 30;
+                    sosTimerText.innerText = `Cancel (${timeLeft}s)`;
+                    clearInterval(sosInterval);
+                    sosInterval = setInterval(() => {
+                        timeLeft--;
+                        sosTimerText.innerText = `Cancel (${timeLeft}s)`;
+                        if (timeLeft <= 0) {
+                            clearInterval(sosInterval);
+                            closeModal('sos-modal');
+                            // Open report modal as fallback or success action
+                            document.getElementById('report-type').value = "SOS Alert";
+                            showModal('report-modal');
+                        }
+                    }, 1000);
                 });
             }
 
-            // ===============================================
-            // CITIZEN DASHBOARD LOGIC
-            // ===============================================
-            const sosButton = document.getElementById('sos-button');
-            const emergencyButtons = document.querySelectorAll('.emergency-button');
-            const pinLocationButton = document.getElementById('pin-location-btn');
-            const locationStatus = document.getElementById('location-status');
-            const mapIframe = document.getElementById('map-iframe');
-            const mapLoader = document.getElementById('map-loader');
-            const emergencyButtonsGrid = document.getElementById('emergency-buttons-grid');
-            const responseContainer = document.getElementById('response-container');
-            const cancelButton = document.getElementById('cancel-button');
-            const chatButton = document.getElementById('chat-button');
+            if(sosCancelBtn) {
+                sosCancelBtn.addEventListener('click', () => closeModal('sos-modal'));
+            }
+
+            // --- 5. Citizen Logic: File Report ---
             const fileReportBtn = document.getElementById('file-report-btn');
+            if(fileReportBtn) {
+                fileReportBtn.addEventListener('click', () => {
+                    document.getElementById('report-type').value = "";
+                    document.getElementById('report-location').value = "";
+                    showModal('report-modal');
+                });
+            }
 
-            const geoOptions = { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 };
+            // --- 6. Citizen Logic: Emergency Buttons (Fire, Flood, etc) ---
+            const emergencyButtons = document.querySelectorAll('.emergency-button');
+            const emTitle = document.getElementById('emergency-title');
+            const emStatus = document.getElementById('emergency-status-text');
+            const emDesc = document.getElementById('emergency-status-desc');
+            const emDot = document.getElementById('emergency-status-dot');
+            const emTimerText = document.getElementById('emergency-timer-text');
+            const emCancelBtn = document.getElementById('emergency-cancel-btn');
+            const emDetailsBtn = document.getElementById('emergency-details-btn');
 
-            async function getCurrentLocation() {
-                return new Promise((resolve, reject) => {
+            emergencyButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const type = btn.dataset.type;
+
+                    // Reset Modal UI
+                    emTitle.innerText = `${type} Response`;
+                    emStatus.innerText = "Waiting...";
+                    emStatus.className = "ml-auto font-medium text-yellow-600";
+                    emDesc.innerText = "Connecting to nearest unit...";
+                    emDot.className = "absolute bottom-0 right-0 p-2 rounded-full border-2 border-white bg-yellow-400";
+
+                    emCancelBtn.disabled = false;
+                    emCancelBtn.classList.remove('bg-gray-100', 'text-gray-400');
+                    emCancelBtn.classList.add('bg-red-600', 'text-white', 'hover:bg-red-700');
+
+                    emDetailsBtn.disabled = true;
+                    emDetailsBtn.classList.remove('bg-green-600', 'text-white', 'hover:bg-green-700');
+                    emDetailsBtn.classList.add('bg-gray-200', 'text-gray-400', 'cursor-not-allowed');
+
+                    showModal('emergency-modal');
+
+                    // Simulate Connection
+                    let timeLeft = 60;
+                    emTimerText.innerText = `Cancel (${timeLeft})`;
+                    clearInterval(emergencyInterval);
+                    emergencyInterval = setInterval(() => {
+                        timeLeft--;
+                        emTimerText.innerText = `Cancel (${timeLeft})`;
+                        if (timeLeft <= 0) {
+                            clearInterval(emergencyInterval);
+                            emStatus.innerText = "Connected";
+                            emStatus.className = "ml-auto font-medium text-green-600";
+                            emDesc.innerText = "Responders dispatched.";
+                            emDot.className = "absolute bottom-0 right-0 p-2 rounded-full border-2 border-white bg-green-500";
+
+                            emCancelBtn.disabled = true;
+                            emCancelBtn.classList.add('bg-gray-100', 'text-gray-400');
+                            emCancelBtn.classList.remove('bg-red-600', 'text-white');
+
+                            emDetailsBtn.disabled = false;
+                            emDetailsBtn.classList.add('bg-green-600', 'text-white', 'hover:bg-green-700');
+                            emDetailsBtn.classList.remove('bg-gray-200', 'text-gray-400');
+                        }
+                    }, 500); // Fast simulation
+                });
+            });
+
+            if(emCancelBtn) {
+                emCancelBtn.addEventListener('click', () => closeModal('emergency-modal'));
+            }
+
+            // --- 7. Pin Location Logic ---
+            const pinBtn = document.getElementById('pin-location-btn');
+            const mapLoader = document.getElementById('map-loader');
+            const mapEmpty = document.getElementById('map-empty');
+            const mapIframe = document.getElementById('map-iframe');
+
+            if(pinBtn) {
+                pinBtn.addEventListener('click', () => {
+                    if (!navigator.geolocation) {
+                        alert("Geolocation is not supported by your browser.");
+                        return;
+                    }
+                    mapLoader.classList.remove('hidden');
+                    mapEmpty.classList.add('hidden');
+                    mapIframe.classList.add('hidden');
+
                     navigator.geolocation.getCurrentPosition(
-                        pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-                        err => {
-                            console.warn(`ERROR(${err.code}): ${err.message}`);
-                            reject(err);
+                        (position) => {
+                            const lat = position.coords.latitude;
+                            const lon = position.coords.longitude;
+                            const bbox = 0.01;
+                            const src = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - bbox},${lat - bbox},${lon + bbox},${lat + bbox}&layer=mapnik&marker=${lat},${lon}`;
+
+                            mapIframe.src = src;
+                            mapIframe.onload = () => {
+                                mapLoader.classList.add('hidden');
+                                mapIframe.classList.remove('hidden');
+                            };
+                            // Fallback
+                            setTimeout(() => {
+                                mapLoader.classList.add('hidden');
+                                mapIframe.classList.remove('hidden');
+                            }, 2000);
+
+                            // Auto-fill location in report form if needed
+                            const locInput = document.getElementById('report-location');
+                            if(locInput) locInput.value = `Lat: ${lat}, Lon: ${lon}`;
                         },
-                        geoOptions
+                        (error) => {
+                            console.error(error);
+                            mapLoader.classList.add('hidden');
+                            mapEmpty.classList.remove('hidden');
+                            alert("Unable to retrieve location.");
+                        }
                     );
                 });
             }
-
-            function updateCitizenMap(lat, lon) {
-                const bbox = 0.005; // Zoom factor
-                const url = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - bbox},${lat - bbox},${lon + bbox},${lat + bbox}&layer=mapnik&marker=${lat},${lon}`;
-                if (mapIframe && mapIframe.src !== url) mapIframe.src = url;
-                if (mapIframe) {
-                    mapIframe.onload = () => {
-                        if(mapLoader) mapLoader.classList.add('hidden');
-                        mapIframe.classList.remove('hidden');
-                    };
-                }
-            }
-
-            async function initializeCitizenMap() {
-                try {
-                    const location = await getCurrentLocation();
-                    updateCitizenMap(location.lat, location.lon);
-                } catch(e) {
-                    if (mapLoader) {
-                        mapLoader.innerHTML = `<div class="p-4 text-center"><p class="text-sm text-gray-700">Could not get your location.</p><p class="text-xs text-gray-500 mt-1">Please enable location services and <button id="retry-location-btn" class="text-red-600 underline">try again</button>.</p></div>`;
-                        const retryBtn = document.getElementById('retry-location-btn');
-                        if (retryBtn) {
-                            retryBtn.addEventListener('click', () => {
-                                mapLoader.innerHTML = `<div class="text-center text-gray-600"><svg class="animate-spin h-8 w-8 text-gray-500 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><p class="mt-2 text-sm">Fetching your location...</p></div>`;
-                                initializeCitizenMap();
-                            });
-                        }
-                    }
-                }
-            }
-
-            if(fileReportBtn) {
-                fileReportBtn.addEventListener('click', () => {
-                    alert('The "File Report" feature is coming soon! This will be used for non-urgent incidents.');
-                });
-            }
-
-            if(sosButton) sosButton.addEventListener('click', async () => {
-                try {
-                    const location = await getCurrentLocation();
-                    alert(`SOS SIGNAL SENT!\n\nLocation: Lat: ${location.lat.toFixed(6)}, Lon: ${location.lon.toFixed(6)}\n\nResponders dispatched.`);
-                } catch (e) { alert('Could not get location. Please enable location services.'); }
-            });
-
-            emergencyButtons.forEach(button => {
-                button.addEventListener('click', async () => {
-                    const emergencyType = button.dataset.type;
-                     try {
-                        await getCurrentLocation();
-                        alert(`A ${emergencyType} emergency has been reported. Responders are on their way.`);
-                    } catch (e) { alert('Could not get location. Please enable location services to report an emergency.'); }
-                });
-            });
-
-            if(cancelButton) cancelButton.addEventListener('click', () => {
-                if(responseContainer) responseContainer.classList.add('hidden');
-                if(emergencyButtonsGrid) emergencyButtonsGrid.classList.remove('hidden');
-            });
-
-            if(chatButton) chatButton.addEventListener('click', () => alert('Opening chat...'));
-
-            if(pinLocationButton) pinLocationButton.addEventListener('click', async () => {
-                if(locationStatus) {
-                    locationStatus.textContent = `Pinning...`;
-                    locationStatus.classList.remove('hidden');
-                }
-                try {
-                    const location = await getCurrentLocation();
-                    updateCitizenMap(location.lat, location.lon);
-                    if(locationStatus) {
-                        locationStatus.textContent = `Pinned: ${location.lat.toFixed(4)}, ${location.lon.toFixed(4)}`;
-                        setTimeout(() => locationStatus.classList.add('hidden'), 4000);
-                    }
-                } catch(e) {
-                     if(locationStatus) {
-                        locationStatus.textContent = `Failed to pin.`;
-                        setTimeout(() => locationStatus.classList.add('hidden'), 4000);
-                    }
-                }
-            });
-
-            // --- INITIALIZATION ---
-            updateHeader('responder');
-            renderResponderView();
         });
     </script>
 </body>

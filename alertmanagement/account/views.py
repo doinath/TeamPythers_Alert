@@ -1,85 +1,498 @@
-from django.contrib.auth.models import User
-from django.contrib import messages
-from django.views import View
-from django.shortcuts import render
 from django.shortcuts import render, redirect
+from django.views import View
+from django.contrib import messages
+from django.db import transaction
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User as AuthUser
+from .models import User as CustomUser, Citizen, ContactInfo, Responder, Authority, Notification
+from emergency.models import MedicalCondition
+from verification.models import GovernmentDocument
+from django.core.files.storage import default_storage
 
+# ---------------------------
+#  INDEX / LOGIN
+# ---------------------------
+class IndexView(View):
+    def get(self, request):
+        return render(request, "index.html")
+
+    def post(self, request):
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        # Authenticate using Django's built-in User
+        auth_user = authenticate(request, username=email, password=password)
+
+        if auth_user is not None:
+            login(request, auth_user)
+
+            try:
+                # Get related custom profile
+                custom_user = auth_user.custom_profile
+
+                # --- LOG SYSTEM ACTION (Login) ---
+                from system_log.models import SystemLog
+
+                SystemLog.objects.create(
+                    action="User Login",
+                    detail=f"User {custom_user.first_name} {custom_user.last_name} ({auth_user.email}) logged in successfully.",
+                    user_id=custom_user
+                )
+
+            except CustomUser.DoesNotExist:
+                messages.error(request, "Custom profile not found.")
+                return render(request, "index.html")
+
+            # Redirect based on role
+            if hasattr(custom_user, 'role') and custom_user.role == "authority":
+                return redirect("account:authority_dashboard")
+            elif hasattr(custom_user, 'role') and custom_user.role == "responder":
+                return redirect("account:responder_dashboard")
+            else:
+                return redirect("account:citizen_dashboard")
+        else:
+            messages.error(request, "Invalid email or password.")
+            return render(request, "index.html")
+
+
+# ---------------------------
+#  REGISTER
+# ---------------------------
 class RegisterView(View):
     def get(self, request):
         return render(request, "register.html")
 
     def post(self, request):
-        # 1. Retrieve data from the POST request
         first_name = request.POST.get('firstName')
+        middle_name = request.POST.get('middleName')
         last_name = request.POST.get('lastName')
         email = request.POST.get('email')
+        phone_number = request.POST.get('phoneNumber')
         password = request.POST.get('password')
+        confirm_password = request.POST.get('confirmPassword')
 
-        # NOTE: Middle name is typically optional and can be handled later.
+        context = {
+            'firstName': first_name,
+            'middleName': middle_name,
+            'lastName': last_name,
+            'email': email,
+            'phoneNumber': phone_number
+        }
 
-        # 2. Basic Validation: Check if a user with that email already exists
-        if User.objects.filter(email=email).exists():
+        if password != confirm_password:
+            messages.error(request, 'Passwords do not match.')
+            return render(request, "register.html", context)
+
+        if AuthUser.objects.filter(email=email).exists():
             messages.error(request, 'This email address is already registered.')
-
-            # Re-render the form with error message and previously entered data
-            context = {
-                'error_message': 'This email address is already registered.',
-                'firstName': first_name,
-                'lastName': last_name,
-                'email': email
-            }
-            return render(request, "register.html", context=context)
+            return render(request, "register.html", context)
 
         try:
-            user = User.objects.create_user(
-                username=email,
-                email=email,
-                password=password,
-                first_name=first_name,
-                last_name=last_name
-            )
+            # Local import to avoid circular dependency
+            from system_log.models import SystemLog
+
+            with transaction.atomic():
+                auth_user = AuthUser.objects.create_user(
+                    username=email,
+                    email=email,
+                    password=password,
+                    first_name=first_name,
+                    last_name=last_name
+                )
+
+                custom_user = CustomUser.objects.create(
+                    account=auth_user,
+                    first_name=first_name,
+                    middle_name=middle_name,
+                    last_name=last_name,
+                    email_address=email,
+                    phone_number=phone_number
+                )
+
+                Citizen.objects.create(user_id=custom_user)
+
+                # --- LOG SYSTEM ACTION (Registration) ---
+                SystemLog.objects.create(
+                    action="Account Registration",
+                    detail=f"New Citizen account created for {first_name} {last_name} ({email}).",
+                    user_id=custom_user
+                )
+
+            login(request, auth_user)
             messages.success(request, 'Account created successfully! Please complete your profile.')
-            return redirect('citizen_profile_completion')
+            return redirect('account:citizen_profile_completion')
 
         except Exception as e:
             messages.error(request, f'An unexpected error occurred: {e}')
+            return render(request, "register.html", context)
 
-            context = {
-                'error_message': 'An unexpected error occurred during registration.',
-                'firstName': first_name,
-                'lastName': last_name,
-                'email': email
-            }
-            return render(request, "register.html", context=context)
 
-class CitizenProfileCompletionView(View):
+# ---------------------------
+#  CITIZEN PROFILE COMPLETION
+# ---------------------------
+class CitizenProfileCompletionView(LoginRequiredMixin, View):
+    login_url = '/'
+
     def get(self, request):
         return render(request, "citizen_profile_completion.html")
 
-class IndexView(View):
-    def get(self, request):
-        return render(request, "index.html")
+    def post(self, request):
+        try:
+            custom_user = request.user.custom_profile
+        except AttributeError:
+            messages.error(request, "User profile not found. Please contact support.")
+            return redirect('account:index')
 
-class CitizenDashboardView(View):
-    def get(self, request):
-        return render(request, "citizen_dashboard.html")
+        try:
+            # Local import to avoid circular dependency
+            from system_log.models import SystemLog
 
-class ResponderDashboardView(View):
+            with transaction.atomic():
+                dob = request.POST.get('dob')
+                if dob:
+                    custom_user.date_of_birth = dob
+
+                custom_user.gender = request.POST.get('gender')
+                custom_user.street = request.POST.get('street')
+                custom_user.municipality = request.POST.get('barangay')
+                custom_user.city = request.POST.get('city')
+                custom_user.province = request.POST.get('province')
+                custom_user.zip_code = request.POST.get('zipCode')
+                custom_user.country = "Philippines"
+                custom_user.save()
+
+                # Contacts
+                ContactInfo.objects.filter(user_id=custom_user).delete()
+                contact_count = int(request.POST.get('contact_count', 0))
+                for i in range(1, contact_count + 1):
+                    role = request.POST.get(f'contact_role_{i}')
+                    phone = request.POST.get(f'contact_phone_{i}')
+                    if role and phone:
+                        ContactInfo.objects.create(
+                            user_id=custom_user,
+                            relationship=role,
+                            contact_info=phone
+                        )
+
+                # Medical Conditions
+                MedicalCondition.objects.filter(user_id=custom_user).delete()
+                medical_count = int(request.POST.get('medical_count', 0))
+                for i in range(1, medical_count + 1):
+                    cond_name = request.POST.get(f'condition_name_{i}')
+                    cond_notes = request.POST.get(f'condition_notes_{i}')
+                    if cond_name:
+                        MedicalCondition.objects.create(
+                            user_id=custom_user,
+                            condition_name=cond_name,
+                            notes=cond_notes if cond_notes else ""
+                        )
+
+                # Government IDs
+                id_count = int(request.POST.get('id_count', 0))
+                for i in range(1, id_count + 1):
+                    id_type_val = request.POST.get(f'id_type_{i}')
+                    id_number_val = request.POST.get(f'id_number_{i}')
+                    id_file_val = request.FILES.get(f'id_file_{i}')
+
+                    if id_type_val == 'other':
+                        id_type_val = request.POST.get(f'id_type_other_{i}')
+
+                    if id_type_val and id_number_val and id_file_val:
+                        GovernmentDocument.objects.create(
+                            user_id=custom_user,
+                            id_type=id_type_val,
+                            id_number=id_number_val,
+                            filepath=id_file_val,
+                            status='PENDING'
+                        )
+
+                # --- LOG SYSTEM ACTION (Profile Completion) ---
+                SystemLog.objects.create(
+                    action="Profile Completion",
+                    detail=f"User {custom_user.first_name} completed initial profile setup.",
+                    user_id=custom_user
+                )
+
+            messages.success(request, 'Profile completed successfully! Welcome to your Dashboard.')
+            return redirect('account:citizen_dashboard')
+
+        except Exception as e:
+            messages.error(request, f"An error occurred: {e}")
+            return render(request, "citizen_profile_completion.html")
+
+
+# ---------------------------
+#  DASHBOARDS
+# ---------------------------
+class CitizenDashboardView(LoginRequiredMixin, View):
+    def get(self, request):
+        custom_user = CustomUser.objects.get(account=request.user)
+        approval_alert = False
+
+        notifications = Notification.objects.filter(user=custom_user, is_read=False)
+        for note in notifications:
+            if "authority" in note.message.lower() and "approved" in note.message.lower():
+                approval_alert = True
+                note.is_read = True
+                note.save()
+                break
+
+        return render(request, "citizen_dashboard.html", {"approval_alert": approval_alert})
+
+
+class ResponderDashboardView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, "responder_dashboard.html")
 
-class AuthorityDashboardView(View):
+
+class AuthorityDashboardView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, "authority_dashboard.html")
 
-class CitizenProfileView(View):
-    def get(self, request):
-        return render(request, "citizen_profile.html")
 
-class ResponderProfileView(View):
+# ---------------------------
+#  PROFILE VIEWS
+# ---------------------------
+class CitizenProfileView(LoginRequiredMixin, View):
+    def get(self, request):
+        try:
+            # Access the custom profile linked to the Auth User
+            user_profile = request.user.custom_profile
+
+            # Fetch related data
+            medical_conditions = MedicalCondition.objects.filter(user_id=user_profile)
+            contacts = ContactInfo.objects.filter(user_id=user_profile)
+            gov_ids = GovernmentDocument.objects.filter(user_id=user_profile)
+
+            context = {
+                'user': user_profile,
+                'medical_conditions': medical_conditions,
+                'contacts': contacts,
+                'gov_ids': gov_ids,
+            }
+            return render(request, "citizen_profile.html", context)
+        except CustomUser.DoesNotExist:
+            messages.error(request, "Profile not found.")
+            return redirect('account:citizen_dashboard')
+
+    def post(self, request):
+        try:
+            user_profile = request.user.custom_profile
+
+            # Local import to avoid circular dependency
+            from system_log.models import SystemLog
+
+            with transaction.atomic():
+                # 1. Update Personal Details & Address
+                user_profile.phone_number = request.POST.get('phone_number')
+                user_profile.email_address = request.POST.get('email_address')
+                user_profile.date_of_birth = request.POST.get('date_of_birth')
+                user_profile.gender = request.POST.get('gender')
+                user_profile.street = request.POST.get('street')
+                user_profile.municipality = request.POST.get('municipality')
+                user_profile.city = request.POST.get('city')
+                user_profile.province = request.POST.get('province')
+                user_profile.zip_code = request.POST.get('zip_code')
+                user_profile.save()
+
+                # 2. Update Medical Info
+                MedicalCondition.objects.filter(user_id=user_profile).delete()
+                conditions = request.POST.getlist('medical_condition')
+                notes = request.POST.getlist('medical_notes')
+
+                for i in range(len(conditions)):
+                    if conditions[i].strip():
+                        MedicalCondition.objects.create(
+                            user_id=user_profile,
+                            condition_name=conditions[i],
+                            notes=notes[i] if i < len(notes) else ""
+                        )
+
+                # 3. Update Emergency Contacts
+                ContactInfo.objects.filter(user_id=user_profile).delete()
+                rels = request.POST.getlist('contact_relationship')
+                nums = request.POST.getlist('contact_number')
+
+                for i in range(len(rels)):
+                    if rels[i].strip() and nums[i].strip():
+                        ContactInfo.objects.create(
+                            user_id=user_profile,
+                            relationship=rels[i],
+                            contact_info=nums[i]
+                        )
+
+                # 4. Handle Government IDs
+                new_types = request.POST.getlist('new_id_type')
+                new_numbers = request.POST.getlist('new_id_number')
+                new_files = request.FILES.getlist('new_id_file')
+
+                for i in range(len(new_types)):
+                    if new_types[i] and new_numbers[i]:
+                        current_file = new_files[i] if i < len(new_files) else None
+                        if current_file:
+                            GovernmentDocument.objects.create(
+                                user_id=user_profile,
+                                id_type=new_types[i],
+                                id_number=new_numbers[i],
+                                filepath=current_file,
+                                status='PENDING'
+                            )
+
+                # --- LOG SYSTEM ACTION (Profile Update) ---
+                SystemLog.objects.create(
+                    action="Profile Update",
+                    detail=f"User {user_profile.first_name} {user_profile.last_name} updated their profile information.",
+                    user_id=user_profile
+                )
+
+            messages.success(request, "Profile updated successfully.")
+            return redirect('account:citizen_profile')
+
+        except Exception as e:
+            print(f"Error Saving Profile: {e}")
+            messages.error(request, "An error occurred while saving profile.")
+            return redirect('account:citizen_profile')
+
+
+class ResponderProfileView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, "responder_profile.html")
 
-class AuthorityProfileView(View):
+
+class AuthorityProfileView(LoginRequiredMixin, View):
     def get(self, request):
-        return render(request, "authority_profile.html")
+        try:
+            # 1. Access the main custom profile linked to the Auth User
+            user_profile = request.user.custom_profile
+
+            # 2. Access the Authority-specific details
+            # We assume Authority is linked through Citizen -> Authority
+            authority_details = Authority.objects.get(
+                citizen__user_id=user_profile
+            )
+
+            # 3. Fetch related data
+            medical_conditions = MedicalCondition.objects.filter(user_id=user_profile)
+            contacts = ContactInfo.objects.filter(user_id=user_profile)
+            gov_ids = GovernmentDocument.objects.filter(user_id=user_profile)
+
+            context = {
+                'authority_user': user_profile,  # General User data (Name, Contact, Address, DOB, Gender)
+                'authority_details': authority_details,  # Authority-specific data (Agency, Jurisdiction)
+                'medical_conditions': medical_conditions,
+                'emergency_contacts': contacts,
+                'government_ids': gov_ids,
+            }
+            return render(request, "authority_profile.html", context)
+
+        except Authority.DoesNotExist:
+            messages.error(request, "Authority profile details not found. Please ensure your application is approved.")
+            return redirect('account:authority_dashboard')
+        except CustomUser.DoesNotExist:
+            messages.error(request, "User profile not found.")
+            return redirect('account:index')  # Redirect to index or login if base profile is missing
+
+
+# ---------------------------
+#  APPLY VIEWS
+# ---------------------------
+class ApplyResponderView(LoginRequiredMixin, View):
+    def post(self, request):
+        try:
+            # Local import to avoid circular dependency
+            from system_log.models import SystemLog
+
+            citizen = request.user.custom_profile.citizen_profile
+
+            # Check if already exists
+            if hasattr(citizen, 'responder_profile'):
+                messages.warning(request, "You have already applied as a Responder.")
+                return redirect('account:citizen_dashboard')
+
+            with transaction.atomic():
+                # Create Responder
+                Responder.objects.create(
+                    citizen=citizen,
+                    department_unit=request.POST.get('department_unit'),
+                    role=request.POST.get('role'),
+                    service_area=request.POST.get('service_area'),
+                    duty_status='OFF'
+                )
+
+                # Create associated Gov ID
+                id_type = request.POST.get('id_type')
+                id_number = request.POST.get('id_number')
+                id_file = request.FILES.get('id_file')
+
+                if id_type and id_number and id_file:
+                    GovernmentDocument.objects.create(
+                        user_id=request.user.custom_profile,
+                        id_type=id_type,
+                        id_number=id_number,
+                        filepath=id_file,
+                        status='PENDING'
+                    )
+
+                # --- LOG SYSTEM ACTION (Responder Application) ---
+                SystemLog.objects.create(
+                    action="Responder Application Submitted",
+                    detail=f"User {request.user.custom_profile.first_name} applied for Responder role.",
+                    user_id=request.user.custom_profile
+                )
+
+            messages.success(request, "Responder application submitted successfully!")
+            return redirect('account:citizen_dashboard')
+
+        except Exception as e:
+            messages.error(request, f"Error submitting application: {e}")
+            return redirect('account:citizen_dashboard')
+
+
+class ApplyAuthorityView(LoginRequiredMixin, View):
+    def post(self, request):
+        try:
+            # Local import to avoid circular dependency
+            from system_log.models import SystemLog
+
+            citizen = request.user.custom_profile.citizen_profile
+
+            if hasattr(citizen, 'authority'):
+                messages.warning(request, "You have already applied as an Authority.")
+                return redirect('account:citizen_dashboard')
+
+            with transaction.atomic():
+                # Create Authority
+                Authority.objects.create(
+                    citizen=citizen,
+                    agency_name=request.POST.get('agency_name'),
+                    jurisdiction_area=request.POST.get('jurisdiction_area')
+                )
+
+                # Create associated Gov ID
+                id_type = request.POST.get('id_type')
+                id_number = request.POST.get('id_number')
+                id_file = request.FILES.get('id_file')
+
+                if id_type and id_number and id_file:
+                    GovernmentDocument.objects.create(
+                        user_id=request.user.custom_profile,
+                        id_type=id_type,
+                        id_number=id_number,
+                        filepath=id_file,
+                        status='PENDING'
+                    )
+
+                # --- LOG SYSTEM ACTION (Authority Application) ---
+                SystemLog.objects.create(
+                    action="Authority Application Submitted",
+                    detail=f"User {request.user.custom_profile.first_name} applied for Authority role.",
+                    user_id=request.user.custom_profile
+                )
+
+            messages.success(request, "Authority application submitted successfully!")
+            return redirect('account:citizen_dashboard')
+
+        except Exception as e:
+            messages.error(request, f"Error submitting application: {e}")
+            return redirect('account:citizen_dashboard')

@@ -1,10 +1,68 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Submitted Document</title>
-</head>
-<body>
+    <title>Submitted Document Review</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'role_verification.css' %}">
+    <link rel="stylesheet" href="{% static 'submitted_document.css' %}">
 
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <header class="top-header">
+            <div class="header-left-group">
+                <div class="alert-logo">
+                    <img src="{% static 'imgs/alert_logo.png' %}" alt="ALERT Logo">
+                </div>
+
+                <ul class="nav-tabs">
+                    <li><a href="#">Dashboard</a></li>
+                    <li><a href="#">Chat</a></li>
+                    <li class="active"><a href="#">Verification</a></li>
+                </ul>
+            </div>
+
+            <div class="user-profile">
+                <span class="user-name">Shervin</span>
+                 <img src="{% static 'imgs/shervin_pfp.jpg' %}" alt="Shervin's Profile" class="profile-pic">
+                <i class="fas fa-ellipsis-v"></i>
+            </div>
+        </header>
+
+        <main class="document-viewer">
+            <div class="document-header">
+                <h1>Review: Badyanha, Sherry Lyn C.</h1>
+                <p>Role Requested: Authority | Status: Pending</p>
+            </div>
+
+            <div class="file-gallery">
+                <div class="file-item">
+                    <img src="placeholder_id_front.jpg" alt="Front of ID">
+                    <div class="file-caption">Government ID (Front)</div>
+                </div>
+                <div class="file-item">
+                    <img src="placeholder_id_back.jpg" alt="Back of ID">
+                    <div class="file-caption">Government ID (Back)</div>
+                </div>
+                <div class="file-item">
+                    <img src="placeholder_certificate.jpg" alt="Certificate">
+                    <div class="file-caption">Employment Certificate</div>
+                </div>
+                <div class="file-item">
+                    <img src="placeholder_proof.jpg" alt="Proof of Address">
+                    <div class="file-caption">Proof of Address</div>
+                </div>
+            </div>
+
+            <div class="modal-footer" style="margin-top: 40px; border-top: 2px solid #eee;">
+                <button class="modal-btn btn-approve">APPROVE</button>
+                <button class="modal-btn btn-decline">DECLINE</button>
+            </div>
+        </main>
+    </div>
 </body>
 </html>

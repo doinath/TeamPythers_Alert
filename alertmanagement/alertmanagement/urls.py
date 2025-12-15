@@ -19,12 +19,16 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('account.urls')),
-    path('emergency/', include('emergency.urls')),
-    path('communication/', include('communication.urls')),
-    path('system/', include('system.urls')),
-    path('verification/', include('verification.urls')),
+
+    path('account/', include(('account.urls', 'account'), namespace='account')),
+    path('', include(('account.urls', 'account_root'), namespace='account_root')),
+
+    path('emergency/', include(('emergency.urls', 'emergency'), namespace='emergency')),
+    path('communication/', include(('communication.urls', 'communication'), namespace='communication')),
+    path('system_log/', include(('system_log.urls', 'system_log'), namespace='system_log')),
+    path('verification/', include(('verification.urls', 'verification'), namespace='verification')),
 ]
+
 
 # if settings.DEBUG:
 #     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])

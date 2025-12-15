@@ -25,11 +25,10 @@
                 <div class="flex items-center space-x-12 -ml-4">
                     <div class="flex items-center space-x-2">
                         <img src="{% static 'images/com_logo.png' %}" alt="ALERT Logo" class="h-10 w-auto object-contain" />
-                        <!-- <span class="text-xl font-bold text-red-600">ALERT</span> -->
                     </div>
                     <nav class="hidden md:flex items-center space-x-12">
                         <a href="#dashboard" class="text-gray-500 hover:text-red-600 transition-colors">Dashboard</a>
-                        <a href="{% url 'communication:messages' %}"class="text-gray-500 hover:text-red-600 transition-colors"> Chat</a>
+                        <a href="{% url 'communication:messages' %}" class="text-gray-500 hover:text-red-600 transition-colors"> Chat</a>
                         <a href="{% url 'communication:call_logs' %}" class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Call Logs</a>
                     </nav>
                 </div>
@@ -37,68 +36,10 @@
                 <!-- User Profile -->
                 <div class="flex items-center space-x-10">
                     <div class="hidden md:flex items-center space-x-4">
-
-                        <!-- User Name -->
-                        {% if request.user.is_authenticated %}
-                            <span class="text-gray-800 font-medium text-sm mr-3">
-                                {{ request.user.first_name }} {{ request.user.last_name }}
-                            </span>
-                        {% else %}
-                            <span class="text-gray-800 font-medium text-sm mr-3">
-                                John Doe
-                            </span>
-                        {% endif %}
-
-                        <!-- Clickable Profile Picture with Role-Based URL + Hover -->
-                        {% if request.user.role == 'citizen' %}
-                            <a href="{% url 'citizen_profile' %}" class="group">
-                                {% if request.user.profile_picture %}
-                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
-                                         src="{{ request.user.profile_picture.url }}"
-                                         alt="User Avatar" />
-                                {% else %}
-                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
-                                         src="https://i.pravatar.cc/40?u={{ request.user.username }}"
-                                         alt="User Avatar" />
-                                {% endif %}
-                            </a>
-                        {% elif request.user.role == 'responder' %}
-                            <a href="{% url 'responder_profile' %}" class="group">
-                                {% if request.user.profile_picture %}
-                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
-                                         src="{{ request.user.profile_picture.url }}"
-                                         alt="User Avatar" />
-                                {% else %}
-                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
-                                         src="https://i.pravatar.cc/40?u={{ request.user.username }}"
-                                         alt="User Avatar" />
-                                {% endif %}
-                            </a>
-                        {% elif request.user.role == 'authority' %}
-                            <a href="{% url 'authority_profile' %}" class="group">
-                                {% if request.user.profile_picture %}
-                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
-                                         src="{{ request.user.profile_picture.url }}"
-                                         alt="User Avatar" />
-                                {% else %}
-                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
-                                         src="https://i.pravatar.cc/40?u={{ request.user.username }}"
-                                         alt="User Avatar" />
-                                {% endif %}
-                            </a>
-                        {% else %}
-                            <a href="#" class="group">
-                                {% if request.user.profile_picture %}
-                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
-                                         src="{{ request.user.profile_picture.url }}"
-                                         alt="User Avatar" />
-                                {% else %}
-                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
-                                         src="https://i.pravatar.cc/40?u={{ request.user.username }}"
-                                         alt="User Avatar" />
-                                {% endif %}
-                            </a>
-                        {% endif %}
+                        <span class="text-gray-800 font-medium text-sm mr-3">Bessie Cooper</span>
+                        <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
+                             src="https://i.pravatar.cc/40?u=bessie"
+                             alt="User Avatar" />
                     </div>
 
                     <!-- Mobile Menu Button -->
@@ -124,19 +65,15 @@
         <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
             <nav class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <a href="#dashboard" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Dashboard</a>
-                <a href="{% url 'communication:messages' %}" class="block px-3 py-2 rounded-md text-base font-medium bg-red-50 text-red-700">Chat</a>
-                <a href="{% url 'communication:call_logs' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Call logs</a>
+                <a href="{% url 'communication:messages' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Chat</a>
+                <a href="{% url 'communication:call_logs' %}" class="block px-3 py-2 rounded-md text-base font-medium bg-red-50 text-red-700">Call logs</a>
             </nav>
             <div class="pt-4 pb-3 border-t border-gray-200">
                 <div class="flex items-center px-5">
-                    {% if request.user.profile_picture %}
-                        <img class="h-10 w-10 rounded-full object-cover" src="{{ request.user.profile_picture.url }}" alt="User Avatar" />
-                    {% else %}
-                        <img class="h-10 w-10 rounded-full object-cover" src="https://i.pravatar.cc/100?u={{ request.user.username }}" alt="User Avatar" />
-                    {% endif %}
+                    <img class="h-10 w-10 rounded-full object-cover" src="https://i.pravatar.cc/100?u=bessie" alt="User Avatar" />
                     <div class="ml-3">
-                        <div class="text-base font-medium text-gray-800">{{ request.user.first_name }} {{ request.user.last_name }}</div>
-                        <div class="text-sm font-medium text-gray-500">{{ request.user.email }}</div>
+                        <div class="text-base font-medium text-gray-800">Bessie Cooper</div>
+                        <div class="text-sm font-medium text-gray-500">bessie.cooper@example.com</div>
                     </div>
                 </div>
             </div>
@@ -148,8 +85,8 @@
             <div class="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0">
                 <!-- Categories (All and Missed) -->
                 <div class="flex space-x-2">
-                    <a href="?call_type=all" class="px-4 py-2 rounded-md text-sm font-medium {% if not request.GET.call_type or request.GET.call_type == 'all' %}bg-red-600 text-white{% else %}text-gray-700 bg-gray-100 hover:bg-gray-200{% endif %}">All</a>
-                    <a href="?call_type=missed" class="px-4 py-2 rounded-md text-sm font-medium {% if request.GET.call_type == 'missed' %}bg-red-600 text-white{% else %}text-gray-700 bg-gray-100 hover:bg-gray-200{% endif %}">Missed</a>
+                    <a href="?call_type=all" id="filter-all" class="px-4 py-2 rounded-md text-sm font-medium bg-red-600 text-white">All</a>
+                    <a href="?call_type=missed" id="filter-missed" class="px-4 py-2 rounded-md text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200">Missed</a>
                 </div>
 
                 <!-- Search Area -->
@@ -174,65 +111,203 @@
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        {% for call_log in call_logs %}
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center">
-                                    <div class="flex-shrink-0 h-10 w-10">
-                                        {% if call_log.emergency_event.is_authority %}
-                                            <img class="h-10 w-10 rounded-full" src="{% static 'images/fire_department_logo.png' %}" alt="Agency Logo">
-                                        {% else %}
-                                            {# This uses a generic avatar service. Adjust if you have user profile pictures. #}
-                                            <img class="h-10 w-10 rounded-full" src="https://i.pravatar.cc/40?u={{ call_log.user_id.username }}" alt="User Avatar">
-                                        {% endif %}
-                                    </div>
-                                    <div class="ml-4">
-                                        <div class="text-sm font-medium text-gray-900">{{ call_log.user_id.get_full_name|default:call_log.user_id.username }}</div>
-                                        {% if call_log.emergency_event.is_authority %}
-                                            <div class="text-sm text-gray-500">{{ call_log.emergency_event.agency_name }}</div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{{ call_log.start_time|date:"D d M, h:i A" }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{% if call_log.end_time %}{{ call_log.end_time|date:"D d M, h:i A" }}{% else %}N/A{% endif %}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {% if call_log.call_type == 'incoming' %}bg-green-100 text-green-800{% elif call_log.call_type == 'outgoing' %}bg-blue-100 text-blue-800{% else %}bg-red-100 text-red-800{% endif %}">
-                                    {{ call_log.get_call_type_display }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {# THIS IS THE LINE THAT IS CHANGED: #}
-                                {{ call_log.formatted_duration }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button onclick="callAgain({{ call_log.user_id.id }})" class="bg-green-100 text-green-700 hover:bg-green-200 px-3 py-1 rounded-md text-xs font-semibold mr-2">Call Again</button>
-                                <button onclick="deleteCallLog({{ call_log.call_id }})" class="bg-red-100 text-red-700 hover:bg-red-200 px-3 py-1 rounded-md text-xs font-semibold mr-2">Delete</button>
-                                {# Assuming 'chat_view' URL takes user ID. Adjust if it takes emergency_event ID or other #}
-                                <a href="{% url 'chat_view' call_log.user_id.id %}" class="inline-flex items-center text-gray-500 hover:text-gray-700">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                                    </svg>
-                                </a>
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="6" class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">No call logs found.</td>
-                        </tr>
-                        {% endfor %}
+                    <tbody class="bg-white divide-y divide-gray-200" id="call-log-table-body">
+                        {# Mock data will be injected here by JavaScript #}
                     </tbody>
                 </table>
+                <div id="no-calls-message" class="hidden px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">No call logs found.</div>
             </div>
         </div>
     </main>
 
     <script>
+        // Mock data structure, mimicking your Django model's properties
+        // Dates are strings to simplify client-side handling
+        const mockCallLogsData = [
+            {
+                call_id: 1,
+                start_time: "Mon 9 Aug, 10:49 AM",
+                end_time: "Mon 9 Aug, 10:51 AM",
+                duration: 120, // seconds
+                call_type: "incoming",
+                get_call_type_display: "Incoming",
+                user_id: { id: 101, username: "medic_team", get_full_name: "Medic Team" },
+                emergency_event: { is_authority: true, agency_name: "Fire Department" }
+            },
+            {
+                call_id: 2,
+                start_time: "Saturday 9 Aug, 10:49 AM",
+                end_time: "Saturday 9 Aug, 11:04 AM",
+                duration: 900, // 15 minutes
+                call_type: "outgoing",
+                get_call_type_display: "Outgoing",
+                user_id: { id: 102, username: "responder2", get_full_name: "Responder 2" },
+                emergency_event: { is_authority: true, agency_name: "Flood Department" }
+            },
+            {
+                call_id: 3,
+                start_time: "Mon 9 Aug, 10:49 AM",
+                end_time: null,
+                duration: 0,
+                call_type: "missed",
+                get_call_type_display: "Missed",
+                user_id: { id: 103, username: "responder3", get_full_name: "Responder 3" },
+                emergency_event: { is_authority: true, agency_name: "Fire Department" }
+            },
+            {
+                call_id: 4,
+                start_time: "Saturday 9 Aug, 10:49 AM",
+                end_time: "Saturday 9 Aug, 10:51 AM",
+                duration: 120, // 2 minutes
+                call_type: "incoming",
+                get_call_type_display: "Incoming",
+                user_id: { id: 104, username: "johndoe", get_full_name: "John Doe" },
+                emergency_event: { is_authority: false, agency_name: null }
+            },
+            {
+                call_id: 5,
+                start_time: "Mon 9 Aug, 10:49 AM",
+                end_time: "Mon 9 Aug, 10:59 AM",
+                duration: 600, // 10 minutes
+                call_type: "outgoing",
+                get_call_type_display: "Outgoing",
+                user_id: { id: 105, username: "alicesmith", get_full_name: "Alice Smith" },
+                emergency_event: { is_authority: true, agency_name: "Medical Team" }
+            },
+            {
+                call_id: 6,
+                start_time: "Saturday 9 Aug, 10:49 AM",
+                end_time: "Saturday 9 Aug, 10:49 AM",
+                duration: 30, // 30 seconds
+                call_type: "incoming",
+                get_call_type_display: "Incoming",
+                user_id: { id: 106, username: "charliebrown", get_full_name: "Charlie Brown" },
+                emergency_event: { is_authority: false, agency_name: null }
+            },
+            {
+                call_id: 7,
+                start_time: "Saturday 9 Aug, 09:30 AM",
+                end_time: "Saturday 9 Aug, 10:45 AM",
+                duration: 4500, // 1 hour 15 minutes
+                call_type: "outgoing",
+                get_call_type_display: "Outgoing",
+                user_id: { id: 107, username: "sarahlee", get_full_name: "Sarah Lee" },
+                emergency_event: { is_authority: true, agency_name: "Crisis Intervention" }
+            },
+            {
+                call_id: 8,
+                start_time: "Mon 8 Aug, 08:00 AM",
+                end_time: null,
+                duration: 0,
+                call_type: "missed",
+                get_call_type_display: "Missed",
+                user_id: { id: 108, username: "mikejones", get_full_name: "Mike Jones" },
+                emergency_event: { is_authority: false, agency_name: null }
+            }
+        ];
+
+        // Function to format duration (mimics Django model property)
+        function formatDuration(totalSeconds) {
+            if (totalSeconds === null || totalSeconds === undefined || totalSeconds === 0) {
+                return "00:00";
+            }
+
+            const hours = Math.floor(totalSeconds / 3600);
+            const remainingSeconds = totalSeconds % 3600;
+            const minutes = Math.floor(remainingSeconds / 60);
+            const seconds = remainingSeconds % 60;
+
+            if (hours > 0) {
+                return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+            return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function renderCallLogs(filterType = 'all', searchTerm = '') {
+            const tableBody = document.getElementById('call-log-table-body');
+            tableBody.innerHTML = ''; // Clear existing rows
+            const noCallsMessage = document.getElementById('no-calls-message');
+            noCallsMessage.classList.add('hidden');
+
+            let filteredLogs = mockCallLogsData;
+
+            // Apply filter by call type
+            if (filterType === 'missed') {
+                filteredLogs = filteredLogs.filter(log => log.call_type === 'missed');
+            }
+
+            // Apply search term filter
+            const lowerCaseSearchTerm = searchTerm.toLowerCase();
+            if (lowerCaseSearchTerm) {
+                filteredLogs = filteredLogs.filter(log =>
+                    (log.user_id.get_full_name && log.user_id.get_full_name.toLowerCase().includes(lowerCaseSearchTerm)) ||
+                    (log.emergency_event.agency_name && log.emergency_event.agency_name.toLowerCase().includes(lowerCaseSearchTerm)) ||
+                    log.start_time.toLowerCase().includes(lowerCaseSearchTerm) ||
+                    (log.end_time && log.end_time.toLowerCase().includes(lowerCaseSearchTerm)) ||
+                    log.get_call_type_display.toLowerCase().includes(lowerCaseSearchTerm) ||
+                    formatDuration(log.duration).toLowerCase().includes(lowerCaseSearchTerm)
+                );
+            }
+
+
+            if (filteredLogs.length === 0) {
+                noCallsMessage.classList.remove('hidden');
+                return;
+            }
+
+            filteredLogs.forEach(call_log => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50';
+
+                const contactNameHtml = `
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 h-10 w-10">
+                            ${call_log.emergency_event.is_authority ?
+                                `<img class="h-10 w-10 rounded-full" src="{% static 'images/fire_department_logo.png' %}" alt="Agency Logo">` :
+                                `<img class="h-10 w-10 rounded-full" src="https://i.pravatar.cc/40?u=${call_log.user_id.username}" alt="User Avatar">`
+                            }
+                        </div>
+                        <div class="ml-4">
+                            <div class="text-sm font-medium text-gray-900">${call_log.user_id.get_full_name || call_log.user_id.username}</div>
+                            ${call_log.emergency_event.is_authority && call_log.emergency_event.agency_name ?
+                                `<div class="text-sm text-gray-500">${call_log.emergency_event.agency_name}</div>` : ''
+                            }
+                        </div>
+                    </div>
+                `;
+
+                const callTypeClass = call_log.call_type === 'incoming' ? 'bg-green-100 text-green-800' :
+                                      call_log.call_type === 'outgoing' ? 'bg-blue-100 text-blue-800' :
+                                      'bg-red-100 text-red-800';
+
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">${contactNameHtml}</td>
+                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">${call_log.start_time}</div></td>
+                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">${call_log.end_time || 'N/A'}</div></td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${callTypeClass}">
+                            ${call_log.get_call_type_display}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${formatDuration(call_log.duration)}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button onclick="callAgain(${call_log.user_id.id})" class="bg-green-100 text-green-700 hover:bg-green-200 px-3 py-1 rounded-md text-xs font-semibold mr-2">Call Again</button>
+                        <button onclick="deleteCallLog(${call_log.call_id})" class="bg-red-100 text-red-700 hover:bg-red-200 px-3 py-1 rounded-md text-xs font-semibold mr-2">Delete</button>
+                        <a href="{% url 'communication:messages' %}".replace('0', ${call_log.user_id.id})" class="inline-flex items-center text-gray-500 hover:text-gray-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                            </svg>
+                        </a>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // --- Event Listeners and Initial Render ---
+
         // Mobile menu toggle
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
@@ -245,53 +320,52 @@
             menuCloseIcon.classList.toggle('hidden');
         });
 
-        // Search functionality (client-side for demonstration)
-        document.getElementById('search-input').addEventListener('keyup', function() {
-            let filter = this.value.toLowerCase();
-            let rows = document.querySelectorAll('tbody tr');
+        // Category filters
+        const filterAll = document.getElementById('filter-all');
+        const filterMissed = document.getElementById('filter-missed');
+        let currentFilter = 'all'; // Default filter
 
-            rows.forEach(row => {
-                let textContent = row.textContent.toLowerCase();
-                if (textContent.includes(filter)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
+        filterAll.addEventListener('click', (e) => {
+            e.preventDefault();
+            currentFilter = 'all';
+            filterAll.classList.add('bg-red-600', 'text-white');
+            filterAll.classList.remove('text-gray-700', 'bg-gray-100', 'hover:bg-gray-200');
+            filterMissed.classList.remove('bg-red-600', 'text-white');
+            filterMissed.classList.add('text-gray-700', 'bg-gray-100', 'hover:bg-gray-200');
+            renderCallLogs(currentFilter, document.getElementById('search-input').value);
         });
+
+        filterMissed.addEventListener('click', (e) => {
+            e.preventDefault();
+            currentFilter = 'missed';
+            filterMissed.classList.add('bg-red-600', 'text-white');
+            filterMissed.classList.remove('text-gray-700', 'bg-gray-100', 'hover:bg-gray-200');
+            filterAll.classList.remove('bg-red-600', 'text-white');
+            filterAll.classList.add('text-gray-700', 'bg-gray-100', 'hover:bg-gray-200');
+            renderCallLogs(currentFilter, document.getElementById('search-input').value);
+        });
+
+        // Search functionality
+        document.getElementById('search-input').addEventListener('keyup', function() {
+            renderCallLogs(currentFilter, this.value);
+        });
+
+        // Initial render on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCallLogs(currentFilter, document.getElementById('search-input').value);
+        });
+
 
         // Placeholder functions for actions
         function callAgain(userId) {
             alert('Initiating call to user ID: ' + userId);
-            // In a real Django project, you would make an AJAX call or redirect
-            // to a view that handles initiating a call.
-            // e.g., window.location.href = `/call/initiate/${userId}/`;
         }
 
         function deleteCallLog(callId) {
             if (confirm('Are you sure you want to delete this call log?')) {
                 alert('Deleting call log ID: ' + callId);
-                // In a real Django project, you would make an AJAX call to a delete view.
-                // e.g., fetch(`/call/delete/${callId}/`, { method: 'POST', headers: { 'X-CSRFToken': getCookie('csrftoken') } })
-                // .then(response => { if (response.ok) location.reload(); });
-                // You'd also need a CSRF token for POST requests in Django.
+                // For mock data, you could implement a splice and re-render here
             }
-        }
-
-        // Function to get CSRF token (needed for Django POST requests)
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
         }
     </script>
 </body>

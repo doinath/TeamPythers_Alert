@@ -26,7 +26,7 @@ INSTALLED_APPS = [
     'communication',
     'verification',
     'emergency',
-    'system',
+    'system_log',
 ]
 
 MIDDLEWARE = [
@@ -68,7 +68,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'alertmanagement',
         'USER': 'root',
-        'PASSWORD': 'alduind',
+        'PASSWORD': 'Sherie@#$2505',
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {
@@ -100,15 +100,19 @@ USE_TZ = True
 
 # -------------------- STATIC FILES --------------------
 STATIC_URL = '/static/'
-
 STATICFILES_DIRS = [
     BASE_DIR / 'account' / 'assets',
-    BASE_DIR / 'communication' / 'com_assets',
-    BASE_DIR / 'emergency' / 'static',
+    BASE_DIR / "communication" / "com_assets",
+    BASE_DIR / 'verification' / "assets"
 ]
 
+# 1. Allow cookies to work without HTTPS (Essential for localhost)
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
-
+# 2. Tell Django to trust requests from your local address
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
+]
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

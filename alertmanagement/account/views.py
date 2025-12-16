@@ -5,7 +5,7 @@ from django.contrib.auth.models import User as AuthUser
 from .models import User as CustomUser, Citizen, ContactInfo, Responder, Authority, Notification
 from emergency.models import MedicalCondition
 from verification.models import GovernmentDocument
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
@@ -13,10 +13,22 @@ from django.db import connection, transaction
 from emergency.models import EmergencyEvent
 import json
 import time
+from emergency.models import EventAssignment
 
-from emergency.models import EmergencyEvent
 
-
+def handle_dev_login(request, dev_id):
+    """
+    If a dev_id is provided, fetch that CustomUser and log their AuthUser in.
+    """
+    if dev_id:
+        try:
+            # Fetch the profile
+            target_profile = CustomUser.objects.get(pk=dev_id)
+            # Log in the associated Auth User account
+            # We specify the backend to bypass standard auth checks
+            login(request, target_profile.account, backend='django.contrib.auth.backends.ModelBackend')
+        except CustomUser.DoesNotExist:
+            messages.error(request, f"Dev Mode: User ID {dev_id} not found.")
 # ---------------------------
 #  INDEX / LOGIN
 # ---------------------------
@@ -231,30 +243,133 @@ class CitizenProfileCompletionView(LoginRequiredMixin, View):
 # ---------------------------
 #  DASHBOARDS
 # ---------------------------
-class CitizenDashboardView(LoginRequiredMixin, View):
-    def get(self, request):
-        custom_user = CustomUser.objects.get(account=request.user)
-        approval_alert = False
+class CitizenDashboardView(View):
+    # Removed LoginRequiredMixin to allow handle_dev_login to work first
+    def get(self, request, dev_id=None):
+        # 1. Handle Dev Mode
+        handle_dev_login(request, dev_id)
 
-        notifications = Notification.objects.filter(user=custom_user, is_read=False)
-        for note in notifications:
-            if "authority" in note.message.lower() and "approved" in note.message.lower():
-                approval_alert = True
-                note.is_read = True
-                note.save()
-                break
+        # 2. Manual Login Check
+        if not request.user.is_authenticated:
+            return redirect('account:index')
 
-        return render(request, "citizen_dashboard.html", {"approval_alert": approval_alert})
+        # 3. Standard Logic
+        try:
+            custom_user = CustomUser.objects.get(account=request.user)
+            approval_alert = False
+
+            notifications = Notification.objects.filter(user=custom_user, is_read=False)
+            for note in notifications:
+                if "authority" in note.message.lower() and "approved" in note.message.lower():
+                    approval_alert = True
+                    note.is_read = True
+                    note.save()
+                    break
+
+            return render(request, "citizen_dashboard.html", {"approval_alert": approval_alert})
+        except CustomUser.DoesNotExist:
+            messages.error(request, "Profile not found.")
+            return redirect('account:index')
 
 
-class ResponderDashboardView(LoginRequiredMixin, View):
-    def get(self, request):
-        return render(request, "responder_dashboard.html")
+class ResponderDashboardView(View):
+    def get(self, request, dev_id=None):
+        if dev_id:
+            try:
+                target_profile = CustomUser.objects.get(pk=dev_id)
+                login(request, target_profile.account, backend='django.contrib.auth.backends.ModelBackend')
+            except CustomUser.DoesNotExist:
+                messages.error(request, f"Dev Mode: User ID {dev_id} not found.")
+
+        if not request.user.is_authenticated:
+            return redirect('account:index')
+
+        display_assignment = None
+        assignment_label = "No Assignment"
+
+        try:
+            user_profile = request.user.custom_profile
+
+            if hasattr(user_profile.citizen_profile, 'responder_profile'):
+                responder = user_profile.citizen_profile.responder_profile
+
+                active_assignment = EventAssignment.objects.filter(
+                    responder=responder,
+                    status__in=['active', 'pending']
+                ).select_related('emergency_event').order_by('-assigned_at').first()
+                if active_assignment:
+                    display_assignment = active_assignment
+                    assignment_label = "Current Assignment"
+                else:
+                    last_completed = EventAssignment.objects.filter(
+                        responder=responder,
+                        status='completed'
+                    ).select_related('emergency_event').order_by('-assigned_at').first()
+
+                    if last_completed:
+                        display_assignment = last_completed
+                        assignment_label = "Last Completed Assignment"
+                    else:
+                        assignment_label = "No Recent Assignments"
+            else:
+                assignment_label = "Profile Error: Not a Responder"
+
+        except Exception as e:
+            print(f"Dashboard Error: {e}")
+            assignment_label = "Error loading data"
+
+        context = {
+            'display_assignment': display_assignment,
+            'assignment_label': assignment_label,
+            'dev_id': dev_id
+        }
+
+        return render(request, "responder_dashboard.html", context)
+
+class AuthorityDashboardView(View):
+    def get(self, request, dev_id=None):
+        # 1. Handle Dev Mode
+        handle_dev_login(request, dev_id)
+
+        # 2. Manual Login Check
+        if not request.user.is_authenticated:
+            return redirect('account:index')
+
+        active_events = EmergencyEvent.objects.exclude(
+            status__in=['resolved', 'closed', 'cancelled', 'completed']
+        ).order_by('-created_at')
+
+        responders_available_count = Responder.objects.filter(duty_status='ON').count()
+
+        assigned_active_events = EmergencyEvent.objects.filter(
+            assignments__status='active'
+        ).distinct().order_by('-updated_at')
+
+        # 6. Context
+        context = {
+            'active_events': active_events,
+            'active_count': active_events.count(),
+            'responders_available_count': responders_available_count,
+            'assigned_active_events': assigned_active_events, # UPDATED KEY
+            'dev_id': dev_id
+        }
+
+        return render(request, "authority_dashboard.html", context)
 
 
-class AuthorityDashboardView(LoginRequiredMixin, View):
-    def get(self, request):
-        return render(request, "authority_dashboard.html")
+class CloseEventView(LoginRequiredMixin, View):
+
+    def get(self, request, event_id):
+        try:
+            with connection.cursor() as cursor:
+                cursor.callproc('sp_CancelEvent', [event_id])
+
+            messages.success(request, f"Event #{event_id} has been cancelled and responders released.")
+
+        except Exception as e:
+            messages.error(request, f"Error cancelling event: {e}")
+
+        return redirect('account:authority_dashboard')
 
 
 # ---------------------------

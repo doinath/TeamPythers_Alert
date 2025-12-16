@@ -1,65 +1,59 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.messages.context_processors import messages
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
+from django.views.generic import RedirectView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
+from django.utils import timezone
+from django.urls import reverse
 
-# Create your views here.
+# Imports
+from .models import RoleVerification
+from account.models import User as CustomUser
 
-class GovernmentDocument(View):
-    def get(self, request):
-        return render(request, "government_document.html")
 
-class SubmittedDocument(View):
-    def get(self, request):
-        return render(request, "submitted_document.html")
+class RoleReviewDashboard(LoginRequiredMixin, View):
+    """Bypasses role checks and renders role_verification.html directly."""
 
-class RoleVerification(View):
-    def get(self, request):
-        return render(request, "role_verification.html")
+    def get(self, request, role_type="Responder"):
+        # Fetch applications from the database
+        pending_apps = RoleVerification.objects.filter(
+            status='PENDING',
+            requested_role=role_type.lower()
+        ).select_related('user_id')
 
-class RoleVerificationView(LoginRequiredMixin, View):
+        # PATH FIX: Looking directly for role_verification.html
+        return render(request, "role_verification.html", {
+            'pending_applications': pending_apps,
+            'role_to_approve': role_type.capitalize()
+        })
 
-    login_url =  '/'
 
-    def get(self, request):
-        if not hasattr(request.user.custom_profile, 'authority'):
-            messages.error(request, "You are not authorized to view this page.")
-            return redirect('account:citizen_dashboard')
+class VerificationActionView(LoginRequiredMixin, View):
+    """Handles the Approve and Reject button logic."""
 
-        pending_verification = RoleVerification.objects.filter(status='PENDING').select_related('user_id')
+    def post(self, request, pk):
+        verification = get_object_or_404(RoleVerification, pk=pk)
+        action = request.POST.get('action')
 
-        context = {
-            'verification': pending_verification
-        }
+        if action == 'approve':
+            verification.status = 'APPROVED'
+            user_obj = verification.user_id
+            user_obj.role = verification.requested_role
+            user_obj.save()
+            messages.success(request, f"Successfully approved {user_obj.get_full_name()}.")
+        else:
+            verification.status = 'REJECTED'
+            messages.warning(request, "Application has been declined.")
 
-        return render(request, "role_verification.html", context)
+        verification.verified_at = timezone.now()
+        verification.save()
 
-    def post (self, request):
-        if not hasattr(request.user.custom_profile, 'authority'):
-            messages.error(request, "Access denied.")
-            return redirect('account:citizen_dashboard')
+        # Redirect back to the list
+        return redirect(reverse('verification:role_review', kwargs={'role_type': verification.requested_role}))
 
-        verification_id = request.POST.get('verification_id')
-        action = request.POST.get('action')  # 'approve' or 'reject'
 
-        try:
-            authority_profile = request.user.custom_profile.authority
-            verification = get_object_or_404(RoleVerificationModel, pk=verification_id)
+class DefaultReviewRedirectView(LoginRequiredMixin, RedirectView):
+    """Redirects /verification/list/ directly to the responder review page."""
 
-            with transaction.atomic():
-                if action == 'approve':
-                    verification.status = 'APPROVED'
-
-                    messages.success(request, f"Role verification for {verification.requested_role} approved!")
-                elif action == 'reject':
-                    verification.status = 'REJECTED'
-                    messages.warning(request, f"Role verification for {verification.requested_role} rejected.")
-
-                verification.verified_by = authority_profile
-                verification.save()
-
-            return redirect('verification:role_verification')
-
-        except Exception as e:
-            messages.error(request, f"Error processing verification: {e}")
-            return redirect('verification:role_verification')
+    def get_redirect_url(self, *args, **kwargs):
+        return reverse('verification:role_review', kwargs={'role_type': 'responder'})

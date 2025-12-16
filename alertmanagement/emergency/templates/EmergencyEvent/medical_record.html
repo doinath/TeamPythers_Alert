@@ -1,0 +1,255 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medical Record - {{ user_profile.first_name }} {{ user_profile.last_name }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn { animation: fadeIn 0.5s ease-out forwards; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body class="bg-[#f0f2f5] font-sans text-[#333]">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-8">
+                    <div class="flex items-center space-x-2">
+                        <img src="{% static 'emergency/logo.jpg' %}" alt="ALERT Logo" class="h-10 w-auto object-contain" />
+                    </div>
+
+                    <nav class="hidden md:flex items-center space-x-6">
+                        {% if request.resolver_match.kwargs.dev_id %}
+                            <a href="{% url 'EmergencyEvent:event_list_dev' request.resolver_match.kwargs.dev_id %}" class="text-gray-500 hover:text-red-600 font-medium transition-colors">Dashboard</a>
+                        {% else %}
+                            <a href="{% url 'EmergencyEvent:event_list' %}" class="text-gray-500 hover:text-red-600 font-medium transition-colors">Dashboard</a>
+                        {% endif %}
+
+                        <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">Chat</a>
+                        <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">Call Logs</a>
+                    </nav>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <div class="hidden md:flex items-center space-x-4">
+                        <span class="bg-[#d9534f] text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2 shadow-sm">
+                            ADMIN
+                        </span>
+
+                        <span class="text-gray-800 font-medium text-sm mr-3">
+                            {% if user.custom_profile %}
+                                {{ user.custom_profile.first_name }} {{ user.custom_profile.last_name }}
+                            {% elif user.first_name %}
+                                {{ user.first_name }} {{ user.last_name }}
+                            {% else %}
+                                Julian Andales
+                            {% endif %}
+                        </span>
+
+                        <img id="nav-profile-image" class="h-8 w-8 rounded-full object-cover" src="{% static 'emergency/profile_image.jpg' %}" alt="User Avatar" />
+                    </div>
+
+                    <div class="md:hidden flex items-center">
+                        <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-800 focus:outline-none">
+                            <svg id="menu-open-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                            <svg id="menu-close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <nav class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                {% if request.resolver_match.kwargs.dev_id %}
+                    <a href="{% url 'EmergencyEvent:event_list_dev' request.resolver_match.kwargs.dev_id %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Dashboard</a>
+                {% else %}
+                    <a href="{% url 'EmergencyEvent:event_list' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Dashboard</a>
+                {% endif %}
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Chat</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Call Logs</a>
+            </nav>
+            <div class="pt-4 pb-3 border-t border-gray-200">
+                <div class="px-5 pb-2">
+                    <span class="inline-block bg-[#d9534f] text-white font-semibold px-2 py-1 rounded text-xs uppercase shadow-sm">
+                        AUTHORITY - ADMIN
+                    </span>
+                </div>
+                <div class="flex items-center px-5">
+                    <img id="mobile-profile-image" class="h-10 w-10 rounded-full object-cover" src="{% static 'emergency/profile_image.jpg' %}" alt="User Avatar" />
+                    <div class="ml-3">
+                        <div class="text-base font-medium text-gray-800">
+                            {% if user.custom_profile %}
+                                {{ user.custom_profile.first_name }} {{ user.custom_profile.last_name }}
+                            {% elif user.first_name %}
+                                {{ user.first_name }} {{ user.last_name }}
+                            {% else %}
+                                Julian Andales
+                            {% endif %}
+                        </div>
+                        <div class="text-sm font-medium text-gray-500">{{ user.email }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <div class="mb-6">
+            <a href="javascript:history.back()" class="text-gray-500 hover:text-[#d9534f] flex items-center gap-2 transition-colors">
+                <i class="fas fa-arrow-left"></i> Back to Event
+            </a>
+        </div>
+
+        <div class="space-y-8 animate-fadeIn">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="bg-white p-6 rounded-[10px] shadow-md text-center border-t-4 border-[#d9534f]">
+                        <img class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-gray-100 object-cover"
+                             src="https://i.pravatar.cc/150?u={{ user_profile.user_id }}"
+                             alt="Profile" />
+
+                        <h2 class="text-2xl font-bold text-gray-800">
+                             {{ user_profile.first_name }} {{ user_profile.last_name }}
+                        </h2>
+
+                        <p class="text-sm text-gray-500 mt-1">
+                            {{ user_profile.account.email|default:"No email registered" }}
+                        </p>
+
+                        <p class="text-sm text-[#d9534f] font-semibold mt-2">
+                            {% if contact_numbers %}
+                                <i class="fas fa-phone-alt mr-1"></i> {{ contact_numbers.first.contact_info }}
+                            {% else %}
+                                No contact info
+                            {% endif %}
+                        </p>
+
+                        <span class="mt-4 inline-block bg-blue-100 text-blue-800 text-xs font-bold mr-2 px-3 py-1 rounded-full uppercase tracking-wide">
+                            Citizen
+                        </span>
+                    </div>
+
+                    <div class="bg-white rounded-[10px] shadow-md p-6">
+                        <h3 class="text-lg font-bold text-gray-800 border-b border-gray-100 pb-2 mb-4 uppercase text-sm tracking-wide">
+                            <i class="fas fa-map-marker-alt text-[#d9534f] mr-2"></i> Address
+                        </h3>
+                        <address class="text-sm not-italic text-gray-600 space-y-1">
+                            <p class="font-medium">{{ user_profile.street|default:"Street not provided" }}</p>
+                            <p>{{ user_profile.city|default:"-" }}, {{ user_profile.province|default:"" }}</p>
+                            <p>{{ user_profile.zip_code|default:"" }}</p>
+                        </address>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 space-y-6">
+
+                    <div class="bg-white rounded-[10px] shadow-md p-6">
+                         <div class="flex justify-between items-center border-b border-gray-100 pb-3 mb-4">
+                            <h3 class="text-lg font-bold text-gray-800 uppercase text-sm tracking-wide">
+                                <i class="fas fa-notes-medical text-[#d9534f] mr-2"></i> Medical Information
+                            </h3>
+                        </div>
+                        <div id="medical-list" class="space-y-4">
+                            {% if medical_conditions %}
+                                {% for condition in medical_conditions %}
+                                <div class="p-4 bg-red-50 rounded border border-red-100">
+                                    <h4 class="font-bold text-[#d9534f] text-base mb-1">{{ condition.condition_name }}</h4>
+                                    <p class="text-sm text-gray-700">{{ condition.notes }}</p>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="p-6 text-center bg-gray-50 rounded border border-dashed border-gray-300">
+                                    <p class="text-gray-500 italic">No known medical conditions on file.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-[10px] shadow-md p-6">
+                        <div class="flex justify-between items-center border-b border-gray-100 pb-3 mb-4">
+                            <h3 class="text-lg font-bold text-gray-800 uppercase text-sm tracking-wide">
+                                <i class="fas fa-address-book text-[#d9534f] mr-2"></i> Contact Numbers
+                            </h3>
+                        </div>
+                        <ul class="divide-y divide-gray-100" id="emergency-contact-list">
+                            {% if contact_numbers %}
+                                {% for contact in contact_numbers %}
+                                <li class="py-3 flex justify-between items-center hover:bg-gray-50 px-2 rounded transition">
+                                    <div class="flex-grow">
+                                        <p class="font-semibold text-gray-800 text-sm">Registered Contact</p>
+                                        <p class="text-base font-mono text-[#d9534f]">{{ contact.contact_info }}</p>
+                                    </div>
+                                    <a href="tel:{{ contact.contact_info }}" class="bg-gray-100 hover:bg-green-100 text-gray-600 hover:text-green-600 p-2 rounded-full transition">
+                                        <i class="fas fa-phone"></i>
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            {% else %}
+                                <li class="py-3 text-gray-500 italic text-sm">No additional contact numbers available.</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+
+                    <div class="bg-white rounded-[10px] shadow-md p-6">
+                         <div class="flex justify-between items-center border-b border-gray-100 pb-3 mb-4">
+                            <h3 class="text-lg font-bold text-gray-800 uppercase text-sm tracking-wide">
+                                <i class="fas fa-id-card text-[#d9534f] mr-2"></i> Government IDs
+                            </h3>
+                        </div>
+                        <ul class="divide-y divide-gray-100" id="gov-id-list">
+                            <li class="py-3 flex justify-between items-center">
+                                <div class="flex-grow pr-4">
+                                    <p class="font-semibold text-gray-800 text-sm">System ID</p>
+                                    <p class="text-sm text-gray-500 font-mono">USR-{{ user_profile.user_id|stringformat:"05d" }}</p>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                     <span class="text-xs font-bold bg-green-100 text-green-700 px-3 py-1 rounded-full border border-green-200">
+                                         <i class="fas fa-check-circle mr-1"></i> Verified
+                                     </span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // NAVBAR TOGGLE LOGIC (Updated to match Reference)
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const openIcon = document.getElementById('menu-open-icon');
+            const closeIcon = document.getElementById('menu-close-icon');
+
+            if (mobileMenuButton) {
+                 mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                    if(openIcon && closeIcon) {
+                        openIcon.classList.toggle('hidden');
+                        closeIcon.classList.toggle('hidden');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

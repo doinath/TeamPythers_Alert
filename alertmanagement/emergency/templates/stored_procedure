@@ -1,0 +1,125 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_AssignResponder`(
+    IN p_responder_id INT,
+    IN p_event_id INT
+)
+BEGIN
+    UPDATE account_responder
+    SET duty_status = 'RES'
+    WHERE id = p_responder_id;
+    UPDATE emergency_emergencyevent
+    SET status = 'in_progress', responder_id = p_responder_id
+    WHERE eventID = p_event_id;
+    INSERT INTO emergency_eventassignment (
+        role, status, assigned_at, emergency_event_id, responder_id
+    ) VALUES (
+        'responder', 'active', NOW(), p_event_id, p_responder_id
+    );
+END
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_RemoveResponder`(
+    IN p_responder_id INT,
+    IN p_event_id INT
+)
+BEGIN
+    DECLARE v_active_count INT;
+
+    UPDATE emergency_eventassignment
+    SET status = 'cancelled'
+    WHERE emergency_event_id = p_event_id
+      AND responder_id = p_responder_id
+      AND status = 'active';
+
+    UPDATE account_responder
+    SET duty_status = 'ON'
+    WHERE id = p_responder_id;
+
+    SELECT COUNT(*) INTO v_active_count
+    FROM emergency_eventassignment
+    WHERE emergency_event_id = p_event_id
+      AND status = 'active';
+
+    IF v_active_count = 0 THEN
+        UPDATE emergency_emergencyevent
+        SET status = 'Pending'
+        WHERE eventID = p_event_id;
+    END IF;
+END
+
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ResolveEvent`(
+    IN p_event_id INT
+)
+BEGIN
+    UPDATE emergency_emergencyevent
+    SET status = 'completed', updated_at = NOW()
+    WHERE eventID = p_event_id;
+    UPDATE account_responder ar
+    INNER JOIN emergency_eventassignment ea ON ar.id = ea.responder_id
+    SET ar.duty_status = 'ON'
+    WHERE ea.emergency_event_id = p_event_id
+      AND ea.status = 'active';
+    UPDATE emergency_eventassignment
+    SET status = 'completed'
+    WHERE emergency_event_id = p_event_id
+      AND status = 'active';
+
+END
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_SubmitEmergencyReport`(
+    IN p_citizen_id INT,
+    IN p_emergency_type VARCHAR(50),
+    IN p_other_specified VARCHAR(100),
+    IN p_reporting_for_others VARCHAR(3),
+    IN p_patient_full_name VARCHAR(150),
+    IN p_description TEXT,
+    IN p_gps_location VARCHAR(100),
+    IN p_severity VARCHAR(20)
+)
+BEGIN
+    DECLARE v_final_description TEXT;
+    DECLARE v_final_category VARCHAR(50);
+    DECLARE v_final_gps VARCHAR(100);
+
+    SET v_final_gps = IFNULL(p_gps_location, '');
+    IF v_final_gps = '' THEN
+        SET v_final_gps = '0.0000, 0.0000';
+    END IF;
+
+    IF p_emergency_type = 'others' THEN
+        SET v_final_category = 'other';
+    ELSE
+        SET v_final_category = p_emergency_type;
+    END IF;
+    SET v_final_description = p_description;
+
+    IF p_other_specified IS NOT NULL AND p_other_specified != '' THEN
+        SET v_final_description = CONCAT('[SPECIFIC TYPE: ', p_other_specified, '] \n', v_final_description);
+    END IF;
+
+    IF p_reporting_for_others = 'yes' AND p_patient_full_name IS NOT NULL AND p_patient_full_name != '' THEN
+        SET v_final_description = CONCAT('[REPORTING FOR PATIENT: ', p_patient_full_name, '] \n', v_final_description);
+    END IF;
+    INSERT INTO emergency_emergencyevent (
+        userID_id,
+        category,
+        description,
+        gps_location,
+        status,
+        severity_level,
+        created_at,
+        updated_at
+    ) VALUES (
+        p_citizen_id,
+        v_final_category,
+        v_final_description,
+        v_final_gps,
+        'reported',
+        p_severity,
+        NOW(),
+        NOW()
+    );
+
+END

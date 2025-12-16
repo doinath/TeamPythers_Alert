@@ -1,82 +1,394 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Details (Responder)</title>
-    <link rel="stylesheet" href="event_detail.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event Details (Responder) - ALERT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn { animation: fadeIn 0.5s ease-out forwards; }
+        .hidden { display: none; }
+    </style>
 </head>
-<body>
-    <div class="container">
-        <header class="navbar">
-            <div class="logo">
-                <img src="logo.jpg" alt="ALERT Logo">
-                <span class="logo-text"></span>
+<body class="bg-[#f0f2f5] font-sans text-[#333] min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-8">
+                    <div class="flex items-center space-x-2">
+                        <img src="{% static 'emergency/logo.jpg' %}" alt="ALERT Logo" class="h-10 w-auto object-contain" />
+                    </div>
+                    <nav class="hidden md:flex items-center space-x-6">
+                        {% if request.resolver_match.kwargs.dev_id %}
+                            <a href="{% url 'EmergencyEvent:assignment_list_dev' request.resolver_match.kwargs.dev_id %}"
+                               class="text-gray-500 hover:text-red-600 font-medium transition-colors">My Assignments</a>
+                        {% else %}
+                            <a href="{% url 'EmergencyEvent:assignment_list' %}"
+                               class="text-gray-500 hover:text-red-600 font-medium transition-colors">My Assignments</a>
+                        {% endif %}
+
+                        <a href="#" class="text-gray-500 hover:text-red-600 transition-colors">Dashboard</a>
+                    </nav>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <div class="hidden md:flex items-center space-x-4">
+
+                        {% if user.custom_profile.citizen_profile.responder_profile %}
+                            {% with responder=user.custom_profile.citizen_profile.responder_profile %}
+                                {% if responder.duty_status == 'ON' %}
+                                    <span class="bg-green-600 text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase shadow-sm">AVAILABLE</span>
+                                {% elif responder.duty_status == 'RES' or responder.duty_status == 'BUSY' %}
+                                    <span class="bg-[#d9534f] text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase shadow-sm">BUSY</span>
+                                {% else %}
+                                    <span class="bg-gray-500 text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase shadow-sm">OFFLINE</span>
+                                {% endif %}
+                            {% endwith %}
+                        {% else %}
+                            <span class="bg-gray-400 text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase">NO STATUS</span>
+                        {% endif %}
+
+                        <span class="text-gray-800 font-medium text-sm mr-3">
+                            {% if user.custom_profile %}
+                                {{ user.custom_profile.first_name }} {{ user.custom_profile.last_name }}
+                            {% else %}
+                                Julian Andales
+                            {% endif %}
+                        </span>
+
+                        <img id="nav-profile-image" class="h-8 w-8 rounded-full object-cover" src="{% static 'emergency/profile_image.jpg' %}" alt="User Avatar" />
+                    </div>
+
+                    <div class="md:hidden flex items-center">
+                        <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-800 focus:outline-none">
+                            <svg id="menu-open-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                            <svg id="menu-close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
             </div>
-            <nav class="nav-links">
-                <a href="#" class="active">Dashboard</a>
-                <a href="#">Chat</a>
-                <a href="#">Call Logs</a>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <nav class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                {% if request.resolver_match.kwargs.dev_id %}
+                    <a href="{% url 'EmergencyEvent:assignment_list_dev' request.resolver_match.kwargs.dev_id %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">My Assignments</a>
+                {% else %}
+                    <a href="{% url 'EmergencyEvent:assignment_list' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">My Assignments</a>
+                {% endif %}
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Dashboard</a>
             </nav>
-            <div class="user-info">
-                <span class="status-tag">ON DUTY - Assigned</span>
-                <span>Julian Andales</span>
-                <img src="profile_image.jpg" alt="User Profile" class="profile-pic">
-            </div>
-        </header>
-
-        <main class="content-area">
-            <div class="left-column">
-                <div class="card event-details-card">
-                    <div class="detail-row">
-                        <span class="label primary-label">EMERGENCY EVENT:</span>
-                        <span class="value primary-value">MEDICAL ASSISTANCE</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="label">SEVERITY:</span>
-                        <span class="value high-severity">HIGH</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="label">LOCATION:</span>
-                        <span class="value">CAIGIT, CEBU CITY</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="label">CITIZEN:</span>
-                        <span class="value">KYLE PLANDO</span>
-                    </div>
-                    <div class="detail-row phone-row">
-                        <span class="value phone-number">0931-112-3490</span>
-                    </div>
-                    <div class="detail-row description-row">
-                        <span class="label">DESCRIPTION:</span>
-                        <p class="value description-text">Patient experiencing severe chest pain and shortness of breath. History of cardiac issues. Needs immediate transport.</p>
-                    </div>
-                </div>
-
-                <div class="action-buttons-container">
-                    
-                    <div class="action-buttons-top responder-top-row">
-                        <button class="action-button secondary-btn resolved-btn">RESOLVED</button>
-                        <button class="action-button secondary-btn acknowledge-btn">ACKNOWLEDGE</button>
-                        <button class="action-button secondary-btn on-scene-btn">ON SCENE</button>
-                    </div>
-                    
-                    <div class="action-buttons-bottom responder-bottom-row">
-                        <button class="action-button secondary-btn medical-records-btn">MEDICAL RECORDS</button>
-                        <button class="action-button secondary-btn call-btn">CALL</button>
-                        <button class="action-button secondary-btn chat-btn">CHAT</button>
+            <div class="pt-4 pb-3 border-t border-gray-200">
+                <div class="flex items-center px-5">
+                    <img id="mobile-profile-image" class="h-10 w-10 rounded-full object-cover" src="{% static 'emergency/profile_image.jpg' %}" alt="User Avatar" />
+                    <div class="ml-3">
+                        <div class="text-base font-medium text-gray-800">
+                            {% if user.custom_profile %}
+                                {{ user.custom_profile.first_name }} {{ user.custom_profile.last_name }}
+                            {% else %}
+                                Julian Andales
+                            {% endif %}
+                        </div>
+                        <div class="mt-1">
+                            {% if user.custom_profile.citizen_profile.responder_profile %}
+                                {% with responder=user.custom_profile.citizen_profile.responder_profile %}
+                                    {% if responder.duty_status == 'ON' %}
+                                        <span class="text-xs font-semibold text-green-600">AVAILABLE</span>
+                                    {% elif responder.duty_status == 'RES' or responder.duty_status == 'BUSY' %}
+                                        <span class="text-xs font-semibold text-[#d9534f]">BUSY</span>
+                                    {% else %}
+                                        <span class="text-xs font-semibold text-gray-500">OFFLINE</span>
+                                    {% endif %}
+                                {% endwith %}
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </header>
+    <main class="flex-grow p-5 flex flex-col lg:flex-row gap-5 animate-fadeIn">
 
-            <div class="right-panel">
-                <div class="map-card">
-                    <img src="map_image.png" alt="Emergency Location Map" class="map-image">
-                    <div class="map-overlay">Emergency Locations</div>
+        <div class="flex flex-col flex-1 w-full">
+
+            <div class="bg-gradient-to-r from-white/80 to-[#d9534f]/10 p-[30px] rounded-[10px] shadow-md">
+
+                {% if messages %}
+                    <div class="mb-4">
+                        {% for message in messages %}
+                            <div class="p-2 rounded text-sm font-semibold {% if message.tags == 'success' %}bg-green-100 text-green-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="flex items-baseline mb-[15px]">
+                    <span class="w-[200px] shrink-0 font-bold text-[#d9534f] text-base uppercase">Emergency Event:</span>
+                    <span class="flex-1 font-bold text-[#333] text-base uppercase">
+                        {% if event %}
+                            {{ event.get_category_display }}
+                        {% else %}
+                            Medical Assistance
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="flex items-baseline mb-[15px]">
+                    <span class="w-[200px] shrink-0 font-semibold text-[#d9534f] text-sm uppercase">Severity:</span>
+                    <span class="flex-1 font-bold text-[#d9534f] text-base uppercase">
+                        {% if event %}
+                            {% with severity=event.severity_level|stringformat:"s" %}
+                                {% if severity == '1' or severity == 'low' %}Low
+                                {% elif severity == '2' or severity == 'medium' %}Medium
+                                {% elif severity == '3' or severity == 'high' %}High
+                                {% elif severity == '4' or severity == 'critical' %}Critical
+                                {% else %}{{ event.get_severity_level_display }}{% endif %}
+                            {% endwith %}
+                        {% else %}
+                            High
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="flex items-baseline mb-[15px]">
+                    <span class="w-[200px] shrink-0 font-semibold text-[#d9534f] text-sm uppercase">Location:</span>
+                    <span class="flex-1 font-bold text-[#333] text-base uppercase" id="location-text">
+                        {% if event and event.gps_location %}
+                            {{ event.gps_location }}
+                        {% else %}
+                            <span class="text-gray-400 italic">No GPS Data</span>
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="flex items-baseline mb-[15px]">
+                    <span class="w-[200px] shrink-0 font-semibold text-[#d9534f] text-sm uppercase">Status:</span>
+                    <span class="flex-1 font-bold text-blue-600 text-base uppercase">
+                        {% if event %}
+                            {% if event.status == 'on_scene' %}ON SCENE
+                            {% elif event.status == 'on_the_way' %}ON THE WAY
+                            {% else %}{{ event.status|upper|cut:"_" }}{% endif %}
+                        {% else %}
+                            PENDING
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="flex items-baseline mb-[15px]">
+                    <span class="w-[200px] shrink-0 font-semibold text-[#d9534f] text-sm uppercase">Citizen:</span>
+                    <span class="flex-1 font-bold text-[#333] text-base uppercase">
+                        {% if event %}
+                            {{ event.userID.user_id.first_name }} {{ event.userID.user_id.last_name }}
+                        {% else %}
+                            Kyle Plando
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="ml-[200px] -mt-[10px] mb-[25px]">
+                    <span class="text-[#5cb85c] text-sm underline cursor-pointer hover:text-[#4cae4c]">
+                        {% if citizen_contact %}
+                            {{ citizen_contact.contact_info }}
+                        {% else %}
+                            0931-112-3490 (Default)
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="flex items-baseline">
+                    <span class="w-[200px] shrink-0 font-semibold text-[#d9534f] text-sm uppercase self-start">Description:</span>
+                    <p class="flex-1 font-normal text-[#555] text-[15px] leading-relaxed">
+                        {% if event %}
+                            {{ event.description|linebreaksbr }}
+                        {% else %}
+                            Patient experiencing severe chest pain and shortness of breath. History of cardiac issues. Needs immediate transport.
+                        {% endif %}
+                    </p>
                 </div>
             </div>
-        </main>
-    </div>
+
+            <div class="w-full mt-5 flex flex-col items-end gap-4 pr-[30px] lg:pr-0">
+
+                <form method="POST" class="flex flex-wrap justify-end gap-[15px]">
+                    {% csrf_token %}
+
+                    <button type="submit" name="action" value="resolved" class="px-6 py-3 bg-[#5cb85c] text-white font-semibold rounded shadow-md uppercase hover:bg-[#4cae4c] transition-colors duration-300 text-base">
+                        Resolved
+                    </button>
+
+                    <button type="submit" name="action" value="acknowledge" class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base">
+                        Acknowledge
+                    </button>
+
+                    <button type="submit" name="action" value="on_scene" class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base">
+                        On Scene
+                    </button>
+                </form>
+
+                <div class="flex flex-wrap justify-end gap-[15px]">
+
+                    <a href="{% url 'EmergencyEvent:medical_record' event.eventID|default:0 %}{% if request.resolver_match.kwargs.dev_id %}?dev_id={{ request.resolver_match.kwargs.dev_id }}{% endif %}"
+                       class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base text-center">
+                        Medical Records
+                    </a>
+
+                    <button class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base">
+                        Call
+                    </button>
+                    <button class="px-6 py-3 bg-[#d9534f] text-white font-semibold rounded shadow-md uppercase hover:bg-[#c9302c] transition-colors duration-300 text-base">
+                        Chat
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-none w-full lg:w-[55%] flex flex-col h-[400px] lg:h-auto">
+            <div class="relative rounded-[10px] overflow-hidden shadow-md flex-1 bg-gray-200 group">
+
+                <div id="map-loading" class="absolute inset-0 flex items-center justify-center bg-gray-100 z-10 transition-opacity duration-300">
+                    <div class="flex flex-col items-center">
+                        <svg class="animate-spin h-8 w-8 text-[#d9534f] mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span class="text-[#d9534f] font-bold text-sm">Locating...</span>
+                    </div>
+                </div>
+
+                <iframe id="map-iframe" class="w-full h-full border-0" src="" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+                <div class="absolute top-5 right-5 bg-[#d9534f] text-white px-4 py-2 rounded shadow-md font-bold text-lg z-20">
+                    Emergency Locations
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // NAVBAR TOGGLE LOGIC (Updated to match Reference)
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const openIcon = document.getElementById('menu-open-icon');
+            const closeIcon = document.getElementById('menu-close-icon');
+
+            if (mobileMenuButton) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                    openIcon.classList.toggle('hidden');
+                    closeIcon.classList.toggle('hidden');
+                });
+            }
+
+            // --- ROBUST MAP LOADING LOGIC ---
+            // 1. Get raw string, trim whitespace
+            const dbLocation = "{% if event and event.gps_location %}{{ event.gps_location|escapejs }}{% endif %}".trim();
+
+            const locationTextEl = document.getElementById('location-text');
+            const loadingEl = document.getElementById('map-loading');
+            const iframe = document.getElementById('map-iframe');
+
+            // Fallback Location (Cebu City)
+            const defaultLat = 10.3157;
+            const defaultLon = 123.8854;
+
+            function loadMap(lat, lon) {
+                // Ensure number format
+                lat = parseFloat(lat);
+                lon = parseFloat(lon);
+
+                // --- AUTO-FIX SWAPPED COORDINATES ---
+                // If 'lat' is greater than 90, it's actually Longitude.
+                // Philippines Lat is ~4-21, Lon is ~116-127.
+                if (Math.abs(lat) > 90 && Math.abs(lon) <= 90) {
+                    console.warn("Detected swapped coordinates. Correcting...");
+                    const temp = lat;
+                    lat = lon;
+                    lon = temp;
+                }
+
+                // Update text if empty or generic
+                if(locationTextEl && (locationTextEl.innerText.includes("No GPS") || locationTextEl.innerText.trim() === "")) {
+                    locationTextEl.innerText = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+                }
+
+                console.log(`Loading Map: Lat ${lat}, Lon ${lon}`);
+
+                // OpenStreetMap Embed URL
+                const bboxOffset = 0.005;
+                const embedUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - bboxOffset},${lat - bboxOffset},${lon + bboxOffset},${lat + bboxOffset}&layer=mapnik&marker=${lat},${lon}`;
+
+                iframe.src = embedUrl;
+
+                iframe.onload = () => {
+                    loadingEl.style.opacity = '0';
+                    setTimeout(() => {
+                        loadingEl.style.display = 'none';
+                    }, 300);
+                };
+            }
+
+            function parseAndLoad(locString) {
+                console.log("Parsing Location:", locString);
+                // Regex matches numbers like "10.123" or "-123.456"
+                const matches = locString.match(/-?\d+(\.\d+)?/g);
+
+                if (matches && matches.length >= 2) {
+                    const val1 = parseFloat(matches[0]);
+                    const val2 = parseFloat(matches[1]);
+
+                    // Check for invalid 0,0 coordinates (default DB value)
+                    if (Math.abs(val1) < 0.0001 && Math.abs(val2) < 0.0001) {
+                        console.warn("Location is 0,0. Loading fallback.");
+                        loadMap(defaultLat, defaultLon);
+                    } else {
+                        loadMap(val1, val2);
+                    }
+                } else {
+                    console.error("Could not parse coordinates from:", locString);
+                    loadMap(defaultLat, defaultLon);
+                }
+            }
+
+            // Execution
+            if (dbLocation && dbLocation !== "") {
+                parseAndLoad(dbLocation);
+            } else {
+                // Try browser location
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const lat = position.coords.latitude;
+                            const lon = position.coords.longitude;
+                            if(locationTextEl) locationTextEl.innerText = `Current Dev Loc: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+                            loadMap(lat, lon);
+                        },
+                        (error) => {
+                            console.warn("Geolocation denied or failed.");
+                            loadMap(defaultLat, defaultLon);
+                        }
+                    );
+                } else {
+                    loadMap(defaultLat, defaultLon);
+                }
+            }
+        });
+    </script>
 </body>
 </html>

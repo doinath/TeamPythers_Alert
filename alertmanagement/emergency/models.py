@@ -28,7 +28,6 @@ class EmergencyEvent(models.Model):
 
     eventID = models.AutoField(primary_key=True)
 
-    # FIXED: unique related_name for each FK
     authority = models.ForeignKey(
         Authority,
         on_delete=models.SET_NULL,
@@ -81,7 +80,6 @@ class EventAssignment(models.Model):
     assigned_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
 
-    # FIXED: unique related names for avoid clashes
     authority = models.ForeignKey(
         Authority,
         on_delete=models.SET_NULL,
@@ -112,8 +110,6 @@ class MedicalCondition(models.Model):
     condition_id = models.AutoField(primary_key=True)
     condition_name = models.CharField(max_length=100)
     notes = models.TextField()
-
-    # GOOD: User FK is correct
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):

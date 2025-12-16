@@ -1,160 +1,308 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responder Availability List</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Responder Availability List - ALERT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="responder_avail_emg.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn { animation: fadeIn 0.5s ease-out forwards; }
+        /* Added from Reference */
+        .hidden { display: none; }
+    </style>
 </head>
-<body>
+<body class="bg-gray-100 font-sans text-gray-800">
 
-    <div class="container">
-        
-        <nav class="navbar">
-            <div class="logo">
-                <img src="logo.jpg" alt="ALERT Logo">
-            </div>
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-8">
+                    <div class="flex items-center space-x-2">
+                        <img src="{% static 'emergency/logo.jpg' %}" alt="ALERT Logo" class="h-10 w-auto object-contain" />
+                    </div>
 
-            <div class="nav-links">
-                <a href="#">Dashboard</a>
-                <a href="#">Chat</a>
-                <a href="#" class="active">Call Logs</a>
-            </div>
+                    <nav class="hidden md:flex items-center space-x-6">
+                        {% if request.resolver_match.kwargs.dev_id %}
+                            <a href="{% url 'EmergencyEvent:event_list_dev' request.resolver_match.kwargs.dev_id %}"
+                               class="text-gray-500 hover:text-red-600 font-medium transition-colors">Dashboard</a>
+                        {% else %}
+                            <a href="{% url 'EmergencyEvent:event_list' %}"
+                               class="text-gray-500 hover:text-red-600 font-medium transition-colors">Dashboard</a>
+                        {% endif %}
 
-            <div class="user-info">
-                <span>Julian Andales</span>
-                <img src="profile_image.jpg" alt="User Profile" class="profile-pic">
-            </div>
-        </nav>
+                        <a href="#" class="text-gray-500 hover:text-red-600 font-medium transition-colors">Chat</a>
+                        <a href="#" class="text-red-600 font-medium transition-colors">Call Logs</a>
+                    </nav>
+                </div>
 
-        <h2 style="margin-bottom: 20px; color: #555;">Responder Availability List</h2>
+                <div class="flex items-center space-x-4">
+                    <div class="hidden md:flex items-center space-x-4">
+                        <span class="bg-[#d9534f] text-white font-semibold px-2.5 py-1 rounded text-[13px] uppercase mr-2 shadow-sm">
+                            DISPATCHER
+                        </span>
 
-        <div class="filter-bar">
-            <div class="filter-tabs">
-                <button class="tab active">All</button>
-                <button class="tab">Available</button>
-                <button class="tab">Busy</button>
-                <button class="tab">Off Duty</button>
-            </div>
+                        <span class="text-gray-800 font-medium text-sm mr-3">
+                            {% if user.custom_profile %}
+                                {{ user.custom_profile.first_name }} {{ user.custom_profile.last_name }}
+                            {% elif user.first_name %}
+                                {{ user.first_name }} {{ user.last_name }}
+                            {% else %}
+                                Julian Andales
+                            {% endif %}
+                        </span>
 
-            <div style="display: flex; align-items: center; gap: 15px;">
-                
-                <div class="counter-pill">0/6</div>
+                        <img id="nav-profile-image" class="h-8 w-8 rounded-full object-cover" src="{% static 'emergency/profile_image.jpg' %}" alt="User Avatar" />
+                    </div>
 
-                <div class="search-box">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Search">
+                    <div class="md:hidden flex items-center">
+                        <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-800 focus:outline-none">
+                            <svg id="menu-open-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                            <svg id="menu-close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="assignments-table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Agency</th>
-                        <th>Name</th>
-                        <th>Role</th>
-                        <th>Availability</th>
-                        <th style="text-align: center;">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <i class="fa-solid fa-fire-extinguisher icon-red"></i>
-                            Bureau Of Fire Protection
-                        </td>
-                        <td>Alab, Christopher K.</td>
-                        <td>Fire Inspector</td>
-                        <td>
-                            <span class="status-badge grad-very-high">Busy</span>
-                        </td>
-                        <td style="text-align: center;">
-                            <button class="action-btn grad-blue">View</button>
-                        </td>
-                    </tr>
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <nav class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                {% if request.resolver_match.kwargs.dev_id %}
+                    <a href="{% url 'EmergencyEvent:event_list_dev' request.resolver_match.kwargs.dev_id %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Dashboard</a>
+                {% else %}
+                    <a href="{% url 'EmergencyEvent:event_list' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Dashboard</a>
+                {% endif %}
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Chat</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-gray-50">Call Logs</a>
+            </nav>
 
-                    <tr>
-                        <td>
-                            <i class="fa-solid fa-kit-medical icon-dark-orange"></i>
-                            LDRRMC
-                        </td>
-                        <td>Yuta, Segismundo L.</td>
-                        <td>Search And Rescue Team Leader</td>
-                        <td>
-                            <span class="status-badge grad-low">Available</span>
-                        </td>
-                        <td style="text-align: center;">
-                            <button class="action-btn grad-assign">Assign</button>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <i class="fa-solid fa-kit-medical icon-dark-orange"></i>
-                            LDRRMC
-                        </td>
-                        <td>Bahabaha, Isabelle Mae T.</td>
-                        <td>Search and Rescue Volunteer</td>
-                        <td>
-                            <span class="status-badge grad-low">Available</span>
-                        </td>
-                        <td style="text-align: center;">
-                            <button class="action-btn grad-assign">Assign</button>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <i class="fa-solid fa-shield-halved icon-blue"></i>
-                            Philippine National Police
-                        </td>
-                        <td>Baril, Efren Joshua K.</td>
-                        <td>Police Lieutenant</td>
-                        <td>
-                            <span class="status-badge grad-moderate">Off Duty</span>
-                        </td>
-                        <td style="text-align: center;">
-                            <button class="action-btn grad-moderate" disabled>Unavailable</button>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <i class="fa-solid fa-shield-halved icon-blue"></i>
-                            Philippine National Police
-                        </td>
-                        <td>Pinereso, Ernesto Jr. P.</td>
-                        <td>Police Lieutenant</td>
-                        <td>
-                            <span class="status-badge grad-moderate">Off Duty</span>
-                        </td>
-                        <td style="text-align: center;">
-                            <button class="action-btn grad-moderate" disabled>Unavailable</button>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <i class="fa-solid fa-person-military-rifle icon-brown"></i>
-                            Armed Forces
-                        </td>
-                        <td>Dimataub, Leonarda Joshua L.</td>
-                        <td>First Lieutenant</td>
-                        <td>
-                            <span class="status-badge grad-moderate">Off Duty</span>
-                        </td>
-                        <td style="text-align: center;">
-                            <button class="action-btn grad-moderate" disabled>Unavailable</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="pt-4 pb-3 border-t border-gray-200">
+                <div class="px-5 pb-2">
+                    <span class="inline-block bg-[#d9534f] text-white font-semibold px-2 py-1 rounded text-xs uppercase shadow-sm">
+                        DISPATCHER
+                    </span>
+                </div>
+                <div class="flex items-center px-5">
+                    <img id="mobile-profile-image" class="h-10 w-10 rounded-full object-cover" src="{% static 'emergency/profile_image.jpg' %}" alt="User Avatar" />
+                    <div class="ml-3">
+                        <div class="text-base font-medium text-gray-800">
+                            {% if user.custom_profile %}
+                                {{ user.custom_profile.first_name }} {{ user.custom_profile.last_name }}
+                            {% elif user.first_name %}
+                                {{ user.first_name }} {{ user.last_name }}
+                            {% else %}
+                                Julian Andales
+                            {% endif %}
+                        </div>
+                        <div class="text-sm font-medium text-gray-500">{{ user.email }}</div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+    </header>
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8 animate-fadeIn">
 
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-600">Responder Availability List</h2>
+                {% if event_id %}
+                    <span class="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-full border border-blue-200 shadow-sm mt-2 inline-block">
+                        <i class="fas fa-bullhorn mr-1"></i> Assigning for Event ID: <strong>#{{ event_id }}</strong>
+                    </span>
+                {% endif %}
+            </div>
+
+            {% if event_id %}
+                {% if request.resolver_match.kwargs.dev_id %}
+                    <a href="{% url 'EmergencyEvent:event_details_authority_dev' event_id request.resolver_match.kwargs.dev_id %}"
+                       class="px-5 py-2 bg-gray-800 text-white text-sm font-bold uppercase rounded shadow hover:bg-gray-700 transition-colors">
+                        <i class="fas fa-check mr-2"></i> Done / Return
+                    </a>
+                {% else %}
+                    <a href="{% url 'EmergencyEvent:event_details_authority' event_id %}"
+                       class="px-5 py-2 bg-gray-800 text-white text-sm font-bold uppercase rounded shadow hover:bg-gray-700 transition-colors">
+                        <i class="fas fa-check mr-2"></i> Done / Return
+                    </a>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        {% if messages %}
+            <div class="mb-6">
+                {% for message in messages %}
+                    <div class="p-3 rounded-md text-sm font-medium border {% if message.tags == 'success' %}bg-green-50 text-green-700 border-green-200{% elif message.tags == 'warning' %}bg-yellow-50 text-yellow-700 border-yellow-200{% else %}bg-red-50 text-red-700 border-red-200{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="bg-white rounded-lg shadow-sm p-4 mb-6 flex flex-col lg:flex-row justify-between items-center gap-4">
+            <div class="flex space-x-2 overflow-x-auto w-full lg:w-auto pb-2 lg:pb-0">
+                <button class="px-4 py-2 text-sm font-semibold text-gray-800 bg-gray-100 rounded-md border-b-2 border-red-600 whitespace-nowrap">All</button>
+                <button class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-md transition-colors whitespace-nowrap">Available</button>
+                <button class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-md transition-colors whitespace-nowrap">Busy</button>
+                <button class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-md transition-colors whitespace-nowrap">Off Duty</button>
+            </div>
+
+            <div class="flex items-center gap-4 w-full lg:w-auto justify-between lg:justify-end">
+                <div class="bg-[#d9534f] text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-sm whitespace-nowrap">
+                    Assigned: {{ assigned_count }} / {{ total_count }}
+                </div>
+
+                <div class="relative w-full lg:w-64">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input type="text" placeholder="Search responders..." class="w-full py-2 pl-10 pr-4 text-sm text-gray-700 bg-white border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent shadow-sm">
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Agency</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Name</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Role</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Availability</th>
+                            <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+
+                        {% if responders %}
+                            {% for responder in responders %}
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center font-semibold text-gray-800 gap-3">
+                                        <div class="w-6 text-center">
+                                            {% if "Fire" in responder.department_unit or "BFP" in responder.department_unit %}
+                                                <i class="fa-solid fa-fire-extinguisher text-red-600 text-lg"></i>
+                                            {% elif "Police" in responder.department_unit or "PNP" in responder.department_unit %}
+                                                <i class="fa-solid fa-user-shield text-blue-800 text-lg"></i>
+                                            {% elif "Army" in responder.department_unit or "Armed" in responder.department_unit %}
+                                                <i class="fa-solid fa-person-military-rifle text-[#8d5b4c] text-lg"></i>
+                                            {% else %}
+                                                <i class="fa-solid fa-star-of-life text-green-600 text-lg"></i>
+                                            {% endif %}
+                                        </div>
+                                        {{ responder.department_unit }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                    {{ responder.citizen.user_id.last_name }}, {{ responder.citizen.user_id.first_name }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                    {{ responder.role }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {% if responder.duty_status == 'ON' %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            <span class="w-2 h-2 mr-1 bg-green-500 rounded-full"></span> Available
+                                        </span>
+                                    {% elif responder.duty_status == 'BUSY' or responder.duty_status == 'RES' %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            <span class="w-2 h-2 mr-1 bg-red-500 rounded-full"></span> Busy
+                                        </span>
+                                    {% else %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                            <span class="w-2 h-2 mr-1 bg-gray-500 rounded-full"></span> Off Duty
+                                        </span>
+                                    {% endif %}
+                                </td>
+
+                                <td class="px-6 py-4 whitespace-nowrap text-center">
+
+                                    {% if responder.id in assigned_ids %}
+                                        <form method="POST" action="{% if request.resolver_match.kwargs.dev_id %}{% url 'EmergencyEvent:responder_availability_dev' request.resolver_match.kwargs.dev_id %}{% else %}{% url 'EmergencyEvent:responder_availability' %}{% endif %}?event_id={{ event_id }}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="remove">
+                                            <input type="hidden" name="responder_id" value="{{ responder.id }}">
+                                            <input type="hidden" name="event_id" value="{{ event_id }}">
+                                            <button type="submit" class="px-4 py-2 text-xs font-bold text-white uppercase rounded shadow-md transition-all hover:bg-red-700 min-w-[100px] bg-red-600">
+                                                Cancel
+                                            </button>
+                                        </form>
+
+                                    {% elif responder.duty_status == 'ON' %}
+                                        {% if event_id %}
+                                            <form method="POST" action="{% if request.resolver_match.kwargs.dev_id %}{% url 'EmergencyEvent:responder_availability_dev' request.resolver_match.kwargs.dev_id %}{% else %}{% url 'EmergencyEvent:responder_availability' %}{% endif %}?event_id={{ event_id }}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="assign">
+                                                <input type="hidden" name="responder_id" value="{{ responder.id }}">
+                                                <input type="hidden" name="event_id" value="{{ event_id }}">
+                                                <button type="submit" class="px-4 py-2 text-xs font-bold text-white uppercase rounded shadow-md transition-all hover:scale-105 min-w-[100px] bg-gradient-to-r from-[#58E07F] to-[#307A45]">
+                                                    Assign
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            <button disabled class="px-4 py-2 text-xs font-bold text-gray-500 uppercase rounded shadow-md bg-gray-200 cursor-not-allowed min-w-[100px]">
+                                                Select Event
+                                            </button>
+                                        {% endif %}
+
+                                    {% elif responder.duty_status == 'BUSY' or responder.duty_status == 'RES' %}
+                                        <button disabled class="px-4 py-2 text-xs font-bold text-white uppercase rounded shadow-md opacity-70 min-w-[100px] bg-gradient-to-r from-[#3C97FF] to-[#151D8D] cursor-not-allowed">
+                                            Deployed
+                                        </button>
+
+                                    {% else %}
+                                        <button disabled class="px-4 py-2 text-xs font-bold text-gray-600 uppercase rounded shadow-md cursor-not-allowed opacity-70 min-w-[100px] bg-gray-300">
+                                            Unavailable
+                                        </button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="px-6 py-10 text-center text-gray-500">
+                                    <i class="fa-solid fa-users-slash text-4xl mb-3 text-gray-300"></i>
+                                    <p>No responders available.</p>
+                                </td>
+                            </tr>
+                        {% endif %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // NAVBAR TOGGLE LOGIC (Updated to match Reference)
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const openIcon = document.getElementById('menu-open-icon');
+            const closeIcon = document.getElementById('menu-close-icon');
+
+            if (mobileMenuButton) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                    if (openIcon && closeIcon) {
+                        openIcon.classList.toggle('hidden');
+                        closeIcon.classList.toggle('hidden');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

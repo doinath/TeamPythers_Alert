@@ -15,11 +15,11 @@
             font-family: 'Inter', sans-serif;
         }
         .animate-pulse-slow {
-            animation: pulse-slow 3s infinite ease-in-out;
+            animation: pulse-slow 2s infinite ease-in-out; /* Adjusted animation speed */
         }
         @keyframes pulse-slow {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(0.98); }
         }
         /* Hide scrollbar for Chrome, Safari and Opera */
         .no-scrollbar::-webkit-scrollbar {
@@ -38,14 +38,15 @@
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
         }
+        #map-container iframe { width: 100%; height: 100%; border: none; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased">
 
-    <!-- App Container -->
+        <input type="hidden" id="csrf_token" value="{{ csrf_token }}">
+
     <div id="app" class="flex flex-col min-h-screen">
 
-        <!-- Header -->
         <header class="bg-white shadow-sm sticky top-0 z-50">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-16">
@@ -70,22 +71,32 @@
                                 <span class="text-gray-800 font-medium text-sm mr-3">Guest</span>
                             {% endif %}
 
-                             {% if request.user.custom_profile.citizen_profile.responder_profile %}
+                            {# FIX: Changed .authority to .authority_profile for consistency with models #}
+                            {% if request.user.custom_profile.citizen_profile.responder_profile %}
                                  <a href="{% url 'account:responder_profile' %}" class="group">
-                            {% elif request.user.custom_profile.citizen_profile.authority %}
+                            {% elif request.user.custom_profile.citizen_profile.authority_profile %}
                                  <a href="{% url 'account:authority_profile' %}" class="group">
                             {% else %}
                                  <a href="{% url 'account:citizen_profile' %}" class="group">
                             {% endif %}
+
                                 <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
                                      src="https://ui-avatars.com/api/?name={{ request.user.first_name }}+{{ request.user.last_name }}&background=EF4444&color=fff"
                                      alt="User Avatar" />
                             </a>
                         </div>
+
                         <div class="md:hidden flex items-center">
                             <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-800 focus:outline-none">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                                <svg id="menu-open-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"
+                                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
+                                <svg id="menu-close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden"
+                                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             </button>
                         </div>
@@ -96,8 +107,8 @@
             <div id="mobile-menu" class="hidden md:hidden bg-white border-t absolute w-full z-30 shadow-lg top-16 left-0">
                 <nav class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                     <a href="{% url 'account:citizen_dashboard' %}" class="block px-3 py-2 rounded-md text-base font-medium bg-red-50 text-red-700">Dashboard</a>
-                    <a href="{% url 'communication:messages' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50">Chat</a>
-                    <a href="{% url 'communication:call_logs' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50">Call logs</a>
+                    <a href="{% url 'communication:messages' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Chat</a>
+                    <a href="{% url 'communication:call_logs' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Call logs</a>
                 </nav>
                 <div class="pt-4 pb-3 border-t border-gray-200">
                     <div class="flex items-center px-5">
@@ -114,13 +125,10 @@
             </div>
         </header>
 
-        <!-- Main Content -->
         <main class="flex-grow container mx-auto p-4 md:p-6 lg:p-8">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-                <!-- Left Column -->
                 <div class="lg:col-span-4 flex flex-col gap-8">
-                    <!-- SOS Card -->
                     <div class="bg-white p-6 rounded-xl shadow-lg text-center">
                         <h2 class="text-xl font-bold text-gray-800 mb-4">Quick Call Authority</h2>
                         <button id="sos-btn" class="relative w-48 h-48 mx-auto rounded-full bg-red-700 shadow-2xl shadow-red-600/50 flex items-center justify-center group transform hover:scale-105 transition-transform duration-300">
@@ -131,7 +139,6 @@
                         <p class="text-sm text-gray-500 mt-4">Press to connect with nearest Authority</p>
                     </div>
 
-                    <!-- Emergency Contacts -->
                     <div class="bg-white p-6 rounded-xl shadow-lg">
                         <h2 class="text-xl font-bold text-gray-800 mb-4">Emergency Contacts</h2>
                         <div class="space-y-6">
@@ -163,7 +170,6 @@
 
                 <div class="lg:col-span-8 flex flex-col gap-8">
 
-                    <!-- Emergency Type Selector -->
                     <div class="bg-white p-6 rounded-xl shadow-lg">
                         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
                             <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900">
@@ -173,59 +179,32 @@
                                 <span>File a Report</span>
                             </button>
                         </div>
-                        <!-- Buttons open Report Modal -->
+
                         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
-                            <!-- Fire -->
-                            <button onclick="openEmergencyModal('Fire')" class="flex flex-col items-center justify-center p-6 text-white bg-gradient-to-br from-orange-500 via-red-600 to-rose-700 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300 h-30">
+                            <button onclick="triggerEmergency('fire')" class="flex flex-col items-center justify-center p-6 text-white bg-gradient-to-br from-orange-500 via-red-600 to-rose-700 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300 h-30">
                                 <img src="{% static 'images/fire_icon.png' %}" width="48" height="48" alt="icon" class="mb-2">
-                                <span class="font-semibold text-sm">Fire</span>
+                                <span class="font-semibold text-sm md:text-base">Fire</span>
                             </button>
-                            <!-- Flood -->
-                            <button onclick="openEmergencyModal('Flood')" class="flex flex-col items-center justify-center p-6 text-white bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300 h-30">
+                            <button onclick="triggerEmergency('flood')" class="flex flex-col items-center justify-center p-6 text-white bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300 h-30">
                                 <img src="{% static 'images/flood_icon.png' %}" width="48" height="48" alt="icon" class="mb-2">
-                                <span class="font-semibold text-sm">Flood</span>
+                                <span class="font-semibold text-sm md:text-base">Flood</span>
                             </button>
-                            <!-- Accident -->
-                            <button onclick="openEmergencyModal('Accident')" class="flex flex-col items-center justify-center p-6 text-white bg-gradient-to-br from-rose-400 via-rose-500 to-red-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300 h-30">
+                            <button onclick="triggerEmergency('medical')" class="flex flex-col items-center justify-center p-6 text-white bg-gradient-to-br from-rose-400 via-rose-500 to-red-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300 h-30">
                                 <img src="{% static 'images/accidents_icon.png' %}" width="48" height="48" alt="icon" class="mb-2">
-                                <span class="font-semibold text-sm">Accident</span>
+                                <span class="font-semibold text-sm md:text-base">Accident</span>
                             </button>
-                            <!-- Crime -->
-                            <button onclick="openEmergencyModal('Crime')" class="flex flex-col items-center justify-center p-6 text-white bg-gradient-to-br from-slate-500 via-indigo-600 to-purple-700 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300 h-30">
+                            <button onclick="triggerEmergency('crime')" class="flex flex-col items-center justify-center p-6 text-white bg-gradient-to-br from-slate-500 via-indigo-600 to-purple-700 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300 h-30">
                                 <img src="{% static 'images/crime_icon.png' %}" width="48" height="48" alt="icon" class="mb-2">
-                                <span class="font-semibold text-sm">Crime</span>
+                                <span class="font-semibold text-sm md:text-base">Crime</span>
                             </button>
-                            <!-- Earthquake -->
-                            <button onclick="openEmergencyModal('Earthquake')" class="flex flex-col items-center justify-center p-6 text-white bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300 h-30">
+                            <button onclick="triggerEmergency('earthquake')" class="flex flex-col items-center justify-center p-6 text-white bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300 h-30">
                                 <img src="{% static 'images/earthquake_icon.png' %}" width="48" height="48" alt="icon" class="mb-2">
                                 <span class="font-semibold text-sm md:text-base">Earthquake</span>
                             </button>
                         </div>
                     </div>
 
-                    <div id="approval-success-modal" class="fixed inset-0 bg-gray-900 bg-opacity-90 flex items-center justify-center z-[200] p-4 hidden">
-                        <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md mx-auto relative modal-animate text-center border-t-8 border-blue-600">
-
-                            <div class="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-blue-100 mb-6">
-                                <svg class="h-10 w-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </div>
-
-                            <h2 class="text-2xl font-bold text-gray-900 mb-2">Application Approved!</h2>
-                            <p class="text-gray-600 mb-8">
-                                Your application to become an <span class="font-bold text-blue-600">Authority</span> has been verified and approved by the administrator.
-                            </p>
-
-                            <button onclick="redirectToAuthority()" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors shadow-lg transform hover:scale-105 duration-200">
-                                Go to Authority Dashboard
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Application Cards -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <!-- Responder Card -->
                         <div class="bg-white p-6 rounded-xl shadow-lg flex flex-col items-start hover:shadow-xl transition-shadow duration-300 border border-gray-100">
                             <div class="p-3 bg-red-100 rounded-lg mb-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -241,7 +220,6 @@
                             </button>
                         </div>
 
-                        <!-- Authority Card -->
                         <div class="bg-white p-6 rounded-xl shadow-lg flex flex-col items-start hover:shadow-xl transition-shadow duration-300 border border-gray-100">
                             <div class="p-3 bg-blue-100 rounded-lg mb-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -291,108 +269,107 @@
         </main>
     </div>
 
-    <div id="sos-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4 hidden">
-        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm mx-auto relative modal-animate">
-            <div class="flex items-center space-x-3 mb-6">
-                <div class="p-2 bg-red-100 rounded-full animate-pulse">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/><line x1="22" y1="2" x2="15" y2="2"/><polyline points="19 5 15 2 19 2"/></svg>
-                </div>
-                <h3 class="text-lg font-semibold text-gray-800">Emergency Center</h3>
-                <span class="ml-auto text-red-600 font-medium animate-pulse">Calling...</span>
-            </div>
+    <div id="sos-modal" class="fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-[300] p-4 hidden">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm mx-auto relative modal-animate flex flex-col items-center">
+           
+            <div class="w-full flex justify-between items-center mb-6">
+                <div class="flex items-center space-x-2 text-red-600">
+                    <span class="relative flex h-3 w-3">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                    </span>
+                    <span id="sos-status-text" class="font-bold text-sm tracking-wide uppercase">Connecting...</span>
+                </div>
+            </div>
 
-            <div class="relative mb-6">
-                <div class="h-24 w-24 rounded-full p-1 border-4 border-gray-100 shadow-inner">
-                    <img class="h-full w-full rounded-full object-cover"
-                         src="https://ui-avatars.com/api/?name=Authority&background=0D8ABC&color=fff"
-                         alt="Authority" />
-                </div>
-                <div id="pulse-ring" class="absolute top-0 left-0 -inset-4 rounded-full border border-red-200 opacity-0 animate-pulse-slow"></div>
-            </div>
+            <div class="relative mb-6">
+                <div class="h-24 w-24 rounded-full p-1 border-4 border-gray-100 shadow-inner">
+                    <img class="h-full w-full rounded-full object-cover" src="https://ui-avatars.com/api/?name=Authority&background=0D8ABC&color=fff" alt="Authority" />
+                </div>
+                <div id="pulse-ring" class="absolute top-0 left-0 -inset-4 rounded-full border border-red-200 opacity-0 animate-pulse-slow"></div>
+            </div>
 
-            <h3 id="sos-title" class="text-xl font-bold text-gray-900 mb-1">Finding Authority</h3>
-            <p id="sos-subtitle" class="text-sm text-gray-500 mb-8 text-center px-4">
-                Please wait while we connect you to the nearest responder unit...
-            </p>
+            <h3 id="sos-title" class="text-xl font-bold text-gray-900 mb-1">Finding Authority</h3>
+            <p id="sos-subtitle" class="text-sm text-gray-500 mb-8 text-center px-4">
+                Please wait while we connect you to the nearest responder unit...
+            </p>
 
-            <button id="sos-cancel-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-all shadow-lg">
-                Cancel Request
-            </button>
-        </div>
-    </div>
+            <button id="sos-cancel-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-all shadow-lg">
+                Cancel Request
+            </button>
+        </div>
+    </div>
 
-    <!-- 2. ACTIVE CALL MODAL -->
+    <div id="connecting-modal" class="fixed inset-0 bg-gray-900 bg-opacity-90 flex items-center justify-center z-[200] hidden">
+        <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-sm text-center modal-animate">
+            <div class="mb-4">
+                <span class="relative flex h-20 w-20 mx-auto">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-20 w-20 bg-red-500 items-center justify-center">
+                      <svg class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  </span>
+                </span>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Broadcasting Alert</h2>
+            <p class="text-gray-500 mb-6">Notifying nearby authorities of your location and emergency type...</p>
+
+            <div class="text-4xl font-mono font-bold text-red-600 mb-8" id="timer-display">00:00</div>
+
+            <button id="cancel-request-btn" class="w-full border-2 border-red-600 text-red-600 font-bold py-3 px-4 rounded-lg hover:bg-red-50 transition-colors">
+                Cancel Request
+            </button>
+        </div>
+    </div>
+
     <div id="active-call-modal" class="fixed inset-0 bg-gray-900 bg-opacity-95 flex items-center justify-center z-[200] hidden">
-        <div class="bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col h-[700px] border border-gray-700 relative">
+        <div class="bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col h-[700px] border border-gray-700 relative">
+           
+            <div class="absolute top-0 w-full p-4 flex justify-between items-center z-10 bg-gradient-to-b from-black/60 to-transparent">
+                <div class="flex items-center space-x-2 bg-red-600/20 px-3 py-1 rounded-full border border-red-500/30">
+                    <span class="animate-pulse h-2 w-2 rounded-full bg-red-500"></span>
+                    <span class="text-red-100 text-xs font-bold tracking-wider">LIVE</span>
+                </div>
+                <span id="active-call-timer" class="font-mono text-white text-lg drop-shadow-md">00:00</span>
+            </div>
 
-            <!-- Top Info Bar -->
-            <div class="absolute top-0 w-full p-4 flex justify-between items-center z-10 bg-gradient-to-b from-black/60 to-transparent">
-                <div class="flex items-center space-x-2 bg-red-600/20 px-3 py-1 rounded-full border border-red-500/30">
-                    <span class="animate-pulse h-2 w-2 rounded-full bg-red-500"></span>
-                    <span class="text-red-100 text-xs font-bold tracking-wider">LIVE</span>
-                </div>
-                <span id="active-call-timer" class="font-mono text-white text-lg drop-shadow-md">00:00</span>
-            </div>
+            <div class="flex-grow flex flex-col items-center justify-center p-6 relative">
+                 <div class="absolute inset-0 flex items-center justify-center z-0">
+                    <div class="h-64 w-64 bg-red-600/10 rounded-full animate-pulse blur-3xl"></div>
+                 </div>
 
-            <!-- Main Content (Avatar/Agency Info) -->
-            <div class="flex-grow flex flex-col items-center justify-center p-6 relative">
-                 <!-- Pulse Animation -->
-                 <div class="absolute inset-0 flex items-center justify-center z-0">
-                    <div class="h-64 w-64 bg-red-600/10 rounded-full animate-pulse blur-3xl"></div>
-                 </div>
+                 <div class="z-10 text-center">
+                     <div class="h-32 w-32 rounded-full p-1 border-2 border-green-500 shadow-[0_0_20px_rgba(34,197,94,0.3)] mx-auto mb-6">
+                         <img src="https://ui-avatars.com/api/?name=Authority&background=0D8ABC&color=fff" alt="Authority" class="h-full w-full rounded-full object-cover">
+                     </div>
 
-    <div id="emergency-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4 hidden">
-        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm mx-auto relative modal-animate">
-            <div class="flex items-center space-x-3 mb-6">
-                <div class="p-2 bg-red-100 rounded-full">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
-                </div>
-                <h3 id="emergency-title" class="text-lg font-semibold text-gray-800">Response</h3>
-                <span id="emergency-status-text" class="ml-auto font-medium text-yellow-600">Waiting...</span>
-            </div>
+                     <h2 id="connected-agency-name" class="text-2xl font-bold text-white mb-1">Connecting...</h2>
+                     <p id="connected-responder-name" class="text-gray-400 text-sm">Dispatcher</p>
+                     <div class="mt-6 flex gap-2 justify-center">
+                         <span class="text-xs bg-gray-700 text-gray-300 px-2 py-1 rounded">Audio Encrypted</span>
+                         <span class="text-xs bg-gray-700 text-gray-300 px-2 py-1 rounded">Locating...</span>
+                     </div>
+                </div>
+            </div>
 
-            <div class="flex flex-col items-center justify-center py-8">
-                <div class="relative mb-4">
-                    <img class="h-24 w-24 rounded-full object-cover ring-4 ring-red-200" src="https://i.pravatar.cc/150?img=12" alt="Responder" />
-                    <span id="emergency-status-dot" class="absolute bottom-0 right-0 p-2 rounded-full border-2 border-white bg-yellow-400"></span>
-                 <div class="z-10 text-center">
-                     <div class="h-32 w-32 rounded-full p-1 border-2 border-green-500 shadow-[0_0_20px_rgba(34,197,94,0.3)] mx-auto mb-6">
-                         <img src="https://ui-avatars.com/api/?name=Authority&background=0D8ABC&color=fff"
-                              alt="Authority"
-                              class="h-full w-full rounded-full object-cover">
-                     </div>
+            <div class="p-8 pb-10 flex justify-center items-center gap-6 bg-gray-900">
+                <button class="p-4 rounded-full bg-gray-700 text-white hover:bg-gray-600 transition duration-200">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                </button>
+                <button id="end-active-call-btn" class="p-5 rounded-full bg-red-600 text-white hover:bg-red-700 transition duration-200 shadow-[0_0_15px_rgba(220,38,38,0.5)] transform hover:scale-105">
+                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M5 3a2 2 0 00-2 2v1c0 8.284 6.716 15 15 15h1a2 2 0 002-2v-3.28a1 1 0 00-.684-.948l-4.493-1.498a1 1 0 00-1.21.502l-1.13 2.257a11.042 11.042 0 01-5.516-5.516l2.257-1.13a1 1 0 00.502-1.21L8.28 3.684A1 1 0 007.28 3H5z"/></svg>
+                </button>
+                <button class="p-4 rounded-full bg-gray-700 text-white hover:bg-gray-600 transition duration-200">
+                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                </button>
+            </div>
+        </div>
+    </div>
 
-                     <h2 id="connected-agency-name" class="text-2xl font-bold text-white mb-1">Connecting...</h2>
-                     <p id="connected-responder-name" class="text-gray-400 text-sm">Dispatcher</p>
-                     <div class="mt-6 flex gap-2 justify-center">
-                         <span class="text-xs bg-gray-700 text-gray-300 px-2 py-1 rounded">Audio Encrypted</span>
-                         <span class="text-xs bg-gray-700 text-gray-300 px-2 py-1 rounded">Locating...</span>
-                     </div>
-                </div>
-            </div>
-
-            <!-- Bottom Controls -->
-            <div class="p-8 pb-10 flex justify-center items-center gap-6 bg-gray-900">
-                <button class="p-4 rounded-full bg-gray-700 text-white hover:bg-gray-600 transition duration-200">
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
-                </button>
-
-                <button id="end-active-call-btn" class="p-5 rounded-full bg-red-600 text-white hover:bg-red-700 transition duration-200 shadow-[0_0_15px_rgba(220,38,38,0.5)] transform hover:scale-105">
-                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M5 3a2 2 0 00-2 2v1c0 8.284 6.716 15 15 15h1a2 2 0 002-2v-3.28a1 1 0 00-.684-.948l-4.493-1.498a1 1 0 00-1.21.502l-1.13 2.257a11.042 11.042 0 01-5.516-5.516l2.257-1.13a1 1 0 00.502-1.21L8.28 3.684A1 1 0 007.28 3H5z"/></svg>
-                </button>
-
-                <button class="p-4 rounded-full bg-gray-700 text-white hover:bg-gray-600 transition duration-200">
-                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 3. REPORT FORM MODAL -->
     <div id="report-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-[300] p-4 hidden">
         <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-2xl mx-auto modal-animate max-h-[90vh] overflow-y-auto">
             <h2 class="text-3xl font-bold text-red-700 mb-6 text-center">Emergency Report Form</h2>
             <form id="report-form" class="space-y-6">
+                {% csrf_token %}
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Type of Emergency</label>
                     <input type="text" id="report-type" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" placeholder="e.g., Fire, Accident, Crime" />
@@ -417,16 +394,15 @@
         </div>
     </div>
 
-    <!-- Responder Profile Modal -->
     <div id="responder-modal" class="fixed inset-0 z-[100] overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" onclick="closeModal('responder-modal')"></div>
-    <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-        <div class="relative transform overflow-hidden rounded-2xl bg-gray-50 text-left shadow-xl transition-all my-8 w-full max-w-3xl border border-gray-200 modal-animate">
-            <div class="absolute top-4 right-4 z-10">
-                <button onclick="closeModal('responder-modal')" class="text-gray-400 hover:text-gray-600 p-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                </button>
-            </div>
+        <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" onclick="closeModal('responder-modal')"></div>
+        <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+            <div class="relative transform overflow-hidden rounded-2xl bg-gray-50 text-left shadow-xl transition-all my-8 w-full max-w-3xl border border-gray-200 modal-animate">
+                <div class="absolute top-4 right-4 z-10">
+                    <button onclick="closeModal('responder-modal')" class="text-gray-400 hover:text-gray-600 p-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    </button>
+                </div>
 
                 <div class="p-8">
                     <h2 class="text-3xl font-bold text-gray-800 text-center mb-2">
@@ -436,17 +412,15 @@
                         This information is vital for verifying your authority and assigning emergency tasks effectively.
                     </p>
 
-                <!-- 1. Ensure enctype is multipart/form-data for file uploads -->
-                <form action="{% url 'account:apply_responder' %}" method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}
+                    <form action="{% url 'account:apply_responder' %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
 
-                    <!-- Professional Information -->
-                    <section>
-                        <h3 class="text-xl font-semibold text-gray-700 mb-4">Professional Information</h3>
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-600 mb-1">Department Unit</label>
-                            <input type="text" name="department_unit" required placeholder="e.g., Unit 404 - Central Station" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-shadow" />
-                        </div>
+                        <section>
+                            <h3 class="text-xl font-semibold text-gray-700 mb-4">Professional Information</h3>
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-600 mb-1">Department Unit</label>
+                                <input type="text" name="department_unit" required placeholder="e.g., Unit 404 - Central Station" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-shadow" />
+                            </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                 <div>
@@ -468,9 +442,8 @@
                             </div>
                         </section>
 
-                    <!-- Verification ID -->
-                    <section class="mt-6 pt-6 border-t border-gray-200">
-                        <h3 class="text-xl font-semibold text-gray-700 mb-4">Verification</h3>
+                        <section class="mt-6 pt-6 border-t border-gray-200">
+                            <h3 class="text-xl font-semibold text-gray-700 mb-4">Verification</h3>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                 <div>
@@ -488,29 +461,26 @@
                                 </div>
                             </div>
 
-                        <div class="space-y-4">
-                            <div class="p-4 border rounded-lg bg-white">
-                                <label class="block text-sm font-medium text-gray-600 mb-1">
-                                    Upload Government Responder's Requirement ID
-                                </label>
-                                <div class="mt-2 flex items-center justify-center w-full">
-                                    <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-red-50 hover:border-red-300 transition-colors">
-                                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                            <!-- Icon -->
-                                            <svg id="upload-icon" xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mb-2 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-
-                                            <!-- 2. Added ID to text so we can change it via JS -->
-                                            <p id="upload-text" class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
-                                            <p class="text-xs text-gray-500">PNG, JPG or PDF (MAX. 5MB)</p>
-                                        </div>
-
-                                        <!-- 3. Added ID to input for JS listener -->
-                                        <input type="file" id="responder_id_file" name="id_file" class="hidden" accept=".png,.jpg,.jpeg,.pdf" required />
+                            <div class="space-y-4">
+                                <div class="p-4 border rounded-lg bg-white">
+                                    <label class="block text-sm font-medium text-gray-600 mb-1">
+                                        Upload Government Responder's Requirement ID
                                     </label>
+                                    <div class="mt-2 flex items-center justify-center w-full">
+                                        <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-red-50 hover:border-red-300 transition-colors">
+                                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                                <svg id="upload-icon" xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mb-2 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+
+                                                <p id="upload-text" class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                                                <p class="text-xs text-gray-500">PNG, JPG or PDF (MAX. 5MB)</p>
+                                            </div>
+
+                                            <input type="file" id="responder_id_file" name="id_file" class="hidden" accept=".png,.jpg,.jpeg,.pdf" required />
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </section>
+                        </section>
 
                         <div class="mt-8 flex flex-col sm:flex-row gap-4">
                             <button type="submit" class="flex-1 bg-gradient-to-r from-red-600 to-red-700 text-white font-bold py-3 px-4 rounded-lg hover:from-red-700 hover:to-red-800 shadow-lg transition-transform transform hover:scale-105">
@@ -526,17 +496,16 @@
         </div>
     </div>
 
-    <!-- Authority Profile Modal -->
     <div id="authority-modal" class="fixed inset-0 z-[100] overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" onclick="closeModal('authority-modal')"></div>
-    <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-        <div class="relative transform overflow-hidden rounded-2xl bg-gray-50 text-left shadow-xl transition-all my-8 w-full max-w-3xl border border-gray-200 modal-animate">
+        <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" onclick="closeModal('authority-modal')"></div>
+        <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+            <div class="relative transform overflow-hidden rounded-2xl bg-gray-50 text-left shadow-xl transition-all my-8 w-full max-w-3xl border border-gray-200 modal-animate">
 
-            <div class="absolute top-4 right-4 z-10">
-                <button onclick="closeModal('authority-modal')" class="text-gray-400 hover:text-gray-600 p-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                </button>
-            </div>
+                <div class="absolute top-4 right-4 z-10">
+                    <button onclick="closeModal('authority-modal')" class="text-gray-400 hover:text-gray-600 p-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    </button>
+                </div>
 
                 <div class="p-8">
                     <h2 class="text-3xl font-bold text-gray-800 text-center mb-2">
@@ -546,67 +515,59 @@
                         Register your organization to coordinate with our network and enhance emergency response capabilities.
                     </p>
 
-                <!-- 1. Updated Form Attributes -->
-                <form action="{% url 'account:apply_authority' %}" method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}
+                    <form action="{% url 'account:apply_authority' %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
 
-                    <section>
-                        <h3 class="text-xl font-semibold text-gray-700 mb-4">Organization Information</h3>
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-600 mb-1">Agency Name</label>
-                            <!-- Added name -->
-                            <input type="text" name="agency_name" required placeholder="e.g., City Disaster Risk Reduction Office" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" />
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-600 mb-1">Jurisdiction Area</label>
-                            <!-- Added name -->
-                            <input type="text" name="jurisdiction_area" required placeholder="e.g., Metropolitan District, Zone A" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" />
-                        </div>
-                    </section>
-
-                    <section class="mt-6 pt-6 border-t border-gray-200">
-                        <h3 class="text-xl font-semibold text-gray-700 mb-4">Verification</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-600 mb-1">ID Type</label>
-                                <!-- Added name -->
-                                <select name="id_type" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow bg-white">
-                                    <option value="">Select ID Type</option>
-                                    <option value="National ID">National ID</option>
-                                    <option value="Agency ID">Agency ID</option>
-                                    <option value="Other">Other Government ID</option>
-                                </select>
+                        <section>
+                            <h3 class="text-xl font-semibold text-gray-700 mb-4">Organization Information</h3>
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-600 mb-1">Agency Name</label>
+                                <input type="text" name="agency_name" required placeholder="e.g., City Disaster Risk Reduction Office" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" />
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-600 mb-1">ID Number</label>
-                                <!-- Added name -->
-                                <input type="text" name="id_number" required placeholder="Enter ID Number" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" />
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-600 mb-1">Jurisdiction Area</label>
+                                <input type="text" name="jurisdiction_area" required placeholder="e.g., Metropolitan District, Zone A" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" />
                             </div>
-                        </div>
+                        </section>
 
-                        <div class="space-y-4">
-                            <div class="p-4 border rounded-lg bg-white">
-                                <label class="block text-sm font-medium text-gray-600 mb-1">
-                                    Upload Government Authority Requirement ID
-                                </label>
-                                <div class="mt-2 flex items-center justify-center w-full">
-                                    <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-blue-50 hover:border-blue-300 transition-colors">
-                                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                            <!-- Added ID for Icon -->
-                                            <svg id="auth-upload-icon" xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mb-2 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-
-                                            <!-- Added ID for Text -->
-                                            <p id="auth-upload-text" class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
-                                            <p class="text-xs text-gray-500">PNG, JPG or PDF (MAX. 5MB)</p>
-                                        </div>
-
-                                        <!-- Added name, unique ID, and removed hidden functionality (kept class hidden) -->
-                                        <input type="file" id="authority_id_file" name="id_file" class="hidden" accept=".png,.jpg,.jpeg,.pdf" required />
-                                    </label>
+                        <section class="mt-6 pt-6 border-t border-gray-200">
+                            <h3 class="text-xl font-semibold text-gray-700 mb-4">Verification</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-600 mb-1">ID Type</label>
+                                    <select name="id_type" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow bg-white">
+                                        <option value="">Select ID Type</option>
+                                        <option value="National ID">National ID</option>
+                                        <option value="Agency ID">Agency ID</option>
+                                        <option value="Other">Other Government ID</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-600 mb-1">ID Number</label>
+                                    <input type="text" name="id_number" required placeholder="Enter ID Number" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" />
                                 </div>
                             </div>
-                        </div>
-                    </section>
+
+                            <div class="space-y-4">
+                                <div class="p-4 border rounded-lg bg-white">
+                                    <label class="block text-sm font-medium text-gray-600 mb-1">
+                                        Upload Government Authority Requirement ID
+                                    </label>
+                                    <div class="mt-2 flex items-center justify-center w-full">
+                                        <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-blue-50 hover:border-blue-300 transition-colors">
+                                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                                <svg id="auth-upload-icon" xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mb-2 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+
+                                                <p id="auth-upload-text" class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                                                <p class="text-xs text-gray-500">PNG, JPG or PDF (MAX. 5MB)</p>
+                                            </div>
+
+                                            <input type="file" id="authority_id_file" name="id_file" class="hidden" accept=".png,.jpg,.jpeg,.pdf" required />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
 
                         <div class="mt-8 flex flex-col sm:flex-row gap-4">
                             <button type="submit" class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold py-3 px-4 rounded-lg hover:from-blue-700 hover:to-blue-800 shadow-lg transition-transform transform hover:scale-105">
@@ -622,11 +583,10 @@
         </div>
     </div>
 
-    <!-- Approval Success Modal -->
     <div id="approval-success-modal" class="fixed inset-0 bg-gray-900 bg-opacity-90 flex items-center justify-center z-[200] p-4 hidden">
         <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md mx-auto relative modal-animate text-center border-t-8 border-blue-600">
             <div class="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-blue-100 mb-6">
-                <svg class="h-10 w-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="h-10 w-10 text-blue-600" fill="none" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
             </div>
@@ -648,7 +608,12 @@
         let durationInterval = null;
         let currentLocation = null;
         let monitorInterval = null;
-        const csrfToken = document.getElementById('csrf_token').value;
+        let eventTimerInterval = null;
+        let currentEventId = null;
+        let assignmentPollInterval = null;
+        // FIX: Safely retrieve CSRF token from the hidden input field
+        const csrfTokenElement = document.getElementById('csrf_token');
+        const csrfToken = csrfTokenElement ? csrfTokenElement.value : '';
 
         // --- DOM Elements ---
         const sosBtn = document.getElementById('sos-btn');
@@ -656,13 +621,89 @@
         const sosCancelBtn = document.getElementById('sos-cancel-btn');
         const activeCallModal = document.getElementById('active-call-modal');
         const endActiveCallBtn = document.getElementById('end-active-call-btn');
-        const activeCallTimer = document.getElementById('active-call-timer');
 
-        // --- Map Logic ---
+        // Mobile menu elements
+        const mobileMenuBtn = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuOpenIcon = document.getElementById('menu-open-icon');
+        const menuCloseIcon = document.getElementById('menu-close-icon');
+
+
+        // --- Pin Location Form Submission Function ---
+        function submitLocationForm(location) {
+            const form = document.getElementById('pin-location-form');
+            const latInput = document.getElementById('lat-input');
+            const lonInput = document.getElementById('lon-input');
+
+            if (form && latInput && lonInput) {
+                // Populate hidden fields
+                if (location) {
+                    latInput.value = location.lat;
+                    lonInput.value = location.lon;
+                } else {
+                    latInput.value = '0';
+                    lonInput.value = '0';
+                }
+
+                // Submit the form to the Django endpoint
+                form.submit();
+            }
+        }
+
+        // --- Mobile Menu Logic (Copied from working code block) ---
+        if(mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', () => {
+                const isHidden = mobileMenu.classList.contains('hidden');
+
+                if (isHidden) {
+                    mobileMenu.classList.remove('hidden');
+                    if (menuOpenIcon) menuOpenIcon.classList.add('hidden');
+                    if (menuCloseIcon) menuCloseIcon.classList.remove('hidden');
+                } else {
+                    mobileMenu.classList.add('hidden');
+                    if (menuOpenIcon) menuOpenIcon.classList.remove('hidden');
+                    if (menuCloseIcon) menuCloseIcon.classList.add('hidden');
+                }
+            });
+        }
+
+
+        // --- Modal Helper ---
+        function showModal(id) {
+            const el = document.getElementById(id);
+            if(el) el.classList.remove('hidden');
+        }
+        function closeModal(id) {
+            const el = document.getElementById(id);
+            if(el) el.classList.add('hidden');
+        }
+
+        function closeAllModals() {
+            closeModal('sos-modal');
+            closeModal('connecting-modal');
+            closeModal('active-call-modal');
+            clearInterval(pollInterval);
+            clearInterval(durationInterval);
+            clearInterval(monitorInterval);
+            clearInterval(eventTimerInterval);
+            clearInterval(assignmentPollInterval);
+            activeCallLogId = null;
+            currentEventId = null;
+        }
+
+        // --- Map & Location ---
         function initMap() {
             const pinBtn = document.getElementById('pin-location-btn');
             const placeholder = document.getElementById('map-placeholder');
             const iframe = document.getElementById('map-iframe');
+            const toast = document.getElementById('map-toast');
+
+            // Initial load attempt for current location
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((pos) => {
+                    currentLocation = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+                });
+            }
 
             pinBtn.addEventListener('click', () => {
                 if (navigator.geolocation) {
@@ -675,7 +716,10 @@
                                 lon: position.coords.longitude
                             };
 
-                            // Update Iframe for OpenStreetMap
+                            // Submit form to log the action
+                            submitLocationForm(currentLocation);
+
+                            // --- Update Map UI ---
                             const bbox = 0.005;
                             iframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${currentLocation.lon - bbox},${currentLocation.lat - bbox},${currentLocation.lon + bbox},${currentLocation.lat + bbox}&layer=mapnik&marker=${currentLocation.lat},${currentLocation.lon}`;
 
@@ -686,85 +730,82 @@
                             pinBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> Pin My Current Location';
 
                             // Show Toast
-                            toast.classList.remove('hidden');
-                            setTimeout(() => toast.classList.add('hidden'), 3000);
+                            if (toast) {
+                                toast.classList.remove('hidden');
+                                setTimeout(() => toast.classList.add('hidden'), 3000);
+                            }
                         },
                         (err) => {
                             alert('Failed to retrieve location. Please check browser permissions.');
                             pinBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> Pin My Current Location';
+
+                            // Log the failed attempt as well
+                            submitLocationForm(null);
                         }
                     );
                 } else {
                     alert("Geolocation is not supported by this browser.");
+                    // Log the failed attempt due to unsupported browser
+                    submitLocationForm(null);
                 }
             });
         }
         window.addEventListener('DOMContentLoaded', initMap);
 
-        // --- Mobile Menu ---
-        const menuBtn = document.getElementById('mobile-menu-button');
-        if(menuBtn) {
-            menuBtn.addEventListener('click', () => {
-                document.getElementById('mobile-menu').classList.toggle('hidden');
-            });
-        }
-
-        // --- Modal Helper ---
-        function showModal(id) {
-            const el = document.getElementById(id);
-            if(el) el.classList.remove('hidden');
-        }
-        function closeModal(id) {
-            const el = document.getElementById(id);
-            if(el) el.classList.add('hidden');
-        }
 
         // ==========================================
-        //  SOS CALL LOGIC
+        //  SOS CALL LOGIC (Merged)
         // ==========================================
 
-        // 1. CLICK SOS -> Start Ringing
-        sosBtn.addEventListener('click', () => {
-            sosModal.classList.remove('hidden');
-            updateUI_Finding();
+        if(sosBtn) {
+            sosBtn.addEventListener('click', () => {
+                showModal('sos-modal');
+                updateUI_Finding();
 
-            fetch("{% url 'communication:initiate_sos_call' %}", {
-                method: "POST",
-                headers: { "X-CSRFToken": csrfToken }
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(data.status === 'ringing') {
-                    activeCallLogId = data.call_id;
-                    updateUI_Ringing();
-                    startPolling();
-                } else {
-                    alert("Connection failed.");
+                fetch("{% url 'communication:initiate_sos_call' %}", {
+                    method: "POST",
+                    headers: { "X-CSRFToken": csrfToken }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.status === 'ringing') {
+                        activeCallLogId = data.call_id;
+                        updateUI_Ringing();
+                        startPolling();
+                    } else {
+                        alert("Connection failed.");
+                        closeAllModals();
+                    }
+                })
+                .catch(err => {
+                    console.error("SOS Initiation Error:", err);
                     closeAllModals();
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                closeAllModals();
+                });
             });
-        });
+        }
 
         function updateUI_Finding() {
-            document.getElementById('sos-title').innerText = "Finding Authority";
-            document.getElementById('sos-status-text').innerText = "CONNECTING...";
-            document.getElementById('pulse-ring').classList.remove('opacity-100');
+            const sosTitle = document.getElementById('sos-title');
+            const sosStatusText = document.getElementById('sos-status-text');
+            const pulseRing = document.getElementById('pulse-ring');
+
+            if (sosTitle) sosTitle.innerText = "Finding Authority";
+            if (sosStatusText) sosStatusText.innerText = "CONNECTING...";
+            if (pulseRing) pulseRing.classList.remove('opacity-100');
         }
 
         function updateUI_Ringing() {
-            document.getElementById('sos-title').innerText = "Calling Authority";
-            document.getElementById('sos-status-text').innerText = "RINGING...";
-            document.getElementById('pulse-ring').classList.add('opacity-100');
+            const sosTitle = document.getElementById('sos-title');
+            const sosStatusText = document.getElementById('sos-status-text');
+            const pulseRing = document.getElementById('pulse-ring');
+
+            if (sosTitle) sosTitle.innerText = "Calling Authority";
+            if (sosStatusText) sosStatusText.innerText = "RINGING...";
+            if (pulseRing) pulseRing.classList.add('opacity-100');
         }
 
-        // 2. POLL STATUS
         function startPolling() {
             if(pollInterval) clearInterval(pollInterval);
-
             pollInterval = setInterval(() => {
                 if(!activeCallLogId) return;
 
@@ -775,16 +816,12 @@
                         clearInterval(pollInterval);
                         switchToActiveCallModal(data.agency_name, data.responder_name);
                         monitorActiveCall();
-                    }
-                    // UPDATED LOGIC: If declined, treat as missed
-                    else if (data.status === 'declined' || data.status === 'missed') {
+                    } else if (data.status === 'declined' || data.status === 'missed') {
                         clearInterval(pollInterval);
                         alert("Authority is unavailable. Call recorded as Missed.");
                         closeAllModals();
-                        // Open report form immediately so user can still report
                         openReportModal("Emergency - Call Missed");
-                    }
-                    else if (data.status === 'completed') {
+                    } else if (data.status === 'completed') {
                         alert("Call ended.");
                         closeAllModals();
                         openReportModal("Emergency Call Ended");
@@ -794,11 +831,14 @@
         }
 
         function switchToActiveCallModal(agencyName, responderName) {
-            document.getElementById('sos-modal').classList.add('hidden');
-            document.getElementById('active-call-modal').classList.remove('hidden');
+            closeModal('sos-modal');
+            showModal('active-call-modal');
 
-            document.getElementById('connected-agency-name').innerText = agencyName || "Emergency Authority";
-            document.getElementById('connected-responder-name').innerText = responderName || "Officer on Duty";
+            const agencyEl = document.getElementById('connected-agency-name');
+            const responderEl = document.getElementById('connected-responder-name');
+
+            if (agencyEl) agencyEl.innerText = agencyName || "Emergency Authority";
+            if (responderEl) responderEl.innerText = responderName || "Officer on Duty";
 
             startDurationTimer();
         }
@@ -811,55 +851,39 @@
                 seconds++;
                 const m = Math.floor(seconds / 60).toString().padStart(2, '0');
                 const s = (seconds % 60).toString().padStart(2, '0');
-                timerDisplay.innerText = `${m}:${s}`;
+                if (timerDisplay) timerDisplay.innerText = `${m}:${s}`;
             }, 1000);
         }
 
-        // 3. END CALL
-        sosCancelBtn.addEventListener('click', () => {
-            endCall(false); // Cancelled before connect
-        });
-
-        endActiveCallBtn.addEventListener('click', () => {
-            endCall(true); // Ended active call
-        });
+        if(sosCancelBtn) {
+            sosCancelBtn.addEventListener('click', () => endCall(false));
+        }
+        if(endActiveCallBtn) {
+            endActiveCallBtn.addEventListener('click', () => endCall(true));
+        }
 
         function endCall(wasActive) {
+            clearInterval(pollInterval);
+            clearInterval(durationInterval);
+            clearInterval(monitorInterval);
+
             if(activeCallLogId) {
                 fetch("{% url 'communication:end_emergency_call' %}", {
                     method: "POST",
-                    headers: {
-                        "X-CSRFToken": csrfToken,
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "X-CSRFToken": csrfToken, "Content-Type": "application/json" },
                     body: JSON.stringify({ call_id: activeCallLogId })
                 });
             }
             closeAllModals();
-
-            // If the call was active (or just ended), show report form
             if (wasActive) {
-                setTimeout(() => {
-                    openReportModal("Emergency Call Ended");
-                }, 500);
+                setTimeout(() => openReportModal("Emergency Call Ended"), 500);
             }
-        }
-
-        function closeAllModals() {
-            document.getElementById('sos-modal').classList.add('hidden');
-            document.getElementById('active-call-modal').classList.add('hidden');
-            clearInterval(pollInterval);
-            clearInterval(durationInterval);
-            clearInterval(monitorInterval);
-            activeCallLogId = null;
         }
 
         function monitorActiveCall() {
             if(monitorInterval) clearInterval(monitorInterval);
-
             monitorInterval = setInterval(() => {
                 if(!activeCallLogId) return;
-
                 fetch(`{% url 'communication:check_call_status' %}?call_id=${activeCallLogId}`)
                 .then(res => res.json())
                 .then(data => {
@@ -873,14 +897,140 @@
             }, 2000);
         }
 
+        // ==========================================
+        //  EVENT BROADCAST LOGIC (Merged)
+        // ==========================================
+
+        function triggerEmergency(type) {
+            // 1. Show Connecting Modal
+            const modal = document.getElementById('connecting-modal');
+            if (modal) modal.classList.remove('hidden');
+
+            // 2. Start Visual Timer (UI only)
+            let seconds = 0;
+            const timerDisplay = document.getElementById('timer-display');
+            if (timerDisplay) timerDisplay.innerText = "00:00";
+            if (eventTimerInterval) clearInterval(eventTimerInterval);
+
+            eventTimerInterval = setInterval(() => {
+                seconds++;
+                const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+                const s = (seconds % 60).toString().padStart(2, '0');
+                if (timerDisplay) timerDisplay.innerText = `${m}:${s}`;
+            }, 1000);
+
+            // 3. Create Event in Backend
+            const locationStr = currentLocation ?
+                `Lat: ${currentLocation.lat.toFixed(6)}, Lon: ${currentLocation.lon.toFixed(6)}` : "Unknown Location (GPS Not Set)";
+
+            fetch("{% url 'communication:create_emergency_event' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    category: type,
+                    location: locationStr
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    currentEventId = data.event_id;
+                    console.log("Event created ID:", currentEventId);
+
+                    // 4. START POLLING FOR AUTHORITY ASSIGNMENT
+                    monitorEventAssignment(currentEventId);
+
+                } else {
+                    alert("Failed to broadcast: " + data.message);
+                    closeAllModals();
+                }
+            })
+            .catch(err => {
+                console.error("Error creating event:", err);
+                alert("Network error occurred.");
+                closeAllModals();
+            });
+        }
+
+        function monitorEventAssignment(eventId) {
+            if(assignmentPollInterval) clearInterval(assignmentPollInterval);
+
+            assignmentPollInterval = setInterval(() => {
+                fetch(`{% url 'communication:check_event_status' %}?event_id=${eventId}`)
+                .then(res => res.json())
+                .then(data => {
+                    const timerDisplay = document.getElementById('timer-display');
+
+                    if (data.event_status === 'in_progress') {
+                        // Stop polling
+                        clearInterval(assignmentPollInterval);
+                        clearInterval(eventTimerInterval);
+
+                        // Optional: Visual Feedback
+                        if (timerDisplay) {
+                            timerDisplay.classList.remove('text-red-600');
+                            timerDisplay.classList.add('text-green-600');
+                            timerDisplay.innerText = "CONNECTED!";
+                        }
+
+                        setTimeout(() => {
+                            // Redirect to the Chat Detail Page for this specific event
+                            window.location.href = "/communication/chat/" + eventId + "/";
+                        }, 1000);
+                    }
+                    else if (data.event_status === 'closed' || data.event_status === 'resolved') {
+                         clearInterval(assignmentPollInterval);
+                         alert("Event was closed.");
+                         closeAllModals();
+                    }
+                })
+                .catch(err => console.error("Polling error:", err));
+            }, 2000); // Check every 2 seconds
+        }
+
+        // --- NEW CANCEL BUTTON LOGIC ---
+        const cancelRequestBtn = document.getElementById('cancel-request-btn');
+        if (cancelRequestBtn) {
+            cancelRequestBtn.addEventListener('click', () => {
+                clearInterval(eventTimerInterval);
+                clearInterval(assignmentPollInterval);
+                closeModal('connecting-modal');
+
+                if(currentEventId) {
+                    fetch("{% url 'communication:cancel_emergency_event' %}", {
+                        method: "POST",
+                        headers: {"X-CSRFToken": csrfToken, "Content-Type": "application/json"},
+                        body: JSON.stringify({ event_id: currentEventId })
+                    })
+                    .then(() => {
+                        currentEventId = null;
+                        alert("Emergency broadcast cancelled.");
+                    })
+                    .catch(err => console.error("Cancel Event Error:", err));
+                } else {
+                    alert("Emergency broadcast cancelled.");
+                }
+            });
+        }
+
         // --- Report Form Logic ---
         function openReportModal(type) {
-            document.getElementById('report-modal').classList.remove('hidden');
-            document.getElementById('report-type').value = type;
-            if(currentLocation) {
-                document.getElementById('report-location').value = `Lat: ${currentLocation.lat.toFixed(6)}, Lon: ${currentLocation.lon.toFixed(6)}`;
+            showModal('report-modal');
+            const reportType = document.getElementById('report-type');
+            const reportLocation = document.getElementById('report-location');
+
+            if (reportType) reportType.value = type;
+            if(currentLocation && reportLocation) {
+                reportLocation.value = `Lat: ${currentLocation.lat.toFixed(6)}, Lon: ${currentLocation.lon.toFixed(6)}`;
+            } else if (reportLocation) {
+                 reportLocation.value = 'Location not pinned. Please enter details.';
             }
         }
+
+        document.getElementById('file-report-btn').addEventListener('click', () => openReportModal('General'));
 
         document.getElementById('report-form').addEventListener('submit', (e) => {
             e.preventDefault();
@@ -888,14 +1038,21 @@
             closeModal('report-modal');
         });
 
+        // --- Application Cards Logic ---
+        document.getElementById('apply-responder-btn').addEventListener('click', () => showModal('responder-modal'));
+        document.getElementById('apply-authority-btn').addEventListener('click', () => showModal('authority-modal'));
+
+
         // --- Application File Upload Logic ---
         // Responder
         const fileInput = document.getElementById('responder_id_file');
         if(fileInput) {
             fileInput.addEventListener('change', function(e) {
-                if (this.files && this.files[0]) {
-                    document.getElementById('upload-text').innerHTML = `<span class="font-bold text-red-600">Selected:</span> ${this.files[0].name}`;
-                    document.getElementById('upload-icon').classList.add('text-red-600');
+                const uploadText = document.getElementById('upload-text');
+                const uploadIcon = document.getElementById('upload-icon');
+                if (this.files && this.files[0] && uploadText && uploadIcon) {
+                    uploadText.innerHTML = `<span class="font-bold text-red-600">Selected:</span> ${this.files[0].name}`;
+                    uploadIcon.classList.add('text-red-600');
                 }
             });
         }
@@ -903,10 +1060,12 @@
         const authFileInput = document.getElementById('authority_id_file');
         if(authFileInput) {
             authFileInput.addEventListener('change', function(e) {
-                if (this.files && this.files[0]) {
-                    document.getElementById('auth-upload-text').innerHTML = `<span class="font-bold text-blue-600">Selected:</span> ${this.files[0].name}`;
-                    document.getElementById('auth-upload-icon').classList.add('text-blue-600');
-                    document.getElementById('auth-upload-icon').classList.remove('text-gray-400');
+                const authUploadText = document.getElementById('auth-upload-text');
+                const authUploadIcon = document.getElementById('auth-upload-icon');
+                if (this.files && this.files[0] && authUploadText && authUploadIcon) {
+                    authUploadText.innerHTML = `<span class="font-bold text-blue-600">Selected:</span> ${this.files[0].name}`;
+                    authUploadIcon.classList.add('text-blue-600');
+                    authUploadIcon.classList.remove('text-gray-400');
                 }
             });
         }
@@ -915,12 +1074,11 @@
         {% if approval_alert %}
             document.addEventListener('DOMContentLoaded', function() {
                 const approvalModal = document.getElementById('approval-success-modal');
-                if(approvalModal) approvalModal.classList.remove('hidden');
+                if(approvalModal) showModal('approval-success-modal');
             });
         {% endif %}
 
         function redirectToAuthority() {
-            // Redirect to the Authority Dashboard URL
             window.location.href = "{% url 'account:authority_dashboard' %}";
         }
     </script>

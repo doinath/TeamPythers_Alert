@@ -8,6 +8,8 @@ from django.contrib.auth.models import User as AuthUser
 from .models import User as CustomUser, Citizen, ContactInfo, Responder, Authority, Notification
 from emergency.models import MedicalCondition
 from verification.models import GovernmentDocument
+from verification.models import RoleVerification
+
 from django.core.files.storage import default_storage
 
 # ---------------------------

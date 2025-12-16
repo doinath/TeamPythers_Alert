@@ -67,8 +67,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'alertmanagement',
-        'USER': 'alduind',
-        'PASSWORD': 'alduind',
+        'USER': 'root',
+        'PASSWORD': 'Admin#123',
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {

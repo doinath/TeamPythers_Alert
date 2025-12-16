@@ -1,388 +1,219 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Role Verification Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Font Awesome (kept) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  <!-- Tailwind CDN (pure Tailwind approach) -->
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ role_to_approve }} Verification | ALERT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .modal-animate { animation: fadeIn 0.2s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
 </head>
+<body class="bg-gray-100 font-sans text-gray-800">
+    <div id="app" class="flex flex-col min-h-screen">
 
-<body class="font-sans bg-gray-100 min-h-screen flex">
-  <div class="w-full bg-white shadow-none overflow-hidden relative">
-    <!-- Top header -->
-    <header class="flex justify-between items-center px-8 py-4 border-b border-gray-200">
-      <div class="flex items-center">
-        <div class="flex items-center mr-10 whitespace-nowrap">
-          <a href="/account/authority_dashboard/">
-          <img src="{% static 'imgs/alert_logo.png' %}" alt="ALERT Logo" class="h-8 w-auto" />
-          </a>
-        </div>
+        <header class="bg-white shadow-sm sticky top-0 z-50">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center space-x-12 -ml-4">
+                        <div class="flex items-center space-x-2">
+                            <img src="{% static 'images/com_logo.png' %}" onerror="this.src='{% static 'imgs/alert_logo.png' %}'" alt="ALERT Logo" class="h-10 w-auto object-contain" />
+                        </div>
+                        <nav class="hidden md:flex items-center space-x-12">
+                            <a href="{% url 'account:authority_dashboard' %}" class="text-gray-500 hover:text-red-600 transition-colors font-medium">Dashboard</a>
+                            <a href="#" class="text-red-600 border-b-2 border-red-600 font-semibold px-2 py-1">Verifications</a>
+                            <a href="{% url 'communication:messages' %}" class="text-gray-500 hover:text-red-600 transition-colors">Chat</a>
+                        </nav>
+                    </div>
 
-        <ul class="flex space-x-6 list-none p-0 m-0">
-          <li class="text-black font-bold border-b-4 border-red-600 pb-1 text-base cursor-default"><a href="#" class="no-underline">Dashboard</a></li>
-          <li class="text-gray-600 text-base cursor-pointer"><a href="#" class="no-underline">Chat</a></li>
+                    <div class="flex items-center space-x-10">
+                        <div class="hidden md:flex items-center space-x-4">
+                            <span class="text-gray-800 font-medium text-sm mr-3">
+                                {{ request.user.first_name }} {{ request.user.last_name|default:"Authority" }}
+                            </span>
+                            <a href="{% url 'account:authority_profile' %}" class="group">
+                                {% if request.user.profile_picture %}
+                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg" src="{{ request.user.profile_picture.url }}" alt="Avatar" />
+                                {% else %}
+                                    <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg" src="https://i.pravatar.cc/100?u={{ request.user.username }}" alt="Avatar" />
+                                {% endif %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
 
-        </ul>
-      </div>
+        <main class="flex-grow container mx-auto p-4 sm:p-6 lg:p-8">
 
-      <div class="flex items-center">
-        <span class="text-[15px] mr-4 font-medium">Shervin</span>
-        <img src="{% static 'imgs/shervin_pfp.jpg' %}" alt="Shervin's Profile" class="w-9 h-9 rounded-full object-cover mr-4" />
-        <i class="fas fa-ellipsis-v text-gray-600"></i>
-      </div>
-    </header>
-
-    <main class="flex">
-      <!-- Sidebar placeholder (hidden by original) -->
-      <nav class="hidden"></nav>
-
-      <!-- Table Section -->
-      <section class="flex-grow px-8 py-6">
-        <!-- Search bar -->
-        <div class="flex justify-end mb-5 relative">
-          <i class="fas fa-search absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
-          <input type="text" placeholder=" Search" class="border border-gray-300 rounded-full pl-4 pr-10 py-2 w-64 text-sm" />
-        </div>
-
-        <!-- Table header -->
-        <!-- Using a custom grid column layout similar to original: [2.2fr 1.5fr 2fr 1fr] -->
-        <ul class="grid grid-cols-[2.2fr_1.5fr_2fr_1fr] gap-4 border-b border-gray-300 pb-3 text-gray-500 uppercase text-sm font-medium list-none m-0 p-0">
-          <li>PERSON</li>
-          <li>TIME AND DATE</li>
-          <li>LOCATION</li>
-          <li>STATUS</li>
-        </ul>
-
-        <!-- Data rows container -->
-        <div class="data-rows-container mt-2 space-y-0">
-          <!-- APPROVED row (non-clickable) -->
-          <ul class="data-row grid grid-cols-[2.2fr_1.5fr_2fr_1fr] items-center border-b border-gray-200 py-3 text-gray-800 cursor-default list-none m-0 p-0"
-              data-verification-id="101" data-role="LGU Staff" data-status="APPROVED">
-            <li class="flex items-center font-medium">
-              <i class="fas fa-user-circle text-3xl text-gray-400 mr-3"></i>
-              <span class="person-name">Dela Cruz, Juan Y.</span>
-            </li>
-
-            <li class="text-sm">14:10 31/10/25</li>
-            <li class="text-sm">Iyawan, Talisay City</li>
-
-            <li>
-              <span class="status-tag inline-block px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">APPROVED</span>
-            </li>
-          </ul>
-
-          <!-- REJECTED row (non-clickable) -->
-          <ul class="data-row grid grid-cols-[2.2fr_1.5fr_2fr_1fr] items-center border-b border-gray-200 py-3 text-gray-800 cursor-default list-none m-0 p-0"
-              data-verification-id="102" data-role="Citizen" data-status="REJECTED">
-            <li class="flex items-center font-medium">
-              <i class="fas fa-user-circle text-3xl text-gray-400 mr-3"></i>
-              <span class="person-name">Doe, Jane D.</span>
-            </li>
-
-            <li class="text-sm">14:07 31/10/25</li>
-            <li class="text-sm">Tabunok, Talisay City</li>
-
-            <li>
-              <span class="status-tag inline-block px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">REJECTED</span>
-            </li>
-          </ul>
-
-          <!-- REJECTED row -->
-          <ul class="data-row grid grid-cols-[2.2fr_1.5fr_2fr_1fr] items-center border-b border-gray-200 py-3 text-gray-800 cursor-default list-none m-0 p-0"
-              data-verification-id="103" data-role="LGU Staff" data-status="REJECTED">
-            <li class="flex items-center font-medium">
-              <i class="fas fa-user-circle text-3xl text-gray-400 mr-3"></i>
-              <span class="person-name">Tan, Rombo</span>
-            </li>
-
-            <li class="text-sm">12:21 31/10/25</li>
-            <li class="text-sm">Mohon, Talisay City</li>
-
-            <li>
-              <span class="status-tag inline-block px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">REJECTED</span>
-            </li>
-          </ul>
-
-          <!-- PENDING (clickable) -->
-          <ul class="data-row grid grid-cols-[2.2fr_1.5fr_2fr_1fr] items-center border-b border-gray-200 py-3 text-gray-800 hover:bg-gray-50 cursor-pointer list-none m-0 p-0"
-              data-verification-id="104" data-role="Authority" data-status="PENDING">
-            <li class="flex items-center font-medium">
-              <i class="fas fa-user-circle text-3xl text-gray-400 mr-3"></i>
-              <span class="person-name">Angcastillo, Natan Jedd N.</span>
-            </li>
-
-            <li class="text-sm">11:11 31/10/25</li>
-            <li class="text-sm">Tabunok, Talisay City</li>
-
-            <li>
-              <span class="status-tag inline-block px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700">PENDING</span>
-            </li>
-          </ul>
-
-          <!-- PENDING -->
-          <ul class="data-row grid grid-cols-[2.2fr_1.5fr_2fr_1fr] items-center border-b border-gray-200 py-3 text-gray-800 hover:bg-gray-50 cursor-pointer list-none m-0 p-0"
-              data-verification-id="105" data-role="Authority" data-status="PENDING">
-            <li class="flex items-center font-medium">
-              <i class="fas fa-user-circle text-3xl text-gray-400 mr-3"></i>
-              <span class="person-name">Poldo, Kylie N.</span>
-            </li>
-
-            <li class="text-sm">14:44 30/10/25</li>
-            <li class="text-sm">Cansojong, Talisay City</li>
-
-            <li>
-              <span class="status-tag inline-block px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700">PENDING</span>
-            </li>
-          </ul>
-
-          <!-- PENDING -->
-          <ul class="data-row grid grid-cols-[2.2fr_1.5fr_2fr_1fr] items-center border-b border-gray-200 py-3 text-gray-800 hover:bg-gray-50 cursor-pointer list-none m-0 p-0"
-              data-verification-id="106" data-role="Authority" data-status="PENDING">
-            <li class="flex items-center font-medium">
-              <i class="fas fa-user-circle text-3xl text-gray-400 mr-3"></i>
-              <span class="person-name">Badyanha, Sherry Lyn C.</span>
-            </li>
-
-            <li class="text-sm">11:55 30/10/25</li>
-            <li class="text-sm">Dumlog, Talisay City</li>
-
-            <li>
-              <span class="status-tag inline-block px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700">PENDING</span>
-            </li>
-          </ul>
-        </div>
-      </section>
-    </main>
-
-    <!-- Modal (hidden by default) -->
-    <div id="verificationModal" class="modal-overlay fixed inset-0 bg-black/40 hidden justify-center items-start z-50 overflow-y-auto">
-      <div class="modal-content bg-white rounded-xl w-[90%] max-w-3xl shadow-2xl my-10 overflow-hidden">
-        <div class="document-viewer p-6">
-          <div class="document-header border-b border-gray-200 pb-4 mb-6">
-            <h1 id="modalPersonName" class="text-2xl font-semibold text-gray-900"></h1>
-            <p class="text-sm text-gray-600">Role Requested: <span id="modalRole" class="font-medium"></span> | Status: <span id="modalStatus" class="font-semibold"></span></p>
-          </div>
-
-          <div class="file-gallery grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="file-item border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-              <img src="placeholder_id_front.jpg" alt="Front of ID" class="w-full h-56 object-cover bg-gray-100" />
-              <div class="file-caption text-center text-sm font-medium bg-gray-50 border-t border-gray-200 p-3">Government ID (Front)</div>
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold text-gray-900">{{ role_to_approve }} Verification Review</h1>
+                <p class="text-gray-500 text-sm">Review and manage pending role applications</p>
             </div>
 
-            <div class="file-item border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-              <img src="placeholder_id_back.jpg" alt="Back of ID" class="w-full h-56 object-cover bg-gray-100" />
-              <div class="file-caption text-center text-sm font-medium bg-gray-50 border-t border-gray-200 p-3">Government ID (Back)</div>
-            </div>
+            <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
+                <div class="px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Pending Applications</h3>
+                    <div class="relative w-full sm:w-64">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                            <i class="fas fa-search text-sm"></i>
+                        </span>
+                        <input type="text" id="searchInput" placeholder="Search by name..." class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                    </div>
+                </div>
 
-            <div class="file-item border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-              <img src="placeholder_certificate.jpg" alt="Certificate" class="w-full h-56 object-cover bg-gray-100" />
-              <div class="file-caption text-center text-sm font-medium bg-gray-50 border-t border-gray-200 p-3">Employment Certificate</div>
-            </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Applicant</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted On</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider tracking-wider">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for verification in pending_applications %}
+                            <tr class="data-row hover:bg-gray-50 transition-colors cursor-pointer"
+                                data-verification-id="{{ verification.pk }}"
+                                data-name="{{ verification.user_id.get_full_name }}"
+                                data-role="{{ verification.requested_role|capfirst }}"
+                                data-doc-url="{% if verification.related_documents.exists %}{{ verification.related_documents.first.filepath.url }}{% endif %}">
 
-            <div class="file-item border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-              <img src="placeholder_proof.jpg" alt="Proof of Address" class="w-full h-56 object-cover bg-gray-100" />
-              <div class="file-caption text-center text-sm font-medium bg-gray-50 border-t border-gray-200 p-3">Proof of Address</div>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="h-10 w-10 flex-shrink-0 bg-gray-200 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-user text-gray-500"></i>
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-semibold text-gray-900">{{ verification.user_id.get_full_name }}</div>
+                                            <div class="text-xs text-gray-500">{{ verification.user_id.email }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ verification.submitted_at|date:"M d, Y" }}
+                                    <div class="text-xs text-gray-400">{{ verification.submitted_at|date:"H:i A" }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ verification.user_id.city|default:"N/A" }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800 border border-yellow-200">
+                                        Pending
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <button class="text-red-600 hover:text-red-900 font-bold">Review</button>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="px-6 py-20 text-center">
+                                    <div class="flex flex-col items-center">
+                                        <i class="fas fa-inbox text-4xl text-gray-200 mb-4"></i>
+                                        <p class="text-gray-500 font-medium">No pending {{ role_to_approve }} applications found.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
-          </div>
+        </main>
 
-          <div class="modal-footer flex justify-end gap-4 mt-6 border-t border-gray-100 pt-4">
-            <button class="modal-btn btn-approve inline-block px-6 py-2 rounded-lg text-white font-bold bg-green-600 hover:bg-green-700 min-w-[120px]">APPROVE</button>
-            <button class="modal-btn btn-decline inline-block px-6 py-2 rounded-lg text-white font-bold bg-red-600 hover:bg-red-700 min-w-[120px]">DECLINE</button>
-          </div>
+        <div id="verificationModal" class="fixed inset-0 bg-gray-900/60 hidden justify-center items-center z-[100] backdrop-blur-sm p-4">
+            <div class="modal-content bg-white rounded-xl w-full max-w-2xl shadow-2xl modal-animate overflow-hidden">
+                <form method="POST" id="verificationForm">
+                    {% csrf_token %}
+                    <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                        <h3 class="text-lg font-bold text-gray-900">Application Review</h3>
+                        <button type="button" id="closeModalIcon" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <div class="p-6">
+                        <div class="mb-6">
+                            <h2 id="modalName" class="text-2xl font-bold text-gray-900"></h2>
+                            <p class="text-sm text-gray-500">Requested Role: <span id="modalRole" class="font-bold text-red-600 uppercase tracking-tight"></span></p>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-gray-700">Identification Document:</label>
+                            <div id="docPreview" class="border-2 border-dashed border-gray-200 rounded-lg bg-gray-50 flex items-center justify-center min-h-[350px] overflow-hidden">
+                                </div>
+                        </div>
+                    </div>
+
+                    <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end space-x-3">
+                        <button type="button" id="closeBtn" class="px-4 py-2 text-sm font-semibold text-gray-600 hover:text-gray-800 transition">Cancel Review</button>
+                        <button type="submit" name="action" value="reject" class="px-6 py-2 bg-white border border-red-600 text-red-600 rounded-lg text-sm font-bold hover:bg-red-50 transition">DECLINE</button>
+                        <button type="submit" name="action" value="approve" class="px-6 py-2 bg-red-600 text-white rounded-lg text-sm font-bold hover:bg-red-700 shadow-md shadow-red-200 transition">APPROVE ROLE</button>
+                    </div>
+                </form>
+            </div>
         </div>
-      </div>
     </div>
 
-  </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('verificationModal');
+            const form = document.getElementById('verificationForm');
+            const searchInput = document.getElementById('searchInput');
 
-  <!-- JS (preserves original behavior, updated to toggle Tailwind classes) -->
-  <script>
-    // CSRF helper (same as original)
-    function getCookie(name) {
-      let cookieValue = null;
-      if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-          const cookie = cookies[i].trim();
-          if (cookie.substring(0, name.length + 1) === (name + '=')) {
-            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-            break;
-          }
-        }
-      }
-      return cookieValue;
-    }
+            // Modal Opening Logic
+            document.querySelectorAll('.data-row').forEach(row => {
+                row.addEventListener('click', () => {
+                    const id = row.dataset.verificationId;
+                    const url = row.dataset.docUrl;
+                    const name = row.dataset.name;
+                    const role = row.dataset.role;
 
-    // Status class sets for Tailwind (we'll add/remove these)
-    const STATUS_CLASSES = {
-      'APPROVED': ['bg-green-100', 'text-green-700'],
-      'PENDING' : ['bg-yellow-100', 'text-yellow-700'],
-      'REJECTED': ['bg-red-100', 'text-red-700'],
-      // some back-compatibility for 'DECLINED' if used
-      'DECLINED': ['bg-red-100', 'text-red-700']
-    };
+                    document.getElementById('modalName').innerText = name;
+                    document.getElementById('modalRole').innerText = role;
+                    form.action = `/verification/action/${id}/`;
 
-    // Remove existing status classes from an element
-    function removeStatusClasses(el) {
-      if (!el) return;
-      // Flatten class arrays and remove them
-      const allClasses = new Set([].concat(...Object.values(STATUS_CLASSES)));
-      allClasses.forEach(cls => el.classList.remove(cls));
-    }
+                    const preview = document.getElementById('docPreview');
+                    preview.innerHTML = url ? `<img src="${url}" class="max-h-[500px] w-auto object-contain shadow-lg">` :
+                                              `<div class="text-center text-gray-400"><i class="fas fa-file-image text-5xl mb-2"></i><p>No document uploaded</p></div>`;
 
-    // Apply given status (APPROVED/PENDING/REJECTED) to a status element (span)
-    function applyStatusClasses(el, status) {
-      if (!el) return;
-      removeStatusClasses(el);
-      const classes = STATUS_CLASSES[status] || STATUS_CLASSES['REJECTED'];
-      el.classList.add(...classes);
-      // Also ensure base classes for pill appearance exist
-      el.classList.add('inline-block', 'px-3', 'py-1', 'rounded-full', 'text-xs', 'font-bold');
-    }
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                });
+            });
 
-    // Set modal status text and styling
-    function setModalStatus(statusElement, statusText) {
-      statusElement.textContent = statusText;
-      applyStatusClasses(statusElement, statusText);
-    }
+            // Modal Closing Logic
+            const closeModal = () => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            };
 
-    // Update row UI after status change
-    function updateRowStatus(row, newStatus) {
-      row.setAttribute('data-status', newStatus);
+            document.getElementById('closeBtn').addEventListener('click', closeModal);
+            document.getElementById('closeModalIcon').addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 
-      // Find the status-tag element in the row
-      const statusTag = row.querySelector('.status-tag');
-      if (statusTag) {
-        statusTag.textContent = newStatus;
-        applyStatusClasses(statusTag, newStatus);
-      }
-
-      // For non-pending statuses, make row non-clickable / default cursor
-      if (newStatus !== 'PENDING') {
-        row.classList.remove('cursor-pointer', 'hover:bg-gray-50');
-        row.classList.add('cursor-default');
-      } else {
-        row.classList.add('cursor-pointer', 'hover:bg-gray-50');
-        row.classList.remove('cursor-default');
-      }
-    }
-
-    // Simulated backend update (or replacement for fetch)
-    function handleVerificationAction(rowElement, action) {
-      const verificationId = rowElement.getAttribute('data-verification-id');
-      const personName = rowElement.querySelector('.person-name') ? rowElement.querySelector('.person-name').textContent.trim() : 'Unknown';
-      const newStatus = action === 'APPROVE' ? 'APPROVED' : 'REJECTED';
-
-      console.log(`Action: ${action} on Verification ID ${verificationId} (${personName})`);
-
-      // --- Place for real fetch to backend (commented) ---
-      /*
-      fetch('/verification/update_status/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': getCookie('csrftoken')
-        },
-        body: JSON.stringify({
-          verification_id: verificationId,
-          new_status: newStatus
-        })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          updateRowStatus(rowElement, newStatus);
-        } else {
-          alert('Error updating status: ' + (data.message || 'Unknown error'));
-        }
-      })
-      .catch(err => console.error('Fetch error:', err));
-      */
-
-      // --- UI-only simulation ---
-      alert(`SIMULATION: Successfully set ${personName}'s status to ${newStatus}.`);
-      updateRowStatus(rowElement, newStatus);
-    }
-
-    // DOM interactions (open modal on pending rows, wire buttons)
-    document.addEventListener('DOMContentLoaded', function () {
-      const modal = document.getElementById('verificationModal');
-      const modalTitle = document.getElementById('modalPersonName');
-      const modalRole = document.getElementById('modalRole');
-      const modalStatus = document.getElementById('modalStatus');
-
-      const dataRows = document.querySelectorAll('.data-row');
-      let activeRow = null;
-
-      dataRows.forEach(row => {
-        row.addEventListener('click', function () {
-          const status = row.getAttribute('data-status');
-
-          // Only open modal for pending items
-          if (status !== 'PENDING') return;
-
-          activeRow = row;
-
-          const personNameElement = row.querySelector('.person-name');
-          const name = personNameElement ? personNameElement.textContent.trim() : 'Unknown User';
-          const role = row.getAttribute('data-role') || 'N/A';
-
-          modalTitle.textContent = 'Review: ' + name;
-          modalRole.textContent = role;
-          setModalStatus(modalStatus, status);
-
-          // Show modal (toggle classes)
-          modal.classList.remove('hidden');
-          modal.classList.add('flex');
-          // ensure the modal scroll starts at top on open
-          modal.scrollTop = 0;
+            // Search Filter
+            searchInput.addEventListener('input', function() {
+                const term = this.value.toLowerCase();
+                document.querySelectorAll('.data-row').forEach(row => {
+                    const name = row.dataset.name.toLowerCase();
+                    row.style.display = name.includes(term) ? '' : 'none';
+                });
+            });
         });
-      });
-
-      // Close modal when clicking outside the content
-      modal.addEventListener('click', function (e) {
-        // if click target is overlay itself (not modal content), close
-        if (e.target === modal) {
-          modal.classList.add('hidden');
-          modal.classList.remove('flex');
-          activeRow = null;
-        }
-      });
-
-      // Wire approve/decline buttons
-      document.querySelectorAll('.modal-footer .modal-btn, .modal-footer .btn-approve, .modal-footer .btn-decline').forEach(button => {
-        button.addEventListener('click', function (e) {
-          // Hide modal
-          modal.classList.add('hidden');
-          modal.classList.remove('flex');
-
-          if (activeRow) {
-            const action = e.target.classList.contains('btn-approve') ? 'APPROVE' : 'DECLINE';
-            handleVerificationAction(activeRow, action);
-            activeRow = null;
-          }
-        });
-      });
-
-      // Also wire the visible action buttons inside modal-footer (since we used classes)
-      const approveBtn = document.querySelector('.btn-approve');
-      const declineBtn = document.querySelector('.btn-decline');
-      if (approveBtn) {
-        approveBtn.addEventListener('click', function (e) {
-          // Already handled by the generic handler above; included for safety
-        });
-      }
-      if (declineBtn) {
-        declineBtn.addEventListener('click', function (e) {
-          // Already handled by the generic handler above; included for safety
-        });
-      }
-    });
-  </script>
+    </script>
 </body>
 </html>

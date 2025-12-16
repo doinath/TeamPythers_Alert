@@ -1,14 +1,21 @@
-from django.shortcuts import render, redirect
-from django.views import View
+
 from django.contrib import messages
-from django.db import transaction
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User as AuthUser
 from .models import User as CustomUser, Citizen, ContactInfo, Responder, Authority, Notification
 from emergency.models import MedicalCondition
 from verification.models import GovernmentDocument
-from django.core.files.storage import default_storage
+from django.shortcuts import render, redirect
+from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
+from django.db import connection, transaction
+from emergency.models import EmergencyEvent
+import json
+import time
+
+from emergency.models import EmergencyEvent
+
 
 # ---------------------------
 #  INDEX / LOGIN
@@ -23,7 +30,6 @@ class IndexView(View):
 
         # Authenticate using Django's built-in User
         auth_user = authenticate(request, username=email, password=password)
-
         if auth_user is not None:
             login(request, auth_user)
 
@@ -469,7 +475,6 @@ class ApplyAuthorityView(LoginRequiredMixin, View):
                     jurisdiction_area=request.POST.get('jurisdiction_area')
                 )
 
-                # Create associated Gov ID
                 id_type = request.POST.get('id_type')
                 id_number = request.POST.get('id_number')
                 id_file = request.FILES.get('id_file')
@@ -483,7 +488,6 @@ class ApplyAuthorityView(LoginRequiredMixin, View):
                         status='PENDING'
                     )
 
-                # --- LOG SYSTEM ACTION (Authority Application) ---
                 SystemLog.objects.create(
                     action="Authority Application Submitted",
                     detail=f"User {request.user.custom_profile.first_name} applied for Authority role.",
@@ -496,3 +500,73 @@ class ApplyAuthorityView(LoginRequiredMixin, View):
         except Exception as e:
             messages.error(request, f"Error submitting application: {e}")
             return redirect('account:citizen_dashboard')
+
+class QuickEmergencyReportView(LoginRequiredMixin, View):
+    def post(self, request):
+        try:
+            # 1. Parse Payload
+            data = json.loads(request.body)
+            emergency_type = data.get('type')
+            lat = data.get('lat') or 0
+            lon = data.get('lon') or 0
+            gps_location = f"{lat}, {lon}"
+
+            # 2. Get Citizen Profile
+            if not hasattr(request.user, 'custom_profile'):
+                return JsonResponse({'status': 'error', 'message': 'User profile missing.'}, status=400)
+
+            citizen_profile = getattr(request.user.custom_profile, 'citizen_profile', None)
+
+            if not citizen_profile:
+                return JsonResponse({'status': 'error', 'message': 'Citizen profile not found.'}, status=400)
+
+            # 3. Call Stored Procedure with AUTOFILLED data
+            event_id = None
+            try:
+                with transaction.atomic():
+                    with connection.cursor() as cursor:
+                        # Arguments: citizenID, type, other_spec, for_others, patient_name, desc, gps, severity
+                        cursor.callproc('sp_SubmitEmergencyReport', [
+                            citizen_profile.pk,
+                            emergency_type,
+                            'Quick Report',     # Autofilled spec
+                            'no',               # Not for others
+                            'Self',             # Patient name
+                            f'QUICK SOS: {emergency_type}',  # Autofilled description
+                            gps_location,
+                            'high'              # Default severity for panic button
+                        ])
+            except Exception as e:
+                return JsonResponse({'status': 'error', 'message': f"Database Error: {str(e)}"}, status=500)
+
+            # 4. Verify & Fetch Event ID
+            for _ in range(3):
+                try:
+                    latest_event = EmergencyEvent.objects.filter(userID=citizen_profile).latest('created_at')
+                    event_id = latest_event.eventID
+                    break
+                except EmergencyEvent.DoesNotExist:
+                    time.sleep(0.5)
+
+            if event_id:
+                return JsonResponse({'status': 'success', 'event_id': event_id})
+            else:
+                return JsonResponse({'status': 'success', 'event_id': 'unknown', 'message': 'Report sent but ID unverified.'})
+
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+class CancelEmergencyReportView(LoginRequiredMixin, View):
+    def post(self, request):
+        try:
+            data = json.loads(request.body)
+            event_id = data.get('event_id')
+            if event_id:
+
+                event = EmergencyEvent.objects.get(eventID=event_id)
+                event.status = 'closed'
+                event.save()
+                return JsonResponse({'status': 'cancelled'})
+            return JsonResponse({'status': 'ignored'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)

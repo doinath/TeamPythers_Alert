@@ -1,5 +1,7 @@
-from django.urls import path, include
+from django.urls import path
 from . import views
+from .views import QuickEmergencyReportView, CancelEmergencyReportView
+from emergency.views import CreateReportView
 
 app_name = 'account'
 
@@ -18,5 +20,12 @@ urlpatterns = [
     # --- URLs for Applications ---
     path('apply/responder/', views.ApplyResponderView.as_view(), name='apply_responder'),
     path('apply/authority/', views.ApplyAuthorityView.as_view(), name='apply_authority'),
-    # ---------------------------------
+
+    # --- Quick Report Logic ---
+    path('quick-report/', QuickEmergencyReportView.as_view(), name='quick_report'),
+    path('cancel-report/', CancelEmergencyReportView.as_view(), name='cancel_report'),
+
+    # --- Manual Report Forms ---
+    path("report-incident/", CreateReportView.as_view(), name="report_form"),
+    path("report-incident/<int:dev_id>/", CreateReportView.as_view(), name="report_form_dev"),
 ]

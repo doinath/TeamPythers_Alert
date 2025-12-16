@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,48 +10,26 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .animate-pulse-slow {
-            animation: pulse-slow 3s infinite ease-in-out;
-        }
-        @keyframes pulse-slow {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        /* Hide scrollbar for Chrome, Safari and Opera */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        /* Hide scrollbar for IE, Edge and Firefox */
-        .no-scrollbar {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
-        }
-        /* Smooth fade in for modals */
-        .modal-animate {
-            animation: fadeIn 0.2s ease-out forwards;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
+        body { font-family: 'Inter', sans-serif; }
+        .animate-pulse-slow { animation: pulse-slow 3s infinite ease-in-out; }
+        @keyframes pulse-slow { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .modal-animate { animation: fadeIn 0.2s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased">
 
-    <!-- App Container -->
+    {% csrf_token %}
+
     <div id="app" class="flex flex-col min-h-screen">
 
-        <!-- Header -->
         <header class="bg-white shadow-sm sticky top-0 z-50">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-16">
-                    <!-- Logo and Nav -->
                     <div class="flex items-center space-x-12 -ml-4">
                         <div class="flex items-center space-x-2">
-                            <!-- Logo Image -->
                             <img src="{% static 'images/com_logo.png' %}" alt="ALERT Logo" class="h-10 w-auto object-contain" />
                         </div>
                         <nav class="hidden md:flex items-center space-x-12">
@@ -62,10 +39,8 @@
                         </nav>
                     </div>
 
-                    <!-- User Profile -->
                     <div class="flex items-center space-x-10">
                         <div class="hidden md:flex items-center space-x-4">
-                            <!-- User Name -->
                             {% if request.user.is_authenticated %}
                                 <span class="text-gray-800 font-medium text-sm mr-3">
                                     {{ request.user.first_name }} {{ request.user.last_name }}
@@ -74,45 +49,23 @@
                                 <span class="text-gray-800 font-medium text-sm mr-3">Guest</span>
                             {% endif %}
 
-                            <!--
-                                LOGIC FIX: Removed 'hasattr' (not valid in templates).
-                                Django templates allow checking related objects directly.
-                                If they don't exist, it evaluates to False.
-                            -->
-
-                            <!-- Check if Responder Profile exists -->
                             {% if request.user.custom_profile.citizen_profile.responder_profile %}
                                  <a href="{% url 'account:responder_profile' %}" class="group">
-                            <!-- Check if Authority Profile exists -->
                             {% elif request.user.custom_profile.citizen_profile.authority %}
                                  <a href="{% url 'account:authority_profile' %}" class="group">
-                            <!-- Default to Citizen -->
                             {% else %}
                                  <a href="{% url 'account:citizen_profile' %}" class="group">
                             {% endif %}
-
-                                <!--
-                                    IMAGE FIX: Models do not have profile_picture.
-                                    Using UI Avatars for safe rendering.
-                                -->
                                 <img class="h-8 w-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110 group-hover:shadow-lg"
                                      src="https://ui-avatars.com/api/?name={{ request.user.first_name }}+{{ request.user.last_name }}&background=EF4444&color=fff"
                                      alt="User Avatar" />
                             </a>
                         </div>
 
-                        <!-- Mobile Menu Button -->
                         <div class="md:hidden flex items-center">
                             <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-800 focus:outline-none">
-                                <svg id="menu-open-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"
-                                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M4 6h16M4 12h16M4 18h16" />
-                                </svg>
-                                <svg id="menu-close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden"
-                                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M6 18L18 6M6 6l12 12" />
+                                <svg id="menu-open-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                                 </svg>
                             </button>
                         </div>
@@ -120,39 +73,19 @@
                 </div>
             </div>
 
-            <!-- Mobile Menu -->
             <div id="mobile-menu" class="hidden md:hidden bg-white border-t absolute w-full z-30 shadow-lg top-16 left-0">
                 <nav class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                     <a href="{% url 'account:citizen_dashboard' %}" class="block px-3 py-2 rounded-md text-base font-medium bg-red-50 text-red-700">Dashboard</a>
                     <a href="{% url 'communication:messages' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Chat</a>
                     <a href="{% url 'communication:call_logs' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">Call logs</a>
                 </nav>
-                <div class="pt-4 pb-3 border-t border-gray-200">
-                    <div class="flex items-center px-5">
-                        <!--
-                             MOBILE FIX: Removed 'request.user.profile_picture' check.
-                             Replaced with UI Avatars to prevent crash.
-                        -->
-                        <img class="h-10 w-10 rounded-full object-cover"
-                             src="https://ui-avatars.com/api/?name={{ request.user.first_name }}+{{ request.user.last_name }}&background=EF4444&color=fff"
-                             alt="User Avatar" />
-
-                        <div class="ml-3">
-                            <div class="text-base font-medium text-gray-800">{{ request.user.first_name }} {{ request.user.last_name }}</div>
-                            <div class="text-sm font-medium text-gray-500">{{ request.user.email }}</div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </header>
 
-        <!-- Main Content -->
         <main class="flex-grow container mx-auto p-4 md:p-6 lg:p-8">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-                <!-- Left Column -->
                 <div class="lg:col-span-4 flex flex-col gap-8">
-                    <!-- SOS Card -->
                     <div class="bg-white p-6 rounded-xl shadow-lg text-center">
                         <h2 class="text-xl font-bold text-gray-800 mb-4">Quick Call</h2>
                         <button id="sos-btn" class="relative w-48 h-48 mx-auto rounded-full bg-red-700 shadow-2xl shadow-red-600/50 flex items-center justify-center group transform hover:scale-105 transition-transform duration-300">
@@ -162,40 +95,21 @@
                         </button>
                     </div>
 
-                    <!-- Emergency Contacts -->
                     <div class="bg-white p-6 rounded-xl shadow-lg">
                         <h2 class="text-xl font-bold text-gray-800 mb-4">Emergency Contacts</h2>
                         <div class="space-y-6">
                             <div>
                                 <h3 class="font-semibold text-red-700 mb-2 pb-1 border-b border-red-100 text-sm uppercase tracking-wide">Police & Law Enforcement</h3>
                                 <ul class="text-sm text-gray-600 space-y-2">
-                                    <li class="flex justify-between items-center"><span>Cebu City Police Hotline</span><span class="text-gray-500 font-mono text-xs">(555) 233-9111</span></li>
-                                    <li class="flex justify-between items-center"><span>Waterfront Police Station</span><span class="text-gray-500 font-mono text-xs">(555) 254-6277</span></li>
-                                    <li class="flex justify-between items-center"><span>Mobile Patrol Group</span><span class="text-gray-500 font-mono text-xs">(555) 233-5564</span></li>
-                                </ul>
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-red-700 mb-2 pb-1 border-b border-red-100 text-sm uppercase tracking-wide">Fire Department & Rescue</h3>
-                                <ul class="text-sm text-gray-600 space-y-2">
-                                    <li class="flex justify-between items-center"><span>Cebu City Fire Department</span><span class="text-gray-500 font-mono text-xs">(555) 256-0541</span></li>
-                                    <li class="flex justify-between items-center"><span>Mandaue City Fire Department</span><span class="text-gray-500 font-mono text-xs">(555) 344-4747</span></li>
-                                </ul>
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-red-700 mb-2 pb-1 border-b border-red-100 text-sm uppercase tracking-wide">Hospitals & Medical Services</h3>
-                                <ul class="text-sm text-gray-600 space-y-2">
-                                    <li class="flex justify-between items-center"><span>Chong Hua Hospital</span><span class="text-gray-500 font-mono text-xs">(555) 255-8000</span></li>
-                                    <li class="flex justify-between items-center"><span>Cebu Doctors' Hospital</span><span class="text-gray-500 font-mono text-xs">(555) 255-5555</span></li>
+                                    <li class="flex justify-between items-center"><span>Cebu City Police</span><span class="text-gray-500 font-mono text-xs">(555) 233-9111</span></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Right Column -->
                 <div class="lg:col-span-8 flex flex-col gap-8">
 
-                    <!-- Emergency Type Selector -->
                     <div class="bg-white p-6 rounded-xl shadow-lg">
                         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
                             <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900">
@@ -206,120 +120,61 @@
                                     <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z"></path>
                                     <path fill-rule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clip-rule="evenodd"></path>
                                 </svg>
-                                <span>File a Report</span>
+                                <span>File a Report (Manual)</span>
                             </button>
                         </div>
 
                         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
-                            <!-- Fire -->
                             <button onclick="openEmergencyModal('Fire')" class="flex flex-col items-center justify-center p-6 text-white bg-gradient-to-br from-orange-500 via-red-600 to-rose-700 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300 h-30">
-                                <img src="{% static 'images/fire_icon.png' %}" width="48" height="48" alt="icon" class="mb-2">
+                                <img src="{% static 'images/fire_icon.png' %}" width="48" height="48" alt="Fire" class="mb-2">
                                 <span class="font-semibold text-sm md:text-base">Fire</span>
                             </button>
-                            <!-- Flood -->
                             <button onclick="openEmergencyModal('Flood')" class="flex flex-col items-center justify-center p-6 text-white bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300 h-30">
-                                <img src="{% static 'images/flood_icon.png' %}" width="48" height="48" alt="icon" class="mb-2">
+                                <img src="{% static 'images/flood_icon.png' %}" width="48" height="48" alt="Flood" class="mb-2">
                                 <span class="font-semibold text-sm md:text-base">Flood</span>
                             </button>
-                            <!-- Accident -->
                             <button onclick="openEmergencyModal('Accident')" class="flex flex-col items-center justify-center p-6 text-white bg-gradient-to-br from-rose-400 via-rose-500 to-red-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300 h-30">
-                                <img src="{% static 'images/accidents_icon.png' %}" width="48" height="48" alt="icon" class="mb-2">
+                                <img src="{% static 'images/accidents_icon.png' %}" width="48" height="48" alt="Accident" class="mb-2">
                                 <span class="font-semibold text-sm md:text-base">Accident</span>
                             </button>
-                            <!-- Crime -->
                             <button onclick="openEmergencyModal('Crime')" class="flex flex-col items-center justify-center p-6 text-white bg-gradient-to-br from-slate-500 via-indigo-600 to-purple-700 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300 h-30">
-                                <img src="{% static 'images/crime_icon.png' %}" width="48" height="48" alt="icon" class="mb-2">
+                                <img src="{% static 'images/crime_icon.png' %}" width="48" height="48" alt="Crime" class="mb-2">
                                 <span class="font-semibold text-sm md:text-base">Crime</span>
                             </button>
-                            <!-- Earthquake -->
                             <button onclick="openEmergencyModal('Earthquake')" class="flex flex-col items-center justify-center p-6 text-white bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-600 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 transform hover:-translate-y-1 transition-all duration-300 h-30">
-                                <img src="{% static 'images/earthquake_icon.png' %}" width="48" height="48" alt="icon" class="mb-2">
+                                <img src="{% static 'images/earthquake_icon.png' %}" width="48" height="48" alt="Earthquake" class="mb-2">
                                 <span class="font-semibold text-sm md:text-base">Earthquake</span>
                             </button>
                         </div>
                     </div>
 
-                    <!-- ================= AUTHORITY APPROVAL MODAL ================= -->
-                    <div id="approval-success-modal" class="fixed inset-0 bg-gray-900 bg-opacity-90 flex items-center justify-center z-[200] p-4 hidden">
+                    <div id="approval-success-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-90 flex items-center justify-center z-[200] p-4">
                         <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md mx-auto relative modal-animate text-center border-t-8 border-blue-600">
-
-                            <!-- Success Icon -->
-                            <div class="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-blue-100 mb-6">
-                                <svg class="h-10 w-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </div>
-
-                            <h2 class="text-2xl font-bold text-gray-900 mb-2">Application Approved!</h2>
-                            <p class="text-gray-600 mb-8">
-                                Your application to become an <span class="font-bold text-blue-600">Authority</span> has been verified and approved by the administrator.
-                            </p>
-
-                            <button onclick="redirectToAuthority()" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors shadow-lg transform hover:scale-105 duration-200">
-                                Go to Authority Dashboard
-                            </button>
+                             <h2 class="text-2xl font-bold text-gray-900 mb-2">Application Approved!</h2>
+                             <button onclick="redirectToAuthority()" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg">Go to Authority Dashboard</button>
                         </div>
                     </div>
 
-                    <!-- Application Cards -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <!-- Responder Card -->
-                        <div class="bg-white p-6 rounded-xl shadow-lg flex flex-col items-start hover:shadow-xl transition-shadow duration-300 border border-gray-100">
-                            <div class="p-3 bg-red-100 rounded-lg mb-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                </svg>
-                            </div>
+                        <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
                             <h3 class="text-lg font-bold text-gray-800">Become a Responder</h3>
-                            <p class="text-sm text-gray-600 mt-2 mb-4 flex-grow">
-                                Join our team of certified professionals. Help save lives and provide immediate assistance during emergencies.
-                            </p>
-                            <button id="apply-responder-btn" class="w-full bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700 transition-colors">
-                                Apply as Responder
-                            </button>
+                            <button id="apply-responder-btn" class="mt-4 w-full bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700">Apply as Responder</button>
                         </div>
-
-                        <!-- Authority Card -->
-                        <div class="bg-white p-6 rounded-xl shadow-lg flex flex-col items-start hover:shadow-xl transition-shadow duration-300 border border-gray-100">
-                            <div class="p-3 bg-blue-100 rounded-lg mb-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                </svg>
-                            </div>
+                        <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
                             <h3 class="text-lg font-bold text-gray-800">Register as Authority</h3>
-                            <p class="text-sm text-gray-600 mt-2 mb-4 flex-grow">
-                                Register your organization to coordinate with our network and enhance emergency response capabilities.
-                            </p>
-                            <button id="apply-authority-btn" class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
-                                Apply as Authority
-                            </button>
+                            <button id="apply-authority-btn" class="mt-4 w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700">Apply as Authority</button>
                         </div>
                     </div>
 
-                    <!-- Map Section -->
                     <div class="bg-white p-6 rounded-xl shadow-lg flex-grow flex flex-col min-h-[400px]">
-                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
+                        <div class="flex justify-between mb-4">
                             <label class="text-lg font-bold text-gray-800">Search Location</label>
-                            <button id="pin-location-btn" class="mt-2 sm:mt-0 flex items-center justify-center space-x-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                                <span>Pin My Current Location</span>
-                            </button>
+                            <button id="pin-location-btn" class="text-sm font-semibold text-white bg-red-600 px-4 py-2 rounded-lg">Pin My Current Location</button>
                         </div>
-
-                        <div id="map-container" class="flex-grow w-full bg-gray-200 rounded-lg overflow-hidden relative flex items-center justify-center">
-                            <!-- Placeholder Content -->
-                            <div id="map-placeholder" class="text-center text-gray-600 p-4">
-                                <div class="flex flex-col items-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-gray-400 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                                    <p class="text-sm">Location not set. Click "Pin My Current Location".</p>
-                                </div>
-                            </div>
-                            <!-- Iframe (Hidden initially) -->
-                            <iframe id="map-iframe" class="w-full h-full absolute inset-0 hidden" src="" style="border: 0;" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                            <!-- Toast -->
-                            <div id="map-toast" class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-lg shadow-md text-sm font-semibold text-gray-800 animate-bounce hidden">
-                                Location Pinned!
-                            </div>
+                        <div id="map-container" class="flex-grow w-full bg-gray-200 rounded-lg overflow-hidden relative">
+                             <div id="map-placeholder" class="text-center text-gray-600 p-4 mt-20">Location not set.</div>
+                             <iframe id="map-iframe" class="w-full h-full absolute inset-0 hidden" src=""></iframe>
+                             <div id="map-toast" class="hidden absolute bottom-4 left-4 bg-white px-4 py-2 rounded-lg shadow-md animate-bounce">Location Pinned!</div>
                         </div>
                     </div>
                 </div>
@@ -327,57 +182,29 @@
         </main>
     </div>
 
-    <!-- ================= MODALS ================= -->
-    <!-- (Modals are unchanged from your input, they are correct) -->
-
-    <!-- SOS Modal -->
     <div id="sos-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4 hidden">
-        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm mx-auto relative modal-animate">
-            <div class="flex items-center space-x-3 mb-6">
-                <div class="p-2 bg-red-100 rounded-full animate-pulse">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/><line x1="22" y1="2" x2="15" y2="2"/><polyline points="19 5 15 2 19 2"/></svg>
-                </div>
-                <h3 class="text-lg font-semibold text-gray-800">Emergency Center</h3>
-                <span class="ml-auto text-red-600 font-medium animate-pulse">Calling...</span>
-            </div>
-
-            <div class="flex flex-col items-center justify-center py-8">
-                <div class="relative mb-4">
-                    <img class="h-24 w-24 rounded-full object-cover ring-4 ring-red-200" src="https://i.pravatar.cc/150?img=68" alt="Caller" />
-                    <span class="absolute bottom-0 right-0 p-2 bg-green-500 rounded-full border-2 border-white"></span>
-                </div>
-                <p class="text-xl font-bold text-gray-900">
-                    {% if request.user.is_authenticated %}
-                        {{ request.user.first_name }} {{ request.user.last_name }}
-                    {% else %}
-                        John Doe
-                    {% endif %}
-                </p>
-            </div>
-
-            <div class="mt-6">
-                <button id="sos-cancel-btn" class="w-full flex items-center justify-center space-x-2 bg-red-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-red-700 transition-colors shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                    <span id="sos-timer-text">Cancel (30s)</span>
-                </button>
-                <p class="text-xs text-gray-500 mt-4 text-center">Authorities will be notified automatically if not cancelled.</p>
-            </div>
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm mx-auto relative modal-animate text-center">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">SOS Alert</h3>
+            <p class="mb-4 text-red-600 font-bold">Calling Emergency Services...</p>
+            <button id="sos-cancel-btn" class="w-full bg-red-600 text-white font-semibold py-3 px-4 rounded-lg">
+                <span id="sos-timer-text">Cancel (10s)</span>
+            </button>
+            <p class="text-xs text-gray-500 mt-4">Auto-submitting report when timer ends.</p>
         </div>
     </div>
 
-    <!-- Emergency Response Modal -->
     <div id="emergency-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4 hidden">
         <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm mx-auto relative modal-animate">
             <div class="flex items-center space-x-3 mb-6">
                 <div class="p-2 bg-red-100 rounded-full">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+                     <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                 </div>
                 <h3 id="emergency-title" class="text-lg font-semibold text-gray-800">Response</h3>
                 <span id="emergency-status-text" class="ml-auto font-medium text-yellow-600">Waiting...</span>
             </div>
 
             <div class="flex flex-col items-center justify-center py-8">
-                <div class="relative mb-4">
+                 <div class="relative mb-4">
                     <img class="h-24 w-24 rounded-full object-cover ring-4 ring-red-200" src="https://i.pravatar.cc/150?img=12" alt="Responder" />
                     <span id="emergency-status-dot" class="absolute bottom-0 right-0 p-2 rounded-full border-2 border-white bg-yellow-400"></span>
                 </div>
@@ -387,296 +214,75 @@
 
             <div class="mt-6 flex space-x-4">
                 <button id="emergency-cancel-btn" class="flex-1 flex items-center justify-center space-x-2 bg-red-600 text-white hover:bg-red-700 font-semibold py-3 px-4 rounded-lg transition-colors shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                    <span id="emergency-timer-text">Cancel (60)</span>
+                    <span id="emergency-timer-text">Cancel (10s)</span>
                 </button>
-                <button id="emergency-details-btn" class="flex-1 flex items-center justify-center space-x-2 bg-gray-200 text-gray-400 font-semibold py-3 px-4 rounded-lg shadow-lg transition-colors cursor-not-allowed" disabled>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                <button id="emergency-details-btn" class="hidden flex-1 flex items-center justify-center space-x-2 bg-gray-200 text-gray-400 font-semibold py-3 px-4 rounded-lg cursor-not-allowed">
                     <span>Details</span>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Report Modal -->
-    <div id="report-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-[60] p-4 hidden">
-        <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-2xl mx-auto modal-animate max-h-[90vh] overflow-y-auto">
-            <h2 class="text-3xl font-bold text-red-700 mb-6 text-center">Emergency Report Form</h2>
-            <form id="report-form" class="space-y-6">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Type of Emergency</label>
-                    <input type="text" id="report-type" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" placeholder="e.g., Fire, Accident, Crime" />
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Location Details</label>
-                    <textarea id="report-location" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" placeholder="Location..."></textarea>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Description</label>
-                    <textarea rows="5" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" placeholder="Describe what happened"></textarea>
-                </div>
-                <div class="flex justify-end space-x-4">
-                    <button type="button" onclick="closeModal('report-modal')" class="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                        Close
-                    </button>
-                    <button type="submit" class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700">
-                        Submit Report
-                    </button>
-                </div>
-            </form>
-        </div>
+    <div id="responder-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-75 z-[100] p-4 flex items-center justify-center">
+        <div class="bg-white rounded-xl p-6 w-full max-w-2xl"><h2 class="text-2xl font-bold">Responder Application</h2><button onclick="closeModal('responder-modal')">Close</button></div>
     </div>
-
-    <!-- Responder Profile Modal -->
-    <div id="responder-modal" class="fixed inset-0 z-[100] overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" onclick="closeModal('responder-modal')"></div>
-    <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-        <div class="relative transform overflow-hidden rounded-2xl bg-gray-50 text-left shadow-xl transition-all my-8 w-full max-w-3xl border border-gray-200 modal-animate">
-            <div class="absolute top-4 right-4 z-10">
-                <button onclick="closeModal('responder-modal')" class="text-gray-400 hover:text-gray-600 p-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                </button>
-            </div>
-
-            <div class="p-8">
-                <h2 class="text-3xl font-bold text-gray-800 text-center mb-2">
-                    Complete Your <span class="text-red-600">Responder</span> Profile
-                </h2>
-                <p class="text-gray-600 mb-8 text-center">
-                    This information is vital for verifying your authority and assigning emergency tasks effectively.
-                </p>
-
-                <!-- 1. Ensure enctype is multipart/form-data for file uploads -->
-                <form action="{% url 'account:apply_responder' %}" method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}
-
-                    <!-- Professional Information -->
-                    <section>
-                        <h3 class="text-xl font-semibold text-gray-700 mb-4">Professional Information</h3>
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-600 mb-1">Department Unit</label>
-                            <input type="text" name="department_unit" required placeholder="e.g., Unit 404 - Central Station" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-shadow" />
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-600 mb-1">Role</label>
-                                <select name="role" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-shadow bg-white">
-                                    <option value="">Select Role</option>
-                                    <option value="Medical">Medical Responders</option>
-                                    <option value="Fire">Fire Responders</option>
-                                    <option value="Law">Law Enforcement</option>
-                                    <option value="Rescue">Rescue & Search</option>
-                                    <option value="Logistics">Logistics</option>
-                                    <option value="Community">Community</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-600 mb-1">Service Area</label>
-                                <input type="text" name="service_area" required placeholder="e.g., Downtown District" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-shadow" />
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- Verification ID -->
-                    <section class="mt-6 pt-6 border-t border-gray-200">
-                        <h3 class="text-xl font-semibold text-gray-700 mb-4">Verification</h3>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-600 mb-1">ID Type</label>
-                                <select name="id_type" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-shadow bg-white">
-                                    <option value="">Select ID Type</option>
-                                    <option value="National ID">National ID</option>
-                                    <option value="Department ID">Department ID</option>
-                                    <option value="PRC License">PRC License</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-600 mb-1">ID Number</label>
-                                <input type="text" name="id_number" required placeholder="Enter ID Number" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-shadow" />
-                            </div>
-                        </div>
-
-                        <div class="space-y-4">
-                            <div class="p-4 border rounded-lg bg-white">
-                                <label class="block text-sm font-medium text-gray-600 mb-1">
-                                    Upload Government Responder's Requirement ID
-                                </label>
-                                <div class="mt-2 flex items-center justify-center w-full">
-                                    <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-red-50 hover:border-red-300 transition-colors">
-                                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                            <!-- Icon -->
-                                            <svg id="upload-icon" xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mb-2 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-
-                                            <!-- 2. Added ID to text so we can change it via JS -->
-                                            <p id="upload-text" class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
-                                            <p class="text-xs text-gray-500">PNG, JPG or PDF (MAX. 5MB)</p>
-                                        </div>
-
-                                        <!-- 3. Added ID to input for JS listener -->
-                                        <input type="file" id="responder_id_file" name="id_file" class="hidden" accept=".png,.jpg,.jpeg,.pdf" required />
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <div class="mt-8 flex flex-col sm:flex-row gap-4">
-                        <button type="submit" class="flex-1 bg-gradient-to-r from-red-600 to-red-700 text-white font-bold py-3 px-4 rounded-lg hover:from-red-700 hover:to-red-800 shadow-lg transition-transform transform hover:scale-105">
-                            Save Responder Profile
-                        </button>
-                        <button type="button" onclick="closeModal('responder-modal')" class="flex-1 bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg hover:bg-gray-300 shadow-lg transition-transform transform hover:scale-105">
-                            Cancel
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+    <div id="authority-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-75 z-[100] p-4 flex items-center justify-center">
+         <div class="bg-white rounded-xl p-6 w-full max-w-2xl"><h2 class="text-2xl font-bold">Authority Application</h2><button onclick="closeModal('authority-modal')">Close</button></div>
     </div>
-</div>
-
-    <!-- Authority Profile Modal -->
-    <div id="authority-modal" class="fixed inset-0 z-[100] overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" onclick="closeModal('authority-modal')"></div>
-    <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-        <div class="relative transform overflow-hidden rounded-2xl bg-gray-50 text-left shadow-xl transition-all my-8 w-full max-w-3xl border border-gray-200 modal-animate">
-
-            <div class="absolute top-4 right-4 z-10">
-                <button onclick="closeModal('authority-modal')" class="text-gray-400 hover:text-gray-600 p-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                </button>
-            </div>
-
-            <div class="p-8">
-                <h2 class="text-3xl font-bold text-gray-800 text-center mb-2">
-                    Complete Your <span class="text-blue-600">Authority</span> Profile
-                </h2>
-                <p class="text-gray-600 mb-8 text-center">
-                    Register your organization to coordinate with our network and enhance emergency response capabilities.
-                </p>
-
-                <!-- 1. Updated Form Attributes -->
-                <form action="{% url 'account:apply_authority' %}" method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}
-
-                    <section>
-                        <h3 class="text-xl font-semibold text-gray-700 mb-4">Organization Information</h3>
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-600 mb-1">Agency Name</label>
-                            <!-- Added name -->
-                            <input type="text" name="agency_name" required placeholder="e.g., City Disaster Risk Reduction Office" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" />
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-600 mb-1">Jurisdiction Area</label>
-                            <!-- Added name -->
-                            <input type="text" name="jurisdiction_area" required placeholder="e.g., Metropolitan District, Zone A" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" />
-                        </div>
-                    </section>
-
-                    <section class="mt-6 pt-6 border-t border-gray-200">
-                        <h3 class="text-xl font-semibold text-gray-700 mb-4">Verification</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-600 mb-1">ID Type</label>
-                                <!-- Added name -->
-                                <select name="id_type" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow bg-white">
-                                    <option value="">Select ID Type</option>
-                                    <option value="National ID">National ID</option>
-                                    <option value="Agency ID">Agency ID</option>
-                                    <option value="Other">Other Government ID</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-600 mb-1">ID Number</label>
-                                <!-- Added name -->
-                                <input type="text" name="id_number" required placeholder="Enter ID Number" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" />
-                            </div>
-                        </div>
-
-                        <div class="space-y-4">
-                            <div class="p-4 border rounded-lg bg-white">
-                                <label class="block text-sm font-medium text-gray-600 mb-1">
-                                    Upload Government Authority Requirement ID
-                                </label>
-                                <div class="mt-2 flex items-center justify-center w-full">
-                                    <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-blue-50 hover:border-blue-300 transition-colors">
-                                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                            <!-- Added ID for Icon -->
-                                            <svg id="auth-upload-icon" xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mb-2 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-
-                                            <!-- Added ID for Text -->
-                                            <p id="auth-upload-text" class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
-                                            <p class="text-xs text-gray-500">PNG, JPG or PDF (MAX. 5MB)</p>
-                                        </div>
-
-                                        <!-- Added name, unique ID, and removed hidden functionality (kept class hidden) -->
-                                        <input type="file" id="authority_id_file" name="id_file" class="hidden" accept=".png,.jpg,.jpeg,.pdf" required />
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <div class="mt-8 flex flex-col sm:flex-row gap-4">
-                        <button type="submit" class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold py-3 px-4 rounded-lg hover:from-blue-700 hover:to-blue-800 shadow-lg transition-transform transform hover:scale-105">
-                            Save Authority Profile
-                        </button>
-                        <button type="button" onclick="closeModal('authority-modal')" class="flex-1 bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg hover:bg-gray-300 shadow-lg transition-transform transform hover:scale-105">
-                            Cancel
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 
     <script>
         // Global State
         let currentLocation = null;
         let sosInterval;
         let emergencyInterval;
+        let currentEventId = null;
 
         // --- Mobile Menu Logic ---
         const mobileMenuBtn = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
-        const menuOpenIcon = document.getElementById('menu-open-icon');
-        const menuCloseIcon = document.getElementById('menu-close-icon');
-
         mobileMenuBtn.addEventListener('click', () => {
-            const isHidden = mobileMenu.classList.contains('hidden');
-
-            if (isHidden) {
-                // Show Menu
-                mobileMenu.classList.remove('hidden');
-                menuOpenIcon.classList.add('hidden');
-                menuCloseIcon.classList.remove('hidden');
-            } else {
-                // Hide Menu
-                mobileMenu.classList.add('hidden');
-                menuOpenIcon.classList.remove('hidden');
-                menuCloseIcon.classList.add('hidden');
-            }
+            mobileMenu.classList.toggle('hidden');
         });
 
         // --- Modal Utils ---
         function showModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.classList.remove('hidden');
-            }
+            document.getElementById(modalId)?.classList.remove('hidden');
         }
 
         function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.classList.add('hidden');
-            }
-
-            // Clear intervals if specific modals are closed
+            document.getElementById(modalId)?.classList.add('hidden');
             if (modalId === 'sos-modal') clearInterval(sosInterval);
             if (modalId === 'emergency-modal') clearInterval(emergencyInterval);
+        }
+
+        // --- AJAX: AUTO SUBMIT REPORT ---
+        function submitAutoReport(type) {
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            const lat = currentLocation ? currentLocation.lat : 0;
+            const lon = currentLocation ? currentLocation.lon : 0;
+
+            console.log(`Auto-submitting ${type} report...`);
+
+            fetch("{% url 'account:quick_report' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({
+                    type: type,
+                    lat: lat,
+                    lon: lon
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    currentEventId = data.event_id;
+                    updateEmergencyModalToConnected();
+                }
+            })
+            .catch(error => console.error('Error submitting report:', error));
         }
 
         // --- Map & Location ---
@@ -688,40 +294,27 @@
 
             pinBtn.addEventListener('click', () => {
                 if (navigator.geolocation) {
-                    pinBtn.innerHTML = '<svg class="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Locating...';
-
+                    pinBtn.innerText = 'Locating...';
                     navigator.geolocation.getCurrentPosition(
                         (position) => {
                             currentLocation = {
                                 lat: position.coords.latitude,
                                 lon: position.coords.longitude
                             };
-
-                            // Update Iframe for OpenStreetMap
                             const bbox = 0.005;
                             iframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${currentLocation.lon - bbox},${currentLocation.lat - bbox},${currentLocation.lon + bbox},${currentLocation.lat + bbox}&layer=mapnik&marker=${currentLocation.lat},${currentLocation.lon}`;
-
                             placeholder.classList.add('hidden');
                             iframe.classList.remove('hidden');
-
-                            // Reset Btn
-                            pinBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> Pin My Current Location';
-
-                            // Show Toast
+                            pinBtn.innerText = 'Pin My Current Location';
                             toast.classList.remove('hidden');
                             setTimeout(() => toast.classList.add('hidden'), 3000);
                         },
-                        (err) => {
-                            alert('Failed to retrieve location. Please check browser permissions.');
-                            pinBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> Pin My Current Location';
-                        }
+                        (err) => { alert('Location access denied.'); pinBtn.innerText = 'Pin My Current Location'; }
                     );
                 } else {
-                    alert("Geolocation is not supported by this browser.");
+                    alert("Geolocation not supported.");
                 }
             });
-
-            // Initial load attempt
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition((pos) => {
                     currentLocation = { lat: pos.coords.latitude, lon: pos.coords.longitude };
@@ -736,7 +329,7 @@
 
         sosBtn.addEventListener('click', () => {
             showModal('sos-modal');
-            let timeLeft = 30;
+            let timeLeft = 10; // UPDATED: Changed from 30 to 10 seconds
             sosTimerText.innerText = `Cancel (${timeLeft}s)`;
 
             clearInterval(sosInterval);
@@ -746,7 +339,12 @@
                 if (timeLeft <= 0) {
                     clearInterval(sosInterval);
                     closeModal('sos-modal');
-                    openReportModal('SOS Emergency Alert');
+
+                    // 1. AUTO SUBMIT
+                    submitAutoReport('SOS Emergency');
+
+                    // 2. Open Emergency Modal in Connected State
+                    openEmergencyModal('SOS', true);
                 }
             }, 1000);
         });
@@ -756,8 +354,8 @@
             closeModal('sos-modal');
         });
 
-        // --- Emergency Logic ---
-        function openEmergencyModal(type) {
+        // --- Emergency Quick Button Logic (Fire, Flood, etc.) ---
+        function openEmergencyModal(type, forceConnected = false) {
             const title = document.getElementById('emergency-title');
             const statusText = document.getElementById('emergency-status-text');
             const statusDot = document.getElementById('emergency-status-dot');
@@ -772,132 +370,69 @@
             statusText.className = 'ml-auto font-medium text-yellow-600';
             statusDot.className = 'absolute bottom-0 right-0 p-2 rounded-full border-2 border-white bg-yellow-400';
             statusDesc.innerText = 'Connecting to nearest unit...';
-
             cancelBtn.disabled = false;
+            cancelBtn.classList.add('bg-red-600', 'text-white');
             cancelBtn.classList.remove('bg-gray-100', 'text-gray-400', 'cursor-not-allowed');
-            cancelBtn.classList.add('bg-red-600', 'text-white', 'hover:bg-red-700');
-
-            detailsBtn.disabled = true;
-            detailsBtn.classList.remove('bg-green-600', 'text-white', 'hover:bg-green-700');
-            detailsBtn.classList.add('bg-gray-200', 'text-gray-400', 'cursor-not-allowed');
+            detailsBtn.classList.add('hidden');
 
             showModal('emergency-modal');
 
+            if (forceConnected) {
+                updateEmergencyModalToConnected();
+                return;
+            }
+
             // Timer countdown
-            let timeLeft = 60;
-            timerText.innerText = `Cancel (${timeLeft})`;
+            let timeLeft = 10; // UPDATED: Ensured 10 seconds
+            timerText.innerText = `Cancel (${timeLeft}s)`;
 
             clearInterval(emergencyInterval);
             emergencyInterval = setInterval(() => {
                 timeLeft--;
-                timerText.innerText = `Cancel (${timeLeft})`;
+                timerText.innerText = `Cancel (${timeLeft}s)`;
+
                 if (timeLeft <= 0) {
                     clearInterval(emergencyInterval);
-                    // Connected State
-                    statusText.innerText = 'Connected';
-                    statusText.className = 'ml-auto font-medium text-green-600';
-                    statusDot.className = 'absolute bottom-0 right-0 p-2 rounded-full border-2 border-white bg-green-500';
-                    statusDesc.innerText = 'Responders dispatched.';
 
-                    // Disable Cancel
-                    cancelBtn.disabled = true;
-                    cancelBtn.classList.remove('bg-red-600', 'text-white', 'hover:bg-red-700');
-                    cancelBtn.classList.add('bg-gray-100', 'text-gray-400', 'cursor-not-allowed');
+                    // 1. AUTO SUBMIT
+                    submitAutoReport(type);
 
-                    // Enable Details
-                    detailsBtn.disabled = false;
-                    detailsBtn.classList.remove('bg-gray-200', 'text-gray-400', 'cursor-not-allowed');
-                    detailsBtn.classList.add('bg-green-600', 'text-white', 'hover:bg-green-700');
-
-                    // Details click handler
-                    detailsBtn.onclick = () => {
-                        closeModal('emergency-modal');
-                        openReportModal(type);
-                    };
+                    // 2. UPDATE UI TO CONNECTED
+                    updateEmergencyModalToConnected();
                 }
-            }, 1000); // 1-second interval
+            }, 1000);
 
-            document.getElementById('emergency-cancel-btn').onclick = () => {
+            cancelBtn.onclick = () => {
                 clearInterval(emergencyInterval);
                 closeModal('emergency-modal');
             };
         }
 
-        // --- Report Logic ---
-        function openReportModal(type = '') {
-            const input = document.getElementById('report-type');
-            const locInput = document.getElementById('report-location');
+        function updateEmergencyModalToConnected() {
+             const statusText = document.getElementById('emergency-status-text');
+             const statusDot = document.getElementById('emergency-status-dot');
+             const statusDesc = document.getElementById('emergency-status-desc');
+             const cancelBtn = document.getElementById('emergency-cancel-btn');
 
-            input.value = type;
-            if (currentLocation) {
-                locInput.value = `Lat: ${currentLocation.lat.toFixed(6)}, Lon: ${currentLocation.lon.toFixed(6)}`;
-            } else {
-                locInput.value = '';
-            }
+             statusText.innerText = 'REPORT SENT';
+             statusText.className = 'ml-auto font-bold text-green-600 uppercase';
+             statusDot.className = 'absolute bottom-0 right-0 p-2 rounded-full border-2 border-white bg-green-500';
+             statusDesc.innerText = 'Responders have been notified of your location.';
 
-            showModal('report-modal');
+             cancelBtn.innerText = 'Close';
+             cancelBtn.onclick = () => closeModal('emergency-modal');
         }
 
-        document.getElementById('file-report-btn').addEventListener('click', () => openReportModal(''));
-
-        document.getElementById('report-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('Report Submitted Successfully!');
-            closeModal('report-modal');
+        document.getElementById('file-report-btn').addEventListener('click', () => {
+            window.location.href = "{% url 'EmergencyEvent:report_form' %}";
         });
 
-        // --- Application Cards Logic ---
         document.getElementById('apply-responder-btn').addEventListener('click', () => showModal('responder-modal'));
         document.getElementById('apply-authority-btn').addEventListener('click', () => showModal('authority-modal'));
 
-        // --- Init ---
         window.addEventListener('DOMContentLoaded', () => {
             initMap();
         });
-
-        // --- Responder  File Upload Logic ---
-        const fileInput = document.getElementById('responder_id_file');
-        const fileText = document.getElementById('upload-text');
-        const uploadIcon = document.getElementById('upload-icon');
-
-        fileInput.addEventListener('change', function(e) {
-            if (this.files && this.files[0]) {
-                const fileName = this.files[0].name;
-                // Update UI to show selected file
-                fileText.innerHTML = `<span class="font-bold text-red-600">Selected:</span> ${fileName}`;
-                uploadIcon.classList.add('text-red-600'); // Change icon color
-            }
-        });
-
-        // --- Authority File Upload Logic ---
-        const authFileInput = document.getElementById('authority_id_file');
-        const authFileText = document.getElementById('auth-upload-text');
-        const authUploadIcon = document.getElementById('auth-upload-icon');
-
-        authFileInput.addEventListener('change', function(e) {
-            if (this.files && this.files[0]) {
-                const fileName = this.files[0].name;
-                // Update UI to show selected file
-                authFileText.innerHTML = `<span class="font-bold text-blue-600">Selected:</span> ${fileName}`;
-                authUploadIcon.classList.add('text-blue-600'); // Change icon color to blue
-                authUploadIcon.classList.remove('text-gray-400');
-            }
-        });
-
-        // AUTHORITY APPROVAL MODAL TRIGGER
-        {% if approval_alert %}
-            document.addEventListener('DOMContentLoaded', function() {
-                const approvalModal = document.getElementById('approval-success-modal');
-                if(approvalModal) {
-                    approvalModal.classList.remove('hidden');
-                }
-            });
-        {% endif %}
-
-        function redirectToAuthority() {
-            // Redirect to the Authority Dashboard URL
-            window.location.href = "{% url 'account:authority_dashboard' %}";
-        }
     </script>
 </body>
 </html>

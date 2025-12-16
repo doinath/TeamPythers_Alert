@@ -44,7 +44,9 @@
                 <div class="flex items-center space-x-4">
                     <div class="hidden md:flex items-center space-x-4">
                         <span class="text-gray-800 font-medium text-sm mr-3">{{ user.first_name }} {{ user.last_name }}</span>
-                        <img id="nav-profile-image" class="h-8 w-8 rounded-full object-cover" src="https://i.pravatar.cc/40?u={{ user.first_name }}" alt="User Avatar" />
+                        <div class="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold border border-red-200 text-xs">
+                            {{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1" }}
+                        </div>
                     </div>
                     <div class="md:hidden flex items-center">
                         <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-800 focus:outline-none">
@@ -59,7 +61,6 @@
                 </div>
             </div>
         </div>
-        <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
             <nav class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <a href="{% url 'account:citizen_dashboard' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Dashboard</a>
@@ -68,7 +69,9 @@
             </nav>
             <div class="pt-4 pb-3 border-t border-gray-200">
                 <div class="flex items-center px-5">
-                    <img id="mobile-profile-image" class="h-10 w-10 rounded-full object-cover" src="https://i.pravatar.cc/150?u={{ user.first_name }}" alt="User Avatar" />
+                    <div class="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold border border-red-200">
+                        {{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1" }}
+                    </div>
                     <div class="ml-3">
                         <div class="text-base font-medium text-gray-800">{{ user.first_name }} {{ user.last_name }}</div>
                         <div class="text-sm font-medium text-gray-500">{{ user.email_address }}</div>
@@ -79,16 +82,13 @@
     </header>
 
     <main class="container mx-auto p-4 sm:p-6 lg:p-8">
-        <!-- FORM START -->
         <form method="POST" enctype="multipart/form-data" id="profile-form">
             {% csrf_token %}
 
             <div class="space-y-8 animate-fadeIn">
-                <!-- Messages -->
                 {% if messages %}
                 <div class="mb-4">
                     {% for message in messages %}
-                    <!-- Added id="alert-message" class logic relies on role="alert" -->
                     <div class="p-4 mb-2 text-sm text-white {% if message.tags == 'error' %}bg-red-500{% else %}bg-green-500{% endif %} rounded-lg" role="alert">
                         {{ message }}
                     </div>
@@ -100,7 +100,6 @@
                      <button type="button" id="edit-profile-btn" class="px-6 py-2 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-75 transition-colors bg-red-700 hover:bg-red-800 focus:ring-red-500">
                         Edit Profile
                     </button>
-                    <!-- Type button triggering submit via JS -->
                     <button type="button" id="save-profile-btn" class="hidden px-6 py-2 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-75 transition-colors bg-blue-600 hover:bg-blue-700 focus:ring-blue-500">
                         Save Profile
                     </button>
@@ -108,17 +107,15 @@
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-                    <!-- LEFT COLUMN -->
                     <div class="lg:col-span-1 space-y-6">
 
-                        <!-- Profile Header -->
                         <div class="bg-white p-6 rounded-lg shadow-md text-center">
 
-                            <!-- PROFILE IMAGE SECTION -->
                             <div class="relative inline-block group">
-                                <img id="main-profile-image" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-red-200 object-cover" src="https://i.pravatar.cc/150?u={{ user.first_name }}" alt="Citizen Profile" />
+                                <div class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-red-200 bg-red-100 flex items-center justify-center text-4xl text-red-600 font-bold overflow-hidden">
+                                    {{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1" }}
+                                </div>
 
-                                <!-- Camera Icon -->
                                 <div id="profile-camera-icon" class="hidden absolute bottom-4 right-0 bg-gray-200 hover:bg-gray-300 p-2 rounded-full cursor-pointer transition-colors border-2 border-white shadow-md">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
@@ -126,7 +123,6 @@
                                     </svg>
                                 </div>
 
-                                <!-- Popup Menu -->
                                 <div id="profile-popup-menu" class="hidden absolute top-full left-1/2 transform -translate-x-1/2 z-20 w-48 bg-gray-800 rounded-lg shadow-xl overflow-hidden text-left mt-2 border border-gray-700">
                                     <button type="button" id="btn-see-pic" class="w-full px-4 py-3 text-sm text-gray-200 hover:bg-gray-700 flex items-center transition-colors">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -145,19 +141,16 @@
                                 <input type="file" id="profile-file-input" accept="image/*" class="hidden" />
                             </div>
 
-                            <!-- Name (Non-Editable) -->
                             <div class="mt-2">
                                  <h2 class="text-2xl font-bold text-gray-800">{{ user.first_name }} {{ user.last_name }}</h2>
                             </div>
 
-                            <!-- Email -->
                             <div data-editable-container class="mt-2 text-left">
                                 <p class="text-sm text-gray-500 mt-1 data-view text-center">{{ user.email_address|default:"N/A" }}</p>
                                 <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Email Address</label>
                                 <input type="email" name="email_address" value="{{ user.email_address|default:'' }}" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-sm"/>
                            </div>
 
-                            <!-- Phone -->
                             <div data-editable-container class="mt-2 text-left">
                                 <p class="text-sm text-gray-500 data-view text-center">{{ user.phone_number|default:"N/A" }}</p>
                                 <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Phone Number</label>
@@ -169,35 +162,29 @@
                             </span>
                         </div>
 
-                        <!-- ADDRESS SECTION -->
                         <div class="bg-white rounded-lg shadow-md p-6">
                             <h3 class="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2 mb-4">Address</h3>
                             <address class="not-italic text-gray-700 grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <!-- Street -->
                                 <div data-editable-container>
                                     <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Street</label>
                                     <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">Street:</span> {{ user.street|default:"N/A" }}</p>
                                     <input type="text" name="street" value="{{ user.street|default:'' }}" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"/>
                                 </div>
-                                <!-- Barangay (Municipality in model) -->
                                 <div data-editable-container>
                                     <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Barangay</label>
                                     <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">Barangay:</span> {{ user.municipality|default:"N/A" }}</p>
                                     <input type="text" name="municipality" value="{{ user.municipality|default:'' }}" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"/>
                                 </div>
-                                <!-- City -->
                                 <div data-editable-container>
                                     <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">City</label>
                                     <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">City:</span> {{ user.city|default:"N/A" }}</p>
                                     <input type="text" name="city" value="{{ user.city|default:'' }}" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"/>
                                 </div>
-                                <!-- Province -->
                                 <div data-editable-container>
                                     <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Province</label>
                                     <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">Province:</span> {{ user.province|default:"N/A" }}</p>
                                     <input type="text" name="province" value="{{ user.province|default:'' }}" class="hidden data-edit w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"/>
                                 </div>
-                                <!-- Zip Code -->
                                 <div data-editable-container class="md:col-span-2">
                                     <label class="text-xs text-gray-500 hidden data-edit mb-1 font-bold">Zip Code</label>
                                     <p class="data-view"><span class="font-semibold text-gray-500 text-xs block md:hidden">Zip Code:</span> {{ user.zip_code|default:"N/A" }}</p>
@@ -206,14 +193,12 @@
                             </address>
                         </div>
 
-                        <button id="logout-btn" class="w-full py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75">
+                        <a href="{% url 'account:logout' %}" class="block text-center w-full py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75">
                             Log Out
-                        </button>
+                        </a>
                     </div>
 
-                    <!-- RIGHT COLUMN -->
                     <div class="lg:col-span-2 space-y-6">
-                        <!-- PERSONAL DETAILS SECTION -->
                         <div class="bg-white rounded-lg shadow-md p-6">
                             <h3 class="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2 mb-4">Personal Details</h3>
                             <dl>
@@ -224,11 +209,10 @@
                                         <input type="date" name="date_of_birth" id="input-dob" value="{{ user.date_of_birth|date:'Y-m-d' }}" class="hidden data-edit w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm" required>
                                     </dd>
                                 </div>
-                                <!-- AGE (Derived) -->
                                 <div class="grid grid-cols-3 gap-4 py-3 border-b border-gray-100 last:border-b-0">
                                     <dt class="text-sm font-medium text-gray-500">Age</dt>
                                     <dd class="text-sm text-gray-900 col-span-2">
-                                        <p id="display-age">{{ user.age|default:"N/A" }}</p>
+                                        <p id="display-age">{{ user.age|default:"-" }}</p>
                                     </dd>
                                 </div>
                                 <div class="grid grid-cols-3 gap-4 py-3 border-b border-gray-100 last:border-b-0">
@@ -244,7 +228,6 @@
                             </dl>
                         </div>
 
-                        <!-- Medical -->
                         <div class="bg-white rounded-lg shadow-md p-6">
                              <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-4">
                                 <h3 class="text-xl font-bold text-gray-800">Medical Information</h3>
@@ -271,7 +254,6 @@
                             </div>
                         </div>
 
-                        <!-- Emergency Contact -->
                         <div class="bg-white rounded-lg shadow-md p-6">
                             <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-4">
                                 <h3 class="text-xl font-bold text-gray-800">Emergency Contact</h3>
@@ -298,14 +280,12 @@
                             </ul>
                         </div>
 
-                        <!-- Government IDs -->
                         <div class="bg-white rounded-lg shadow-md p-6">
                              <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-4">
                                 <h3 class="text-xl font-bold text-gray-800">Government IDs</h3>
                                 <button type="button" class="add-item-btn hidden px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600" data-target-list="#gov-id-list" data-template-id="gov-id-template">Add ID</button>
                             </div>
                             <ul class="divide-y divide-gray-100" id="gov-id-list">
-                                <!-- Existing IDs -->
                                 {% for id_doc in gov_ids %}
                                 <li class="py-3 flex justify-between items-center editable-list-item">
                                     <div class="flex-grow pr-4 space-y-1">
@@ -319,7 +299,6 @@
                                         </div>
                                     </div>
                                     <div class="flex items-center space-x-4">
-                                         <!-- Status Badge -->
                                          {% if id_doc.status == 'VERIFIED' %}
                                             <span class="text-xs font-medium bg-green-100 text-green-800 px-2 py-0.5 rounded-full view-state">Verified</span>
                                          {% elif id_doc.status == 'PENDING' %}
@@ -328,7 +307,6 @@
                                             <span class="text-xs font-medium bg-red-100 text-red-800 px-2 py-0.5 rounded-full view-state">{{ id_doc.status }}</span>
                                          {% endif %}
 
-                                         <!-- View Button -->
                                          {% if id_doc.filepath %}
                                          <button type="button" class="view-id-btn px-3 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 view-state" data-image-src="{{ id_doc.filepath.url }}">View ID</button>
                                          {% endif %}
@@ -343,7 +321,6 @@
         </form>
     </main>
 
-    <!-- Templates for Adding NEW Items via JS -->
     <template id="medical-template">
         <div class="py-4 border-b border-gray-100 last:border-b-0 editable-list-item relative">
             <button type="button" class="remove-item-btn float-right text-red-500 hover:text-red-700 text-2xl font-bold absolute top-0 right-0">&times;</button>
@@ -415,7 +392,6 @@
         </li>
     </template>
 
-    <!-- Modal for Viewing IDs/Profile Pic -->
     <div id="id-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-lg shadow-xl max-w-lg w-full relative animate-fadeIn">
             <button type="button" id="close-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-3xl font-bold">&times;</button>
@@ -426,7 +402,6 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT -->
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         const editProfileBtn = document.getElementById('edit-profile-btn');

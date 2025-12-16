@@ -19,4 +19,6 @@ urlpatterns = [
     path('apply/responder/', views.ApplyResponderView.as_view(), name='apply_responder'),
     path('apply/authority/', views.ApplyAuthorityView.as_view(), name='apply_authority'),
     # ---------------------------------
+
+    path('logout/', views.LogoutView.as_view(), name='logout'),
 ]

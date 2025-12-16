@@ -11,7 +11,6 @@
 </head>
 
 <body class="bg-white text-gray-800">
-    <!-- Header -->
     <header class="sticky top-0 left-0 right-0 z-50 bg-white shadow-md py-4 px-4 sm:px-8 md:px-16">
         <div class="container mx-auto flex justify-between items-center">
             <a href="#home">
@@ -38,44 +37,49 @@
     </header>
 
     <main>
-        <!-- Hero Section -->
         <section id="home" class="relative min-h-screen flex items-center justify-center text-white pt-24 pb-12 md:pt-0 md:pb-0 px-12">
             <div class="absolute inset-0 z-0">
                 <img src="{% static 'images/landingimage.png' %}" alt="Aftermath of a natural disaster" class="w-full h-full object-cover" />
                 <div class="absolute inset-0 backdrop-brightness-75"></div>
             </div>
 
-            <!-- Mobile-only Rescuer Image -->
             <div class="lg:hidden absolute bottom-0 left-0 right-0 flex justify-center z-10 pointer-events-none">
               <img src="{% static 'images/rescuer-hero.png' %}" alt="Firefighter carrying a child to safety" class="h-64 sm:h-80 w-auto object-contain" />
             </div>
 
             <div class="relative z-10 container mx-auto px-4 sm:px-8">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
-                    <!-- Column 1: Rescuer Image (Desktop) -->
                     <div class="hidden lg:flex justify-center lg:justify-end">
                         <img src="{% static 'images/rescuer.png' %}"
                            alt="Firefighter carrying a child to safety"
                            class="h-[48rem] xl:h-[56rem] -mb-48 w-auto object-contain flex-shrink-0 scale-125 -mb-20 transition-transform duration-700 ease-in-out" />
                     </div>
 
-                    <!-- Column 2: Tagline -->
                     <div class="text-left">
                         <h1 class="text-5xl xl:text-6xl mb-7 font-extrabold leading-tight drop-shadow-lg whitespace-nowrap">Stay Safe</h1>
                         <h1 class="text-5xl xl:text-6xl mb-7 font-extrabold leading-tight drop-shadow-lg mt-2 whitespace-nowrap">Stay Informed</h1>
                         <h1 class="text-5xl xl:text-6xl font-extrabold leading-tight drop-shadow-lg mt-2 whitespace-nowrap">Stay <span class="text-red-500">ALERT</span></h1>
                     </div>
 
-                    <!-- Column 3: Sign In Form -->
                     <div class="flex justify-center lg:justify-start ml-12">
                         <div class="bg-white/95 backdrop-blur-sm text-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md" style="box-shadow: 0 0 25px rgba(239, 68, 68, 0.3)">
-                            <h2 class="text-2xl font-bold text-center mb-2">Sign In to you Account</h2>
+                            <h2 class="text-2xl font-bold text-center mb-2">Sign In to your Account</h2>
                             <p class="text-center text-gray-600 mb-6 text-sm">Enter registered email and password in the fields provided.</p>
-                            <form action="" method="POST" novalidate>
+
+                            <form action="{% url 'account:index' %}" method="POST" novalidate>
                                 {% csrf_token %}
 
+                                {% if messages %}
+                                <div id="message-container" class="mb-4">
+                                    {% for message in messages %}
+                                    <div class="p-3 text-sm text-white bg-red-500 rounded-lg shadow-md border border-red-600 text-center animate-pulse" role="alert">
+                                        {{ message }}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+
                                 <div class="mb-4">
-                                    <!-- FIX 4: Add name="email" -->
                                     <input
                                         type="email"
                                         id="email"
@@ -86,7 +90,6 @@
                                     />
                                 </div>
                                 <div class="mb-6">
-                                    <!-- FIX 5: Add name="password" -->
                                     <input
                                         type="password"
                                         id="password"
@@ -106,7 +109,6 @@
             </div>
         </section>
 
-        <!-- About Section -->
         <section>
             <div class="bg-white text-gray-800 py-16 sm:py-24">
                 <div class="container mx-auto px-4">
@@ -218,7 +220,6 @@
             </div>
         </section>
 
-        <!-- Contact Section -->
         <section id="contact" class="py-24 bg-white">
             <div class="container mx-auto px-12 sm:px-20 lg:px-28">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
@@ -284,7 +285,6 @@
         </section>
     </main>
 
-    <!-- Footer -->
     <footer class="bg-[#3b0909] text-gray-300">
         <div class="container mx-auto py-16 px-12 sm:px-20 lg:px-28">
             <div class="grid grid-cols-2 md:grid-cols-5 gap-8 text-sm">
@@ -312,8 +312,7 @@
                     <h4 class="font-bold text-white mb-4">Social</h4>
                     <div class="flex space-x-4">
                         <a href="#" class="text-gray-400 hover:text-white"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" /></svg></a>
-                        <a href="#" class="text-gray-400 hover:text-white"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.024.06 1.378.06 3.808s-.012 2.784-.06 3.808c-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.024.048-1.378.06-3.808.06s-2.784-.012-3.808-.06c-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.048-1.024-.06-1.378-.06-3.808s.012-2.784.06-3.808c.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 016.08 2.525c.636-.247 1.363-.416 2.427-.465C9.53 2.013 9.884 2 12.315 2zm-1.161 1.545a4.92 4.92 0 00-3.59 1.182 4.92 4.92 0 00-1.182 3.59A4.92 4.92 0 003.545 12a4.92 4.92 0 001.182 3.59 4.92 4.92 0 003.59 1.182 4.92 4.92 0 003.59-1.182 4.92 4.92 0 001.182-3.59A4.92 4.92 0 0015.455 8.41a4.92 4.92 0 00-3.59-1.182zM12 15.455a3.455 3.455 0 110-6.91 3.455 3.455 0 010 6.91zm5.09-8.335a1.182 1.182 0 11-2.364 0 1.182 1.182 0 012.364 0z" clip-rule="evenodd" /></svg></a>
-                        <a href="#" class="text-gray-400 hover:text-white"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.71v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" /></svg></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.024.06 1.378.06 3.808s-.012 2.784-.06 3.808c-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.024.048-1.378.06-3.808.06s-2.784-.012-3.808-.06c-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.048-1.024-.06-1.378-.06-3.808s.012-2.784.06-3.808c.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 016.08 2.525c.636-.247 1.363-.416 2.427-.465C9.53 2.013 9.884 2 12.315 2zm-1.161 1.545a4.92 4.92 0 00-3.59 1.182 4.92 4.92 0 00-1.182 3.59A4.92 4.92 0 003.545 12a4.92 4.92 0 001.182 3.59 4.92 4.92 0 003.59 1.182 4.92 4.92 0 001.182-3.59A4.92 4.92 0 0015.455 8.41a4.92 4.92 0 00-3.59-1.182zM12 15.455a3.455 3.455 0 110-6.91 3.455 3.455 0 010 6.91zm5.09-8.335a1.182 1.182 0 11-2.364 0 1.182 1.182 0 012.364 0z" clip-rule="evenodd" /></svg></a>
                     </div>
                 </div>
             </div>
@@ -324,5 +323,22 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const messageContainer = document.getElementById('message-container');
+            if (messageContainer) {
+                // Wait 3 seconds, then fade out
+                setTimeout(() => {
+                    messageContainer.style.transition = 'opacity 0.5s ease';
+                    messageContainer.style.opacity = '0';
+                    // Remove from DOM after fade out
+                    setTimeout(() => {
+                        messageContainer.remove();
+                    }, 500);
+                }, 3000);
+            }
+        });
+    </script>
 </body>
 </html>

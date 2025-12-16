@@ -56,7 +56,7 @@ class User(models.Model):
 
 
 # -----------------------------------------------------------
-#   ADDITIONAL INFORMATION
+#   EMERGENCY CONTACTS
 # -----------------------------------------------------------
 class ContactInfo(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='contact_numbers')
@@ -65,15 +65,6 @@ class ContactInfo(models.Model):
 
     def __str__(self):
         return f"{self.user_id} - {self.contact_info} ({self.relationship})"
-
-
-class Email(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='secondary_emails')
-    email = models.EmailField()
-
-    def __str__(self):
-        return f"{self.user_id} - {self.email}"
-
 
 # -----------------------------------------------------------
 #   CITIZEN (SUBTYPE OF USER)

@@ -5,6 +5,8 @@ from django.db import transaction
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User as AuthUser
+from django.http import JsonResponse  # REQUIRED for AJAX responses
+import json  # REQUIRED for parsing AJAX body
 from .models import User as CustomUser, Citizen, ContactInfo, Responder, Authority, Notification
 from emergency.models import MedicalCondition
 from verification.models import GovernmentDocument
@@ -426,7 +428,6 @@ class ApplyResponderView(LoginRequiredMixin, View):
                 messages.warning(request, "You have already applied as a Responder.")
                 return redirect('account:citizen_dashboard')
 
-            # Use atomic transaction to ensure data integrity
             with transaction.atomic():
                 # 1. Create the Responder Profile
                 Responder.objects.create(
@@ -530,7 +531,7 @@ class ApplyAuthorityView(LoginRequiredMixin, View):
 
 
 # ---------------------------
-#  NEW LOCATION PIN VIEW
+#  LOCATION PIN VIEW
 # ---------------------------
 class LocationPinView(LoginRequiredMixin, View):
     def post(self, request):
@@ -561,3 +562,141 @@ class LocationPinView(LoginRequiredMixin, View):
 
         # Redirect back to the dashboard to show the map and the message
         return redirect('account:citizen_dashboard')
+
+
+# ---------------------------
+#  CITIZEN SOS LOG START VIEW (Uses Stored Procedure)
+# ---------------------------
+class LogSosCallView(LoginRequiredMixin, View):
+    """
+    Handles the AJAX request from the Citizen dashboard to log the SOS initiation.
+    """
+
+    def post(self, request):
+        try:
+            # 1. Get the custom user profile
+            custom_user = request.user.custom_profile
+
+            # 2. Parse the JSON body from the AJAX request
+            data = json.loads(request.body)
+            location_detail = data.get('location_detail', 'Location not provided.')
+
+            # 3. Prepare Stored Procedure parameters
+            log_user_id = custom_user.user_id
+            log_action = "SOS Call Initiated"
+
+            # Detail message includes the location and the user
+            log_detail = (
+                f"Citizen {custom_user.first_name} {custom_user.last_name} initiated an SOS call. "
+                f"Recorded location: {location_detail}"
+            )
+
+            # 4. Execute the Stored Procedure
+            with connection.cursor() as cursor:
+                cursor.callproc('LogSystemAction', [log_user_id, log_action, log_detail])
+
+            # 5. Return success response (JSON is required for the AJAX call)
+            return JsonResponse({
+                'status': 'success',
+                'message': 'SOS action successfully logged.'
+            })
+
+        except Exception as e:
+            # Print to console for debugging
+            print(f"Error logging SOS action: {e}")
+
+            # Return error response
+            return JsonResponse({
+                'status': 'error',
+                'message': f'Failed to log SOS action: {e}'
+            }, status=500)
+
+
+# ---------------------------
+#  AUTHORITY ACCEPT/DECLINE LOG VIEW (Uses Stored Procedure)
+# ---------------------------
+class LogAuthorityActionView(LoginRequiredMixin, View):
+    """
+    Handles the AJAX request from the Authority dashboard to log specific call actions
+    (Accept/Decline) using the stored procedure.
+    """
+
+    def post(self, request):
+        try:
+            # 1. Get user and parse data
+            custom_user = request.user.custom_profile
+            data = json.loads(request.body)
+
+            action_type = data.get('action', 'Unknown Call Action')
+            call_id = data.get('call_id', 'N/A')
+            caller_name = data.get('caller_name', 'Unknown Citizen')
+
+            # 2. Prepare Stored Procedure parameters
+            log_user_id = custom_user.user_id
+            log_action = action_type  # e.g., 'Accepted SOS Call', 'Declined SOS Call'
+
+            # Detail includes who performed the action, which call was affected, and the citizen
+            log_detail = (
+                f"Authority {custom_user.first_name} {custom_user.last_name} ({custom_user.email_address}) "
+                f"performed action: '{action_type}' on Call ID {call_id} from Citizen '{caller_name}'."
+            )
+
+            # 3. Execute the Stored Procedure
+            with connection.cursor() as cursor:
+                cursor.callproc('LogSystemAction', [log_user_id, log_action, log_detail])
+
+            # 4. Return success response
+            return JsonResponse({
+                'status': 'success',
+                'message': f'Authority action "{action_type}" successfully logged.'
+            })
+
+        except Exception as e:
+            print(f"Error logging Authority action: {e}")
+            return JsonResponse({
+                'status': 'error',
+                'message': f'Failed to log action: {e}'
+            }, status=500)
+
+
+# ---------------------------
+#  NEW CALL END LOG VIEW (Uses Stored Procedure)
+# ---------------------------
+class LogCallEndView(LoginRequiredMixin, View):
+    """
+    Handles the AJAX request to log the end of an emergency call, regardless of who terminated it.
+    """
+
+    def post(self, request):
+        try:
+            custom_user = request.user.custom_profile
+            data = json.loads(request.body)
+
+            call_id = data.get('call_id', 'N/A')
+            reason = data.get('reason', 'Call terminated')
+
+            # 1. Prepare Stored Procedure parameters
+            log_user_id = custom_user.user_id
+            log_action = "SOS Call Ended"
+
+            # Detail message includes the call ID and the reason for termination
+            log_detail = (
+                f"SOS Call ID {call_id} ended. Reason: {reason}. "
+                f"Logged by user {custom_user.first_name} {custom_user.last_name}."
+            )
+
+            # 2. Execute the Stored Procedure
+            with connection.cursor() as cursor:
+                cursor.callproc('LogSystemAction', [log_user_id, log_action, log_detail])
+
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Call termination successfully logged.'
+            })
+
+        except Exception as e:
+            print(f"Error logging call termination: {e}")
+            return JsonResponse({
+                'status': 'error',
+                'message': f'Failed to log call termination: {e}'
+            }, status=500)

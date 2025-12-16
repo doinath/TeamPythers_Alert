@@ -6,7 +6,8 @@ app_name = 'account'
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
     path('register/', views.RegisterView.as_view(), name='register'),
-    path('citizen_profile_completion/', views.CitizenProfileCompletionView.as_view(), name='citizen_profile_completion'),
+    path('citizen_profile_completion/', views.CitizenProfileCompletionView.as_view(),
+         name='citizen_profile_completion'),
     path('citizen_dashboard/', views.CitizenDashboardView.as_view(), name='citizen_dashboard'),
     path('responder_dashboard/', views.ResponderDashboardView.as_view(), name='responder_dashboard'),
     path('authority_dashboard/', views.AuthorityDashboardView.as_view(), name='authority_dashboard'),
@@ -19,7 +20,10 @@ urlpatterns = [
     path('apply/responder/', views.ApplyResponderView.as_view(), name='apply_responder'),
     path('apply/authority/', views.ApplyAuthorityView.as_view(), name='apply_authority'),
     path('pin_location/', views.LocationPinView.as_view(), name='pin_location'),
+
+    # --- LOGGING ENDPOINTS ---
+    path('log-sos-call/', views.LogSosCallView.as_view(), name='log_sos_call'),
+    path('log-authority-action/', views.LogAuthorityActionView.as_view(), name='log_authority_action'),
+    path('log-call-end/', views.LogCallEndView.as_view(), name='log_call_end'),
     # ---------------------------------
-
-
 ]

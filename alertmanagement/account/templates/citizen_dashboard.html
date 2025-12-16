@@ -757,8 +757,68 @@
         //  SOS CALL LOGIC (Merged)
         // ==========================================
 
+        // --- NEW: SOS Log Function (Logs the action to the database via stored procedure) ---
+        function logSosAction() {
+            // Determine location for log detail
+            const locationStr = currentLocation ?
+                `Lat: ${currentLocation.lat.toFixed(6)}, Lon: ${currentLocation.lon.toFixed(6)}` : "Unknown Location (GPS Not Set)";
+
+            fetch("{% url 'account:log_sos_call' %}", { // Using the new URL
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    location_detail: locationStr
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    console.log("SOS Action Logged:", data.message);
+                } else {
+                    console.error("Failed to log SOS action:", data.message);
+                }
+            })
+            .catch(error => {
+                console.error("Network error while logging SOS:", error);
+            });
+        }
+
+        // --- NEW: Call End Logging Function (Logs the call termination) ---
+        function logCallEnd(callId, reason) {
+            if (!callId) return;
+            fetch("{% url 'account:log_call_end' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    call_id: callId,
+                    reason: reason
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    console.log("Call End Logged:", data.message);
+                } else {
+                    console.error("Failed to log call end:", data.message);
+                }
+            })
+            .catch(error => {
+                console.error("Network error while logging call end:", error);
+            });
+        }
+
         if(sosBtn) {
             sosBtn.addEventListener('click', () => {
+                // 1. LOG THE SOS CALL ACTION TO DATABASE
+                logSosAction();
+
+                // 2. CONTINUE WITH THE VISUAL AND CALL INITIATION FLOW
                 showModal('sos-modal');
                 updateUI_Finding();
 
@@ -773,12 +833,15 @@
                         updateUI_Ringing();
                         startPolling();
                     } else {
+                        // Failed to initiate call in backend
+                        logCallEnd(activeCallLogId, "Initiation Failed");
                         alert("Connection failed.");
                         closeAllModals();
                     }
                 })
                 .catch(err => {
                     console.error("SOS Initiation Error:", err);
+                    logCallEnd(activeCallLogId, "Network Error");
                     closeAllModals();
                 });
             });
@@ -816,13 +879,22 @@
                         clearInterval(pollInterval);
                         switchToActiveCallModal(data.agency_name, data.responder_name);
                         monitorActiveCall();
-                    } else if (data.status === 'declined' || data.status === 'missed') {
+                    } else if (data.status === 'declined') {
                         clearInterval(pollInterval);
+                        logCallEnd(activeCallLogId, "Declined by Authority");
+                        alert("Authority is unavailable. Call recorded as Declined.");
+                        closeAllModals();
+                        openReportModal("Emergency - Call Declined");
+                    } else if (data.status === 'missed') {
+                        clearInterval(pollInterval);
+                        logCallEnd(activeCallLogId, "Missed by Authority");
                         alert("Authority is unavailable. Call recorded as Missed.");
                         closeAllModals();
                         openReportModal("Emergency - Call Missed");
                     } else if (data.status === 'completed') {
-                        alert("Call ended.");
+                        clearInterval(pollInterval);
+                        logCallEnd(activeCallLogId, "Completed by Authority");
+                        alert("Call ended by Authority.");
                         closeAllModals();
                         openReportModal("Emergency Call Ended");
                     }
@@ -855,18 +927,25 @@
             }, 1000);
         }
 
+        // --- CORRECTED EVENT LISTENERS ---
         if(sosCancelBtn) {
-            sosCancelBtn.addEventListener('click', () => endCall(false));
+            sosCancelBtn.addEventListener('click', () => endCall(false, "Cancelled by Citizen (Ringing)"));
         }
         if(endActiveCallBtn) {
-            endActiveCallBtn.addEventListener('click', () => endCall(true));
+            endActiveCallBtn.addEventListener('click', () => endCall(true, "Ended by Citizen"));
         }
+        // --- END CORRECTED EVENT LISTENERS ---
 
-        function endCall(wasActive) {
+        function endCall(wasActive, logReason) {
             clearInterval(pollInterval);
             clearInterval(durationInterval);
             clearInterval(monitorInterval);
 
+            // 1. Log the call end action FIRST
+            // This is crucial: activeCallLogId must hold the ID of the current call, which is set during initiation.
+            logCallEnd(activeCallLogId, logReason);
+
+            // 2. Notify server to formally end the call (if an ID exists)
             if(activeCallLogId) {
                 fetch("{% url 'communication:end_emergency_call' %}", {
                     method: "POST",
@@ -874,7 +953,10 @@
                     body: JSON.stringify({ call_id: activeCallLogId })
                 });
             }
+
+            // 3. Clear UI and variables
             closeAllModals();
+
             if (wasActive) {
                 setTimeout(() => openReportModal("Emergency Call Ended"), 500);
             }
@@ -889,6 +971,11 @@
                 .then(data => {
                     if(data.status === 'completed' || data.status === 'cancelled') {
                         clearInterval(monitorInterval);
+
+                        const reason = data.status === 'completed' ? "Completed by Authority" : "Cancelled by Authority";
+
+                        logCallEnd(activeCallLogId, reason);
+
                         alert("Authority ended the call.");
                         closeAllModals();
                         openReportModal("Emergency Call Ended");

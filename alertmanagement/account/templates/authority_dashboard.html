@@ -395,8 +395,8 @@
                 <button class="p-4 rounded-full bg-gray-700 text-white hover:bg-gray-600 transition duration-200">
                      <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                 </button>
-            </div>
         </div>
+    </div>
     </div>
 
     <script>
@@ -435,6 +435,31 @@
             }, 1000);
         }
 
+        // --- NEW: Logging Function for Authority Actions ---
+        function logCallAction(actionType, callId, callerName) {
+            fetch("{% url 'account:log_authority_action' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    action: actionType,
+                    call_id: callId,
+                    caller_name: callerName
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    console.log(`Authority Action Logged (${actionType}):`, data.message);
+                } else {
+                    console.error(`Failed to log Authority Action (${actionType}):`, data.message);
+                }
+            })
+            .catch(err => console.error("Network error while logging authority action:", err));
+        }
+
         // --- 1. POLLING FOR INCOMING CALLS ---
         function pollIncomingCalls() {
             // Only poll if we are not already in a call or seeing a modal
@@ -467,9 +492,13 @@
         document.addEventListener('DOMContentLoaded', pollIncomingCalls);
 
 
-        // --- 2. ACCEPT CALL LOGIC ---
+        // --- 2. ACCEPT CALL LOGIC (Updated to include logging) ---
         function acceptCall() {
             if(!incomingCallId) return;
+
+            // Get caller name and ID before closing the modal
+            const callerName = document.getElementById('incoming-caller-name').innerText;
+            const currentCallId = incomingCallId;
 
             fetch("{% url 'communication:accept_call' %}", {
                 method: "POST",
@@ -477,17 +506,20 @@
                     "X-CSRFToken": csrfToken,
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ call_id: incomingCallId })
+                body: JSON.stringify({ call_id: currentCallId })
             })
             .then(res => res.json())
             .then(data => {
                 if(data.status === 'success') {
+                    // LOG SUCCESSFUL ACCEPTANCE
+                    logCallAction('Accepted SOS Call', currentCallId, callerName);
+
                     document.getElementById('incoming-call-modal').classList.add('hidden');
 
-                    activeCallId = incomingCallId;
+                    activeCallId = currentCallId;
                     incomingCallId = null;
 
-                    document.getElementById('active-caller-name').innerText = document.getElementById('incoming-caller-name').innerText;
+                    document.getElementById('active-caller-name').innerText = callerName;
                     // Retrieve caller ID stored earlier
                     document.getElementById('active-caller-id').innerText = document.getElementById('incoming-caller-id').value || 'N/A';
                     document.getElementById('active-call-modal').classList.remove('hidden');
@@ -495,14 +527,20 @@
                     startCallTimer();
                     monitorActiveCall();
                 } else {
+                    // LOG FAILED ACCEPTANCE (if server rejects)
+                    logCallAction('Failed to Accept SOS Call', currentCallId, callerName);
                     alert("Failed to connect call.");
-                    declineCall();
+                    // Still run declineCall() cleanup logic if connection fails
+                    declineCall(true); // Pass true to skip re-logging if decline is called internally
                 }
             })
             .catch(err => {
                 console.error("Accept Call Error:", err);
+                // LOG ACCEPT ERROR
+                logCallAction('Accept SOS Call Network Error', currentCallId, callerName);
                 alert("An error occurred during connection.");
-                declineCall();
+                // Still run declineCall() cleanup logic if connection fails
+                declineCall(true); // Pass true to skip re-logging if decline is called internally
             });
         }
 
@@ -526,16 +564,24 @@
         }
 
 
-        // --- 3. DECLINE / END CALL LOGIC ---
-        function declineCall() {
+        // --- 3. DECLINE / END CALL LOGIC (Updated to include logging) ---
+        function declineCall(skipLog = false) {
             document.getElementById('incoming-call-modal').classList.add('hidden');
 
+            const currentCallId = incomingCallId;
+            const callerName = document.getElementById('incoming-caller-name').innerText;
+
+            // Log the action unless skipLog is true (used when called internally after a connection failure)
+            if (currentCallId && !skipLog) {
+                 logCallAction('Declined SOS Call', currentCallId, callerName);
+            }
+
             // If we have an ID, tell server to mark as missed/declined
-            if(incomingCallId) {
+            if(currentCallId) {
                 fetch("{% url 'communication:end_emergency_call' %}", {
                     method: "POST",
                     headers: {"X-CSRFToken": csrfToken, "Content-Type": "application/json"},
-                    body: JSON.stringify({ call_id: incomingCallId })
+                    body: JSON.stringify({ call_id: currentCallId })
                 });
                 incomingCallId = null;
             }

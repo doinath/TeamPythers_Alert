@@ -88,7 +88,6 @@
                 {% if messages %}
                 <div class="mb-4">
                     {% for message in messages %}
-                    <!-- Added id="alert-message" class logic relies on role="alert" -->
                     <div class="p-4 mb-2 text-sm text-white {% if message.tags == 'error' %}bg-red-500{% else %}bg-green-500{% endif %} rounded-lg" role="alert">
                         {{ message }}
                     </div>
@@ -206,7 +205,9 @@
                             </address>
                         </div>
 
-                        <button id="logout-btn" class="w-full py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75">
+                        <!-- Log Out Button -->
+                        <!-- FIX: Added type="button" so it doesn't submit the form -->
+                        <button type="button" id="logout-btn" class="w-full py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75">
                             Log Out
                         </button>
                     </div>
@@ -440,6 +441,14 @@
         const openIcon = document.getElementById('menu-open-icon');
         const closeIcon = document.getElementById('menu-close-icon');
         const profileForm = document.getElementById('profile-form');
+
+        // --- Logout Button Logic (FIX) ---
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                // Redirect to the index page (using Django template tag for URL)
+                window.location.href = "{% url 'account:index' %}";
+            });
+        }
 
         // --- Auto Hide Messages (5 Seconds) ---
         const alertMessages = document.querySelectorAll('[role="alert"]');

@@ -9,6 +9,8 @@ from .models import User as CustomUser, Citizen, ContactInfo, Responder, Authori
 from emergency.models import MedicalCondition
 from verification.models import GovernmentDocument
 from django.core.files.storage import default_storage
+from django.db import connection
+
 
 # ---------------------------
 #  INDEX / LOGIN
@@ -31,18 +33,27 @@ class IndexView(View):
                 # Get related custom profile
                 custom_user = auth_user.custom_profile
 
-                # --- LOG SYSTEM ACTION (Login) ---
-                from system_log.models import SystemLog
+                # --- LOG SYSTEM ACTION (Via Stored Procedure) ---
 
-                SystemLog.objects.create(
-                    action="User Login",
-                    detail=f"User {custom_user.first_name} {custom_user.last_name} ({auth_user.email}) logged in successfully.",
-                    user_id=custom_user
-                )
+                # 1. Get the readable role name (e.g., "Citizen", "Authority", "Responder")
+                # get_role_display() handles the conversion from 'citizen' to 'Citizen' based on your model choices
+                user_role = custom_user.get_role_display()
+
+                # 2. Prepare data for the Stored Procedure
+                log_user_id = custom_user.user_id
+                log_action = "User Login"
+                # 3. Include the role in the detail message
+                log_detail = f"{user_role} {custom_user.first_name} {custom_user.last_name} ({auth_user.email}) logged in successfully."
+
+                # 4. Execute the Stored Procedure
+                with connection.cursor() as cursor:
+                    cursor.callproc('LogSystemAction', [log_user_id, log_action, log_detail])
 
             except CustomUser.DoesNotExist:
                 messages.error(request, "Custom profile not found.")
                 return render(request, "index.html")
+            except Exception as e:
+                print(f"Error logging system action: {e}")
 
             # Redirect based on role
             if hasattr(custom_user, 'role') and custom_user.role == "authority":
@@ -89,8 +100,7 @@ class RegisterView(View):
             return render(request, "register.html", context)
 
         try:
-            # Local import to avoid circular dependency
-            from system_log.models import SystemLog
+            # Removed local import of SystemLog model
 
             with transaction.atomic():
                 auth_user = AuthUser.objects.create_user(
@@ -107,17 +117,20 @@ class RegisterView(View):
                     middle_name=middle_name,
                     last_name=last_name,
                     email_address=email,
-                    phone_number=phone_number
+                    phone_number=phone_number,
+                    role='citizen'  # Explicitly setting role
                 )
 
                 Citizen.objects.create(user_id=custom_user)
 
-                # --- LOG SYSTEM ACTION (Registration) ---
-                SystemLog.objects.create(
-                    action="Account Registration",
-                    detail=f"New Citizen account created for {first_name} {last_name} ({email}).",
-                    user_id=custom_user
-                )
+                # --- LOG SYSTEM ACTION (Via Stored Procedure) ---
+                log_user_id = custom_user.user_id
+                log_action = "Account Registration"
+                # Specifying it is a Citizen account
+                log_detail = f"New Citizen account created for {first_name} {last_name} ({email})."
+
+                with connection.cursor() as cursor:
+                    cursor.callproc('LogSystemAction', [log_user_id, log_action, log_detail])
 
             login(request, auth_user)
             messages.success(request, 'Account created successfully! Please complete your profile.')
@@ -145,8 +158,7 @@ class CitizenProfileCompletionView(LoginRequiredMixin, View):
             return redirect('account:index')
 
         try:
-            # Local import to avoid circular dependency
-            from system_log.models import SystemLog
+            # Removed local import of SystemLog
 
             with transaction.atomic():
                 dob = request.POST.get('dob')
@@ -207,12 +219,14 @@ class CitizenProfileCompletionView(LoginRequiredMixin, View):
                             status='PENDING'
                         )
 
-                # --- LOG SYSTEM ACTION (Profile Completion) ---
-                SystemLog.objects.create(
-                    action="Profile Completion",
-                    detail=f"User {custom_user.first_name} completed initial profile setup.",
-                    user_id=custom_user
-                )
+                # --- LOG SYSTEM ACTION (Via Stored Procedure) ---
+                user_role = custom_user.get_role_display()  # Likely "Citizen"
+                log_user_id = custom_user.user_id
+                log_action = "Profile Completion"
+                log_detail = f"{user_role} {custom_user.first_name} completed initial profile setup."
+
+                with connection.cursor() as cursor:
+                    cursor.callproc('LogSystemAction', [log_user_id, log_action, log_detail])
 
             messages.success(request, 'Profile completed successfully! Welcome to your Dashboard.')
             return redirect('account:citizen_dashboard')
@@ -397,21 +411,24 @@ class AuthorityProfileView(LoginRequiredMixin, View):
 # ---------------------------
 #  APPLY VIEWS
 # ---------------------------
+# ---------------------------------------------------------
+#  APPLY VIEWS (Corrected & Consolidated)
+# ---------------------------------------------------------
+
 class ApplyResponderView(LoginRequiredMixin, View):
     def post(self, request):
         try:
-            # Local import to avoid circular dependency
-            from system_log.models import SystemLog
-
+            # Access the citizen profile linked to the logged-in user
             citizen = request.user.custom_profile.citizen_profile
 
-            # Check if already exists
+            # Check if this citizen has already applied
             if hasattr(citizen, 'responder_profile'):
                 messages.warning(request, "You have already applied as a Responder.")
                 return redirect('account:citizen_dashboard')
 
+            # Use atomic transaction to ensure data integrity
             with transaction.atomic():
-                # Create Responder
+                # 1. Create the Responder Profile
                 Responder.objects.create(
                     citizen=citizen,
                     department_unit=request.POST.get('department_unit'),
@@ -420,7 +437,7 @@ class ApplyResponderView(LoginRequiredMixin, View):
                     duty_status='OFF'
                 )
 
-                # Create associated Gov ID
+                # 2. Handle ID Document Upload
                 id_type = request.POST.get('id_type')
                 id_number = request.POST.get('id_number')
                 id_file = request.FILES.get('id_file')
@@ -434,17 +451,25 @@ class ApplyResponderView(LoginRequiredMixin, View):
                         status='PENDING'
                     )
 
-                # --- LOG SYSTEM ACTION (Responder Application) ---
-                SystemLog.objects.create(
-                    action="Responder Application Submitted",
-                    detail=f"User {request.user.custom_profile.first_name} applied for Responder role.",
-                    user_id=request.user.custom_profile
-                )
+                # 3. Log System Action via Stored Procedure
+                custom_user = request.user.custom_profile
+
+                # FIX: Use the explicit primary key 'user_id' for consistency
+                log_user_id = custom_user.user_id
+
+                log_action = "Responder Application Submitted"
+                log_detail = f"User {custom_user.first_name} applied for Responder role."
+
+                with connection.cursor() as cursor:
+                    # 'callproc' safely handles the SQL syntax for stored procedures
+                    cursor.callproc('LogSystemAction', [log_user_id, log_action, log_detail])
 
             messages.success(request, "Responder application submitted successfully!")
             return redirect('account:citizen_dashboard')
 
         except Exception as e:
+            # Print detailed error to console for debugging
+            print(f"Error in ApplyResponderView: {e}")
             messages.error(request, f"Error submitting application: {e}")
             return redirect('account:citizen_dashboard')
 
@@ -452,24 +477,24 @@ class ApplyResponderView(LoginRequiredMixin, View):
 class ApplyAuthorityView(LoginRequiredMixin, View):
     def post(self, request):
         try:
-            # Local import to avoid circular dependency
-            from system_log.models import SystemLog
-
+            # Access the citizen profile
             citizen = request.user.custom_profile.citizen_profile
 
-            if hasattr(citizen, 'authority'):
+            # Check if already applied (ensure related_name in models matches 'authority_profile')
+            if hasattr(citizen, 'authority_profile'):
                 messages.warning(request, "You have already applied as an Authority.")
                 return redirect('account:citizen_dashboard')
 
             with transaction.atomic():
-                # Create Authority
+                # 1. Create Authority Profile
                 Authority.objects.create(
                     citizen=citizen,
                     agency_name=request.POST.get('agency_name'),
-                    jurisdiction_area=request.POST.get('jurisdiction_area')
+                    jurisdiction_area=request.POST.get('jurisdiction_area'),
+                    is_verified=False
                 )
 
-                # Create associated Gov ID
+                # 2. Handle ID Document Upload
                 id_type = request.POST.get('id_type')
                 id_number = request.POST.get('id_number')
                 id_file = request.FILES.get('id_file')
@@ -483,16 +508,56 @@ class ApplyAuthorityView(LoginRequiredMixin, View):
                         status='PENDING'
                     )
 
-                # --- LOG SYSTEM ACTION (Authority Application) ---
-                SystemLog.objects.create(
-                    action="Authority Application Submitted",
-                    detail=f"User {request.user.custom_profile.first_name} applied for Authority role.",
-                    user_id=request.user.custom_profile
-                )
+                # 3. Log System Action via Stored Procedure
+                custom_user = request.user.custom_profile
+
+                # FIX: Use the explicit primary key 'user_id' for consistency
+                log_user_id = custom_user.user_id
+
+                log_action = "Authority Application Submitted"
+                log_detail = f"User {custom_user.first_name} applied for Authority role."
+
+                with connection.cursor() as cursor:
+                    cursor.callproc('LogSystemAction', [log_user_id, log_action, log_detail])
 
             messages.success(request, "Authority application submitted successfully!")
             return redirect('account:citizen_dashboard')
 
         except Exception as e:
+            print(f"Error in ApplyAuthorityView: {e}")
             messages.error(request, f"Error submitting application: {e}")
             return redirect('account:citizen_dashboard')
+
+
+# ---------------------------
+#  NEW LOCATION PIN VIEW
+# ---------------------------
+class LocationPinView(LoginRequiredMixin, View):
+    def post(self, request):
+        # We need to ensure the user is logged in (LoginRequiredMixin handles the redirect)
+        custom_user = request.user.custom_profile
+
+        # We grab the location data from the POST request, but only use it for logging detail
+        latitude = request.POST.get('latitude', 'N/A')
+        longitude = request.POST.get('longitude', 'N/A')
+
+        try:
+            # --- LOG SYSTEM ACTION (Via Stored Procedure) ---
+            log_user_id = custom_user.user_id
+            log_action = "Geolocation Pinned"
+
+            # Log detail includes the coordinates, satisfying the "just posting in the database" requirement
+            log_detail = f"User {custom_user.first_name} manually pinned location. Coords: Lat={latitude}, Lon={longitude}."
+
+            with connection.cursor() as cursor:
+                cursor.callproc('LogSystemAction', [log_user_id, log_action, log_detail])
+
+            # Use Django messages to confirm the action, which the dashboard can display
+            messages.info(request, "Location pinned and action logged successfully.")
+
+        except Exception as e:
+            print(f"Error logging location pin: {e}")
+            messages.error(request, f"Error logging location pin: {e}")
+
+        # Redirect back to the dashboard to show the map and the message
+        return redirect('account:citizen_dashboard')

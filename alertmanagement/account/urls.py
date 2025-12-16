@@ -18,5 +18,8 @@ urlpatterns = [
     # --- URLs for Applications ---
     path('apply/responder/', views.ApplyResponderView.as_view(), name='apply_responder'),
     path('apply/authority/', views.ApplyAuthorityView.as_view(), name='apply_authority'),
+    path('pin_location/', views.LocationPinView.as_view(), name='pin_location'),
     # ---------------------------------
+
+
 ]
